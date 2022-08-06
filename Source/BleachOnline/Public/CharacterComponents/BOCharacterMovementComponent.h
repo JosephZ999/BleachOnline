@@ -11,18 +11,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogCharacterMovement, All, All);
 
 class UCapsuleComponent;
 
-/*
-UENUM(BlueprintType)
-enum class EBOMovementType : uint8
-{
-	Walking,
-	Jumping,
-	Falling,
-	Custom,
-};
-*/
-
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom))
 class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -64,10 +53,10 @@ public:
 	float JumpHeight;
 
 private:
-	FVector		   Velocity;
-	FVector		   MovementVector;
-	bool		   bWalking;
-	bool		   bOnGround;
+	FVector Velocity;
+	FVector MovementVector;
+	bool	bWalking;
+	bool	bOnGround;
 
 protected:
 	virtual void BeginPlay() override;
@@ -94,6 +83,16 @@ public:
 
 private:
 	void UpdateVelocity(const float Delta);
+
+	FORCEINLINE float GetAcceleration(float DeltaSeconds) const
+	{
+		return ((bOnGround) ? Acceleration * DeltaSeconds : AirAcceleration * DeltaSeconds);
+	}
+
+	FORCEINLINE float GetDeceleration(float DeltaSeconds) const
+	{
+		return ((bOnGround) ? Deceleration * DeltaSeconds : AirDeceleration * DeltaSeconds);
+	}
 
 	/*
 	bool CapsuleTrace(FVector ForwardVec, float Dist, FHitResult& ReturnHit)

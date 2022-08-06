@@ -3,6 +3,7 @@
 #include "BOCharacterMovementComponent.h"
 #include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet\KismetMathLibrary.h"
 
 // #include "DrawDebugHelpers.h"
 
@@ -14,7 +15,7 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 
 	// Base Options
 	WalkSpeed		= 200.f;
-	Gravity			= 800.f;
+	Gravity			= 900.f;
 	MaxFallSpeed	= 600.f;
 	Acceleration	= 1500.f;
 	Deceleration	= 1500.f;
@@ -128,17 +129,29 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 
 	if (bWalking)
 	{
-		Velocity += MovementVector * ((bOnGround) ? Acceleration * Delta : AirAcceleration * Delta);
-		float VelocityZCache = Velocity.Z;
-		Velocity.Z			 = 0.f;
+		auto VelCache	= FVector(Velocity.X, Velocity.Y, 0.f);
+		const auto SpeedCache = VelCache.Size();
+		const auto VelZCache = Velocity.Z;
 
-		if (Velocity.Size() >= WalkSpeed)
+		if (SpeedCache > WalkSpeed)
 		{
-			Velocity.Normalize();
-			Velocity *= WalkSpeed;
+			const auto NewSpeedCache = SpeedCache - GetDeceleration(Delta);
+			VelCache += MovementVector * GetAcceleration(Delta);
+			VelCache.Normalize();
+			
+			Velocity   = VelCache * ((NewSpeedCache <= WalkSpeed)? WalkSpeed : NewSpeedCache);
+			Velocity.Z = VelZCache;
 		}
-		Velocity.Z = VelocityZCache;
-		bWalking   = false;
+		else
+		{
+			const auto NewSpeedCache = SpeedCache + GetAcceleration(Delta);
+			VelCache = VelCache.GetSafeNormal() + MovementVector * GetAcceleration(Delta);
+			VelCache.Normalize();
+
+			Velocity = VelCache * ((NewSpeedCache >= WalkSpeed)? WalkSpeed : NewSpeedCache);
+			Velocity.Z = VelZCache;
+		}
+		bWalking = false;
 	}
 	else
 	{
@@ -146,7 +159,7 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 		auto VelocityForward = FVector(Velocity.X, Velocity.Y, 0.f);
 		VelocityForward.Normalize();
 
-		AddVelocity = VelocityForward * ((bOnGround) ? Deceleration * Delta : AirDeceleration * Delta);
+		AddVelocity = VelocityForward * GetDeceleration(Delta);
 		Velocity	= (AddVelocity.Size() >= FVector(Velocity.X, Velocity.Y, 0.f).Size()) //
 						  ? FVector(0.f, 0.f, Velocity.Z)								  //
 						  : Velocity - AddVelocity;
