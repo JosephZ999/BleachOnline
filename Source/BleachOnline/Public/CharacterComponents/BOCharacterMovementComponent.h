@@ -70,10 +70,13 @@ public:
 	FVector GetVelocity() const { return Velocity; }
 
 	UFUNCTION(BlueprintCallable)
+	FVector GetMoveVector() const { return MovementVector; }
+
+	UFUNCTION(BlueprintCallable)
 	bool IsOnGround() const { return bOnGround; }
 
 	UFUNCTION(BlueprintCallable)
-	void SetMovementVector(const FVector& ForwardVector, float Scale);
+	void SetMovementVector(const FVector& ForwardVector);
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();

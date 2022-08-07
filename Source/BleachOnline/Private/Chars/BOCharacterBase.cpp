@@ -3,13 +3,28 @@
 #include "BOCharacterBase.h"
 #include "BOCharacterMovementComponent.h"
 #include "BOIndicatorComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ABOCharacterBase::ABOCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	CapsuleComp = CreateAbstractDefaultSubobject<UCapsuleComponent>("CapsuleComp");
+	if (CapsuleComp)
+	{
+		SetRootComponent(CapsuleComp);
+		CapsuleComp->SetCapsuleHalfHeight(22.f);
+		CapsuleComp->SetCapsuleRadius(12.f);
+
+		// Collision Channels
+		CapsuleComp->SetCollisionObjectType(ECC_Pawn);
+		CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+		CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+		CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	}
+
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
-	HealthComp = CreateDefaultSubobject<UBOIndicatorComponent>("HealthComp");
+	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>("HealthComp");
 }
 
 void ABOCharacterBase::BeginPlay()
@@ -25,4 +40,30 @@ void ABOCharacterBase::Tick(float DeltaTime)
 void ABOCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+// Wrapper Functions |=========================================================================
+void ABOCharacterBase::LaunchCharacter(const FVector & Impulse, bool OverrideXY, bool OverrideZ)
+{
+	MovementComp->Launch(Impulse, OverrideXY, OverrideZ);
+}
+
+void ABOCharacterBase::AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce)
+{
+	MovementComp->SetMovementVector(WorldDirection);
+}
+
+FVector ABOCharacterBase::GetVelocity() const
+{
+	return MovementComp->GetVelocity();
+}
+
+void ABOCharacterBase::Jump()
+{
+	MovementComp->Jump();
+}
+
+bool ABOCharacterBase::IsOnGround() const
+{
+	return MovementComp->IsOnGround();
 }

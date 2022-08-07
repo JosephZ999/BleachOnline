@@ -2,7 +2,10 @@
 
 #include "BOIndicatorComponent.h"
 
-UBOIndicatorComponent::UBOIndicatorComponent() {}
+UBOIndicatorComponent::UBOIndicatorComponent()
+{
+	MaxValue = 1.f;
+}
 
 void UBOIndicatorComponent::BeginPlay()
 {

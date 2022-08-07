@@ -17,8 +17,8 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	WalkSpeed		= 200.f;
 	Gravity			= 900.f;
 	MaxFallSpeed	= 600.f;
-	Acceleration	= 1500.f;
-	Deceleration	= 1500.f;
+	Acceleration	= 3000.f;
+	Deceleration	= 3000.f;
 	JumpHeight		= 500.f;
 	AirAcceleration = 200.f;
 	AirDeceleration = 200.f;
@@ -166,10 +166,10 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 	}
 }
 
-void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector, float Scale)
+void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)
 {
 	MovementVector = ForwardVector;
-	MovementVector *= Scale;
+	MovementVector.Z = 0.f;
 	MovementVector.Normalize();
 	bWalking = MovementVector.Size() > 0.f;
 }
