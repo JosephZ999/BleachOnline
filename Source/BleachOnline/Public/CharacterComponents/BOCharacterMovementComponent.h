@@ -53,10 +53,12 @@ public:
 	float JumpHeight;
 
 private:
-	FVector Velocity;
-	FVector MovementVector;
+	FVector Velocity		 = FVector::ZeroVector;
+	FVector MovementVelocity = FVector::ZeroVector;
+	FVector MovementVector	 = FVector::ZeroVector;
 	bool	bWalking;
 	bool	bOnGround;
+	FTimerHandle StopMovingTimer;
 
 protected:
 	virtual void BeginPlay() override;
@@ -73,6 +75,9 @@ public:
 	FVector GetMoveVector() const { return MovementVector; }
 
 	UFUNCTION(BlueprintCallable)
+	FVector GetMoveVelocity() const { return MovementVelocity; }
+
+	UFUNCTION(BlueprintCallable)
 	bool IsOnGround() const { return bOnGround; }
 
 	UFUNCTION(BlueprintCallable)
@@ -86,6 +91,7 @@ public:
 
 private:
 	void UpdateVelocity(const float Delta);
+	void StopMoving();
 
 	FORCEINLINE float GetAcceleration(float DeltaSeconds) const
 	{

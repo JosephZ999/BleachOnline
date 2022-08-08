@@ -3,7 +3,7 @@
 #include "BOCharacterMovementComponent.h"
 #include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet\KismetMathLibrary.h"
+#include "TimerManager.h"
 
 // #include "DrawDebugHelpers.h"
 
@@ -17,8 +17,8 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	WalkSpeed		= 200.f;
 	Gravity			= 900.f;
 	MaxFallSpeed	= 600.f;
-	Acceleration	= 3000.f;
-	Deceleration	= 3000.f;
+	Acceleration	= 2000.f;
+	Deceleration	= 1500.f;
 	JumpHeight		= 500.f;
 	AirAcceleration = 200.f;
 	AirDeceleration = 200.f;
@@ -47,14 +47,12 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 {
-	auto VelocityOffset = Velocity * Delta;
-	// auto VelocityOffset2D = FVector(VelocityOffset.X, VelocityOffset.Y, 0.f);
+	auto VelocityOffset = Velocity;
 	VelocityOffset.Z = (FMath::IsNearlyEqual(VelocityOffset.Z, 0.f)) ? -1.f : VelocityOffset.Z;
 
 	// Gravitation and landing |===================================================================
-
 	FHitResult Hit;
-	OwnerActor->AddActorWorldOffset(FVector(0.f, 0.f, VelocityOffset.Z), true, &Hit);
+	OwnerActor->AddActorWorldOffset(FVector(0.f, 0.f, VelocityOffset.Z * Delta), true, &Hit);
 
 	bool bLanded = bOnGround;
 	bOnGround	 = false;
@@ -67,29 +65,10 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 			bOnGround  = true;
 			Velocity.Z = 0.f;
 		}
-
-		/*
-		// Falling off edge
-		auto Normal = Hit.Normal;
-		auto UpVec	= FVector(0.f, 0.f, 1.f);
-		auto Angle	= BOLib::GetAngleBetweenVectors(Normal, UpVec);
-
-		if (Angle > 1.f)
-		{
-			auto AddVelocity = Hit.Normal * (Delta * Gravity * Angle * 0.1);
-			Velocity += AddVelocity;
-		}
-		else
-		{
-			bOnGround  = true;
-			Velocity.Z = 0.f;
-		}
-		*/
 	}
 
 	if (! bOnGround)
 	{
-		auto AddVelocity = FVector::ZeroVector;
 		Velocity.Z		 = (Velocity.Z <= (-MaxFallSpeed)) //
 							   ? (-MaxFallSpeed)		   //
 							   : Velocity.Z - Gravity * Delta;
@@ -97,10 +76,70 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 
 	// Walking |===================================================================================
 
-	OwnerActor->AddActorWorldOffset(FVector(VelocityOffset.X, 0.f, 0.f), true);
-	OwnerActor->AddActorWorldOffset(FVector(0.f, VelocityOffset.Y, 0.f), true);
+	if (bWalking)
+	{
+		MovementVelocity = FVector(MovementVelocity + MovementVector * GetAcceleration(Delta)).GetClampedToMaxSize(WalkSpeed);
+		bWalking		 = false;
+	}
+	else
+	{
+		float MVelSize	 = MovementVelocity.Size();
+		float NewSize	 = MVelSize - GetDeceleration(Delta);
+		MovementVelocity = MovementVelocity.GetSafeNormal() * ((NewSize <= 0.f) ? 0.f : NewSize);
+	}
 
-	/*
+	OwnerActor->AddActorWorldOffset(FVector((Velocity.X + MovementVelocity.X) * Delta, 0.f, 0.f), true);
+	OwnerActor->AddActorWorldOffset(FVector(0.f, (Velocity.Y + MovementVelocity.Y) * Delta, 0.f), true);
+
+	auto  Velocity2D = FVector(Velocity.X, Velocity.Y, 0.f);
+	float VelSize	 = Velocity2D.Size();
+	float NewSize	 = VelSize - GetDeceleration(Delta);
+	float ZCahe		 = Velocity.Z;
+	Velocity		 = Velocity2D.GetSafeNormal() * ((NewSize <= 0.f) ? 0.f : NewSize);
+	Velocity.Z		 = ZCahe;
+
+	
+}
+
+void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)
+{
+	MovementVector	 = ForwardVector;
+	MovementVector.Z = 0.f;
+	MovementVector.Normalize();
+	bWalking = MovementVector.Size() > 0.f;
+}
+
+void UBOCharacterMovementComponent::Jump()
+{
+	Launch(FVector(MovementVelocity.X, MovementVelocity.Y, JumpHeight), true, true);
+}
+
+void UBOCharacterMovementComponent::Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
+{
+	Velocity.X = (OverrideXY) ? Impulse.X : Velocity.X + Impulse.X;
+	Velocity.Y = (OverrideXY) ? Impulse.Y : Velocity.Y + Impulse.Y;
+	Velocity.Z = (OverrideZ) ? Impulse.Z : Velocity.Z + Impulse.Z;
+}
+
+/*
+	// Falling off edge
+	auto Normal = Hit.Normal;
+	auto UpVec	= FVector(0.f, 0.f, 1.f);
+	auto Angle	= BOLib::GetAngleBetweenVectors(Normal, UpVec);
+
+	if (Angle > 1.f)
+	{
+		auto AddVelocity = Hit.Normal * (Delta * Gravity * Angle * 0.1);
+		Velocity += AddVelocity;
+	}
+	else
+	{
+		bOnGround  = true;
+		Velocity.Z = 0.f;
+	}
+*/
+
+/*
 	auto ForwardVector = VelocityOffset2D;
 	ForwardVector.Normalize();
 	float ForwardVectorDist = VelocityOffset2D.Size();
@@ -125,63 +164,4 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 		OwnerActor->AddActorWorldOffset(FVector(VelocityOffset.X, 0.f, 0.f), true);
 		OwnerActor->AddActorWorldOffset(FVector(0.f, VelocityOffset.Y, 0.f), true);
 	}
-	*/
-
-	if (bWalking)
-	{
-		auto VelCache	= FVector(Velocity.X, Velocity.Y, 0.f);
-		const auto SpeedCache = VelCache.Size();
-		const auto VelZCache = Velocity.Z;
-
-		if (SpeedCache > WalkSpeed)
-		{
-			const auto NewSpeedCache = SpeedCache - GetDeceleration(Delta);
-			VelCache += MovementVector * GetAcceleration(Delta);
-			VelCache.Normalize();
-			
-			Velocity   = VelCache * ((NewSpeedCache <= WalkSpeed)? WalkSpeed : NewSpeedCache);
-			Velocity.Z = VelZCache;
-		}
-		else
-		{
-			const auto NewSpeedCache = SpeedCache + GetAcceleration(Delta);
-			VelCache = VelCache.GetSafeNormal() + MovementVector * GetAcceleration(Delta);
-			VelCache.Normalize();
-
-			Velocity = VelCache * ((NewSpeedCache >= WalkSpeed)? WalkSpeed : NewSpeedCache);
-			Velocity.Z = VelZCache;
-		}
-		bWalking = false;
-	}
-	else
-	{
-		auto AddVelocity	 = FVector::ZeroVector;
-		auto VelocityForward = FVector(Velocity.X, Velocity.Y, 0.f);
-		VelocityForward.Normalize();
-
-		AddVelocity = VelocityForward * GetDeceleration(Delta);
-		Velocity	= (AddVelocity.Size() >= FVector(Velocity.X, Velocity.Y, 0.f).Size()) //
-						  ? FVector(0.f, 0.f, Velocity.Z)								  //
-						  : Velocity - AddVelocity;
-	}
-}
-
-void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)
-{
-	MovementVector = ForwardVector;
-	MovementVector.Z = 0.f;
-	MovementVector.Normalize();
-	bWalking = MovementVector.Size() > 0.f;
-}
-
-void UBOCharacterMovementComponent::Jump()
-{
-	Velocity.Z = JumpHeight;
-}
-
-void UBOCharacterMovementComponent::Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
-{
-	Velocity.X = (OverrideXY) ? Impulse.X : Velocity.X + Impulse.X;
-	Velocity.Y = (OverrideXY) ? Impulse.Y : Velocity.Y + Impulse.Y;
-	Velocity.Z = (OverrideZ) ? Impulse.Z : Velocity.Z + Impulse.Z;
-}
+*/

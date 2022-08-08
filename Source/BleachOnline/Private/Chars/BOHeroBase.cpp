@@ -38,5 +38,5 @@ void ABOHeroBase::Tick(float Delta)
 
 	auto ActorLoc  = GetActorLocation();
 	auto CameraLoc = CameraScene->GetComponentLocation();
-	CameraArmComp->SetWorldLocation(FVector(CameraLoc.X, ActorLoc.Y, CameraLoc.Z));
+	CameraArmComp->SetWorldLocation(ActorLoc);
 }
