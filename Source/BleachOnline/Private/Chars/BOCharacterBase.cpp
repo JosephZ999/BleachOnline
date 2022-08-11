@@ -5,6 +5,8 @@
 #include "BOIndicatorComponent.h"
 #include "Components/CapsuleComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
+
 ABOCharacterBase::ABOCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,6 +32,9 @@ ABOCharacterBase::ABOCharacterBase()
 void ABOCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OnTakeAnyDamage.AddDynamic(this, &ABOCharacterBase::OnTakeAnyDamageHandle);
+	HealthComp->OnValueZero.BindUObject(this, &ABOCharacterBase::OnDeath);
 }
 
 void ABOCharacterBase::Tick(float DeltaTime)
@@ -66,4 +71,14 @@ void ABOCharacterBase::Jump()
 bool ABOCharacterBase::IsOnGround() const
 {
 	return MovementComp->IsOnGround();
+}
+
+void ABOCharacterBase::OnTakeAnyDamageHandle(AActor * DamagedActor, float Damage, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
+{
+	HealthComp->AddValue(-Damage);
+}
+
+void ABOCharacterBase::OnDeath()
+{
+	MovementComp->SetControlEnabled(false);
 }

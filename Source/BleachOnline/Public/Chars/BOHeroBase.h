@@ -8,7 +8,6 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-class USceneComponent;
 
 /**
  *
@@ -22,12 +21,6 @@ public:
 	ABOHeroBase();
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* ArmComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* CameraScene;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraArmComp;
 

@@ -20,12 +20,12 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float Value;
+	float Value = 10.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true", ClampMin = "1"))
-	float MaxValue;
+	float MaxValue = 10.f;
 
-	bool bEnabled;
+	bool bEnabled = true;
 
 protected:
 	virtual void BeginPlay() override;

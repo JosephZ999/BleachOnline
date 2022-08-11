@@ -37,7 +37,7 @@ protected:
 	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
 
 public:
-	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
+	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
@@ -49,4 +49,12 @@ public:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	UFUNCTION()
+	void OnTakeAnyDamageHandle(
+		AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	UFUNCTION()
+	void OnDeath();
 };

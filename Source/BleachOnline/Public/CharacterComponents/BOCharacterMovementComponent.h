@@ -58,7 +58,7 @@ private:
 	FVector MovementVector	 = FVector::ZeroVector;
 	bool	bWalking;
 	bool	bOnGround;
-	FTimerHandle StopMovingTimer;
+	bool	bControl = true;
 
 protected:
 	virtual void BeginPlay() override;
@@ -89,9 +89,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
 
+	UFUNCTION(BlueprintCallable)
+	void SetControlEnabled(bool Enabled) { bControl = Enabled; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsControlEnabled() const { return bControl; }
+
 private:
 	void UpdateVelocity(const float Delta);
-	void StopMoving();
 
 	FORCEINLINE float GetAcceleration(float DeltaSeconds) const
 	{
