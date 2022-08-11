@@ -9,6 +9,7 @@
 class UCapsuleComponent;
 class UBOCharacterMovementComponent;
 class UBOIndicatorComponent;
+class UBOSpriteComponent;
 
 UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
@@ -27,6 +28,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBOIndicatorComponent* HealthComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UBOSpriteComponent* SpriteComp;
 
 protected:
 	virtual void BeginPlay() override;

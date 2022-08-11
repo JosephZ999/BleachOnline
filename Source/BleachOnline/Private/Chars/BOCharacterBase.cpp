@@ -4,6 +4,7 @@
 #include "BOCharacterMovementComponent.h"
 #include "BOIndicatorComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "BOSpriteComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 
@@ -11,7 +12,7 @@ ABOCharacterBase::ABOCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CapsuleComp = CreateAbstractDefaultSubobject<UCapsuleComponent>("CapsuleComp");
+	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComp");
 	if (CapsuleComp)
 	{
 		SetRootComponent(CapsuleComp);
@@ -27,6 +28,8 @@ ABOCharacterBase::ABOCharacterBase()
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
 	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>("HealthComp");
+	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
+	SpriteComp->SetupAttachment(GetRootComponent());
 }
 
 void ABOCharacterBase::BeginPlay()
@@ -48,7 +51,7 @@ void ABOCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 }
 
 // Wrapper Functions |=========================================================================
-void ABOCharacterBase::LaunchCharacter(const FVector & Impulse, bool OverrideXY, bool OverrideZ)
+void ABOCharacterBase::LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
 {
 	MovementComp->Launch(Impulse, OverrideXY, OverrideZ);
 }
@@ -73,7 +76,8 @@ bool ABOCharacterBase::IsOnGround() const
 	return MovementComp->IsOnGround();
 }
 
-void ABOCharacterBase::OnTakeAnyDamageHandle(AActor * DamagedActor, float Damage, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
+void ABOCharacterBase::OnTakeAnyDamageHandle(
+	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	HealthComp->AddValue(-Damage);
 }
