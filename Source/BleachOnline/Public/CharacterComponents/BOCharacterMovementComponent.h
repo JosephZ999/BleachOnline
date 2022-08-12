@@ -81,7 +81,9 @@ public:
 	bool IsOnGround() const { return bOnGround; }
 
 	UFUNCTION(BlueprintCallable)
-	void SetMovementVector(const FVector& ForwardVector);
+	bool IsWalking() const { return bOnGround && ! MovementVector.IsNearlyZero(); }
+
+	UFUNCTION(BlueprintCallable) void SetMovementVector(const FVector& ForwardVector);
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();

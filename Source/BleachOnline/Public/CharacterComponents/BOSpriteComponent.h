@@ -7,6 +7,7 @@
 #include "BOSpriteComponent.generated.h"
 
 class UPaperFlipbook;
+class UBOCharacterMovementComponent;
 
 /**
  *
@@ -16,16 +17,31 @@ class BLEACHONLINE_API UBOSpriteComponent : public UPaperFlipbookComponent
 {
 	GENERATED_BODY()
 
+	// Properties |================================================================================
 public:
 	UBOSpriteComponent();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Main")
+	float AnimationUpdateTick;
+
 private:
+	UBOCharacterMovementComponent* OwnerMoveComp;
+
+	UPROPERTY(VisibleAnywhere)
 	TMap<FName, UPaperFlipbook*> BaseAnimations;
+	FTimerHandle AnimationUpdateTimer;
+
+protected:
+	void BeginPlay() override;
+
+	// Methods |===================================================================================
+public:
+	void Construction();
+	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
 
 private:
 	// Initialization functions
 	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
-
-public:
-	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
+	
+	void AnimationUpdateHandle();
 };

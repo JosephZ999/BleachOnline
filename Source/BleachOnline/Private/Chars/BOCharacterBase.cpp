@@ -34,7 +34,10 @@ ABOCharacterBase::ABOCharacterBase()
 	SpriteComp->SetupAttachment(GetRootComponent());
 }
 
-void ABOCharacterBase::OnConstruction(const FTransform& NewTransform) {}
+void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)
+{
+	SpriteComp->Construction();
+}
 
 void ABOCharacterBase::BeginPlay()
 {
