@@ -10,6 +10,7 @@ class UCapsuleComponent;
 class UBOCharacterMovementComponent;
 class UBOIndicatorComponent;
 class UBOSpriteComponent;
+class UPaperFlipbook;
 
 UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
@@ -53,6 +54,7 @@ public:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void OnConstruction(const FTransform& NewTransform) override;
 
 private:
 	UFUNCTION()

@@ -3,8 +3,10 @@
 #include "BOCharacterBase.h"
 #include "BOCharacterMovementComponent.h"
 #include "BOIndicatorComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "BOSpriteComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "PaperFlipbook.h"
+#include "EngineUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 
@@ -31,6 +33,8 @@ ABOCharacterBase::ABOCharacterBase()
 	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
 	SpriteComp->SetupAttachment(GetRootComponent());
 }
+
+void ABOCharacterBase::OnConstruction(const FTransform& NewTransform) {}
 
 void ABOCharacterBase::BeginPlay()
 {
