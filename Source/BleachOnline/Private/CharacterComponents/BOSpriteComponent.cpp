@@ -1,17 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BOSpriteComponent.h"
+#include "BOCharacterMovementComponent.h"
+#include "BOCoreTypes.h"
+
 #include "PaperFlipbook.h"
 #include "ConstructorHelpers.h"
 #include "EngineUtils.h"
 #include "TimerManager.h"
-#include "BOCharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSpriteComp, All, All);
 
 // Base Animation Names
-#define AN_STAND "Stand"
-#define AN_WALK	 "Walk"
+#define AN_STAND	 "Stand"
+#define AN_WALK		 "Walk"
+#define AN_JUMP_UP	 "JumpUp"
+#define AN_JUMP_HOLD "JumpHold"
+#define AN_JUMP_DOWN "JumpDown"
 
 UBOSpriteComponent::UBOSpriteComponent()
 {
@@ -57,14 +62,25 @@ void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAni
 
 void UBOSpriteComponent::AnimationUpdateHandle()
 {
-	if (OwnerMoveComp->IsWalking())
+	UPaperFlipbook* NewAnim = nullptr;
+	switch (OwnerMoveComp->GetMovementState())
 	{
-		SetFlipbook(BaseAnimations.FindRef(AN_WALK)); //
+	case EMovementState::Stand: NewAnim = BaseAnimations.FindRef(AN_STAND); break;
+	case EMovementState::Walk: NewAnim = BaseAnimations.FindRef(AN_WALK); break;
+	case EMovementState::JumpUp: NewAnim = BaseAnimations.FindRef(AN_JUMP_UP); break;
+	case EMovementState::JumpHold: NewAnim = BaseAnimations.FindRef(AN_JUMP_HOLD); break;
+	case EMovementState::JumpDown: NewAnim = BaseAnimations.FindRef(AN_JUMP_DOWN); break;
+
+	default: // State type is Custom
+		return;
+	} // Switch end
+
+	if (NewAnim != nullptr) //
+	{
+		SetFlipbook(NewAnim);
 	}
 	else
 	{
 		SetFlipbook(BaseAnimations.FindRef(AN_STAND));
 	}
-
-	UE_LOG(LogSpriteComp, Display, TEXT("Animation Updated"));
 }

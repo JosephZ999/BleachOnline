@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "BOCoreTypes.generated.h"
 
+// Damage Actor |==================================================================================
 USTRUCT(BlueprintType)
 struct FDamageInfo
 {
@@ -22,4 +23,17 @@ struct FDamageInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ClampMin = "0", ClampMax = "1", ToolTip = "1.0 - will ignore enemy's armor"))
 	float ArmorPiercing = 0.f; // From 0 to 1
+};
+
+// Movement Component |============================================================================
+UENUM(BlueprintType)
+enum class EMovementState : uint8
+{
+	Stand,
+	Walk,
+	JumpUp,
+	JumpHold,
+	JumpDown,
+	JumpLand,
+	Custom,
 };

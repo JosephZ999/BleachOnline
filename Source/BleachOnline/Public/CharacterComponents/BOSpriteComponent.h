@@ -17,7 +17,6 @@ class BLEACHONLINE_API UBOSpriteComponent : public UPaperFlipbookComponent
 {
 	GENERATED_BODY()
 
-	// Properties |================================================================================
 public:
 	UBOSpriteComponent();
 
@@ -26,21 +25,17 @@ public:
 
 private:
 	UBOCharacterMovementComponent* OwnerMoveComp;
-
-	UPROPERTY(VisibleAnywhere)
 	TMap<FName, UPaperFlipbook*> BaseAnimations;
 	FTimerHandle AnimationUpdateTimer;
 
 protected:
 	void BeginPlay() override;
 
-	// Methods |===================================================================================
 public:
 	void Construction();
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
 
 private:
-	// Initialization functions
 	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
 	
 	void AnimationUpdateHandle();
