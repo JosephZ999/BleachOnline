@@ -13,6 +13,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 ABOCharacterBase::ABOCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bUseControllerRotationYaw	  = true;
 
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComp");
 	if (CapsuleComp)

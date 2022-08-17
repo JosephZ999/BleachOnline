@@ -18,14 +18,11 @@ DEFINE_LOG_CATEGORY_STATIC(LogSpriteComp, All, All);
 #define AN_JUMP_HOLD "JumpHold"
 #define AN_JUMP_DOWN "JumpDown"
 
-UBOSpriteComponent::UBOSpriteComponent()
-{
-	InitBaseAnimations(BaseAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/FBook");
-}
+UBOSpriteComponent::UBOSpriteComponent() {}
 
 void UBOSpriteComponent::Construction()
 {
-	SetFlipbook(BaseAnimations.FindRef(AN_STAND));
+	SetFlipbook(Animations.FindRef(AN_STAND));
 }
 
 void UBOSpriteComponent::BeginPlay()
@@ -44,7 +41,7 @@ void UBOSpriteComponent::BeginPlay()
 
 void UBOSpriteComponent::SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations)
 {
-	BaseAnimations = NewAnimations;
+	Animations = NewAnimations;
 }
 
 void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder)
@@ -65,11 +62,11 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	UPaperFlipbook* NewAnim = nullptr;
 	switch (OwnerMoveComp->GetMovementState())
 	{
-	case EMovementState::Stand: NewAnim = BaseAnimations.FindRef(AN_STAND); break;
-	case EMovementState::Walk: NewAnim = BaseAnimations.FindRef(AN_WALK); break;
-	case EMovementState::JumpUp: NewAnim = BaseAnimations.FindRef(AN_JUMP_UP); break;
-	case EMovementState::JumpHold: NewAnim = BaseAnimations.FindRef(AN_JUMP_HOLD); break;
-	case EMovementState::JumpDown: NewAnim = BaseAnimations.FindRef(AN_JUMP_DOWN); break;
+	case EMovementState::Stand: NewAnim = Animations.FindRef(AN_STAND); break;
+	case EMovementState::Walk: NewAnim = Animations.FindRef(AN_WALK); break;
+	case EMovementState::JumpUp: NewAnim = Animations.FindRef(AN_JUMP_UP); break;
+	case EMovementState::JumpHold: NewAnim = Animations.FindRef(AN_JUMP_HOLD); break;
+	case EMovementState::JumpDown: NewAnim = Animations.FindRef(AN_JUMP_DOWN); break;
 
 	default: // State type is Custom
 		return;
@@ -81,6 +78,6 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	}
 	else
 	{
-		SetFlipbook(BaseAnimations.FindRef(AN_STAND));
+		SetFlipbook(Animations.FindRef(AN_STAND));
 	}
 }

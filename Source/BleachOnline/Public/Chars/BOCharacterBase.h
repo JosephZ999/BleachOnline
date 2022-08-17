@@ -42,6 +42,8 @@ protected:
 	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
 
 public:
+	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
+
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
 

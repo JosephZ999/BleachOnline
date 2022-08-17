@@ -12,7 +12,7 @@ class UCameraComponent;
 /**
  *
  */
-UCLASS()
+UCLASS(abstract)
 class BLEACHONLINE_API ABOHeroBase : public ABOCharacterBase
 {
 	GENERATED_BODY()

@@ -25,7 +25,7 @@ public:
 
 private:
 	UBOCharacterMovementComponent* OwnerMoveComp;
-	TMap<FName, UPaperFlipbook*> BaseAnimations;
+	TMap<FName, UPaperFlipbook*> Animations;
 	FTimerHandle AnimationUpdateTimer;
 
 protected:
@@ -34,9 +34,9 @@ protected:
 public:
 	void Construction();
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
+	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
 
 private:
-	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
 	
 	void AnimationUpdateHandle();
 };
