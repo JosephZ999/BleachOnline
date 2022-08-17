@@ -53,13 +53,13 @@ public:
 	float JumpHeight;
 
 private:
-	EMovementState State;
-	FVector		   Velocity			= FVector::ZeroVector;
-	FVector		   MovementVelocity = FVector::ZeroVector;
-	FVector		   MovementVector	= FVector::ZeroVector;
-	bool		   bWalking;
-	bool		   bOnGround;
-	bool		   bControl = true;
+	uint8	State;
+	FVector Velocity		 = FVector::ZeroVector;
+	FVector MovementVelocity = FVector::ZeroVector;
+	FVector MovementVector	 = FVector::ZeroVector;
+	bool	bWalking;
+	bool	bOnGround;
+	bool	bControl = true;
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,7 +80,7 @@ public:
 	FVector GetMoveVelocity() const { return MovementVelocity; }
 
 	UFUNCTION(BlueprintCallable)
-	EMovementState GetMovementState() { return State; }
+	uint8 GetMovementState() { return State; }
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -96,7 +96,7 @@ public:
 	void Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
 
 	UFUNCTION(BlueprintCallable)
-	void SetMovementState(EMovementState NewState, bool Forcibly = false);
+	void SetMovementState(uint8 NewState, bool Forcibly = false);
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -107,6 +107,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsControlEnabled() const { return bControl; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDoingAnything() const { return State >= (uint8)EMovementState::Custom; }
 
 private:
 	void UpdateVelocity(const float Delta);

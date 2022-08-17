@@ -102,26 +102,26 @@ void UBOCharacterMovementComponent::UpdateState()
 	{
 		if (MovementVelocity.Size() > 0.f && bControl) //
 		{
-			SetMovementState(EMovementState::Walk);
+			SetMovementState((uint8)EMovementState::Walk);
 		}
 		else
 		{
-			SetMovementState(EMovementState::Stand);
+			SetMovementState((uint8)EMovementState::Stand);
 		}
 	}
 	else
 	{
 		if (FMath::IsNearlyEqual(Velocity.Z, 0.f, JUMP_HOLD_INTERVAL)) //
 		{
-			SetMovementState(EMovementState::JumpHold);
+			SetMovementState((uint8)EMovementState::JumpHold);
 		}
 		else if (Velocity.Z > 0.f)
 		{
-			SetMovementState(EMovementState::JumpUp);
+			SetMovementState((uint8)EMovementState::JumpUp);
 		}
 		else
 		{
-			SetMovementState(EMovementState::JumpDown);
+			SetMovementState((uint8)EMovementState::JumpDown);
 		}
 	}
 }
@@ -146,7 +146,7 @@ void UBOCharacterMovementComponent::Launch(const FVector& Impulse, bool Override
 	Velocity.Z = (OverrideZ) ? Impulse.Z : Velocity.Z + Impulse.Z;
 }
 
-void UBOCharacterMovementComponent::SetMovementState(EMovementState NewState, bool Forcibly)
+void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcibly)
 {
-	if (Forcibly || (! Forcibly && State != EMovementState::Custom)) { State = NewState; }
+	if (Forcibly || (! Forcibly && State < (uint8)EMovementState::Custom)) { State = NewState; }
 }

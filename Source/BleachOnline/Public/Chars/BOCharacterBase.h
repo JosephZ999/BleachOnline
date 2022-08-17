@@ -33,6 +33,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBOSpriteComponent* SpriteComp;
 
+	FTimerHandle EndActionTimer;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -41,8 +43,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
 
+	UFUNCTION(BlueprintCallable)
+	void AddVelocity(const FVector& Direction, float Length);
+
 public:
 	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
+	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
@@ -52,6 +58,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsOnGround() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDoingAnything() const;
+
+	UFUNCTION(BlueprintCallable)
+	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false);
+	void EndActionDeferred(float WaitTime);
+	void EndAction();
 
 public:
 	virtual void Tick(float DeltaTime) override;

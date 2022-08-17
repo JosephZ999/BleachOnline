@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbook.h"
 #include "EngineUtils.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 
@@ -64,6 +65,11 @@ void ABOCharacterBase::LaunchCharacter(const FVector& Impulse, bool OverrideXY, 
 	MovementComp->Launch(Impulse, OverrideXY, OverrideZ);
 }
 
+void ABOCharacterBase::AddVelocity(const FVector& Direction, float Length)
+{
+	MovementComp->Launch(Direction * Length, false, false);
+}
+
 void ABOCharacterBase::AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce)
 {
 	MovementComp->SetMovementVector(WorldDirection);
@@ -93,4 +99,39 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 void ABOCharacterBase::OnDeath()
 {
 	MovementComp->SetControlEnabled(false);
+}
+
+// Actions
+
+bool ABOCharacterBase::IsDoingAnything() const
+{
+	return GetMoveComp()->IsDoingAnything();
+}
+
+/*
+ * If LoopAnim = false - Action will not be ended automaticly
+ */
+void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool LoopAnim)
+{
+	GetMoveComp()->SetMovementState(NewState, true);
+	GetMoveComp()->SetControlEnabled(false);
+	GetSpriteComp()->SetAnimation(Animation, LoopAnim);
+	if (LoopAnim == false) { EndActionDeferred(GetSpriteComp()->GetFlipbookLength()); }
+}
+
+void ABOCharacterBase::EndActionDeferred(float WaitTime)
+{
+	if (WaitTime > 0.f) { GetWorldTimerManager().SetTimer(EndActionTimer, this, &ABOCharacterBase::EndAction, WaitTime); }
+	else
+	{
+		EndAction();
+	}
+}
+
+void ABOCharacterBase::EndAction()
+{
+	GetMoveComp()->SetMovementState((uint8)EMovementState::Stand, true);
+	GetMoveComp()->SetControlEnabled(true);
+	GetSpriteComp()->SetLooping(true);
+	GetSpriteComp()->Play();
 }

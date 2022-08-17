@@ -60,7 +60,7 @@ void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAni
 void UBOSpriteComponent::AnimationUpdateHandle()
 {
 	UPaperFlipbook* NewAnim = nullptr;
-	switch (OwnerMoveComp->GetMovementState())
+	switch ((EMovementState)OwnerMoveComp->GetMovementState())
 	{
 	case EMovementState::Stand: NewAnim = Animations.FindRef(AN_STAND); break;
 	case EMovementState::Walk: NewAnim = Animations.FindRef(AN_WALK); break;
@@ -80,4 +80,17 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	{
 		SetFlipbook(Animations.FindRef(AN_STAND));
 	}
+}
+
+bool UBOSpriteComponent::SetAnimation(const FName & AnimationName, bool Looping)
+{
+	bool Success = SetFlipbook(Animations.FindRef(AnimationName));
+	SetLooping(Looping);
+
+	if (Looping == false)
+	{
+		PlayFromStart();
+	}
+
+	return Success;
 }
