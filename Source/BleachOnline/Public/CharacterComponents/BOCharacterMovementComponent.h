@@ -117,11 +117,15 @@ private:
 
 	FORCEINLINE float GetAcceleration(float DeltaSeconds) const
 	{
-		return ((bOnGround) ? Acceleration * DeltaSeconds : AirAcceleration * DeltaSeconds);
+		return ((bOnGround)						  //
+					? Acceleration * DeltaSeconds //
+					: AirAcceleration * DeltaSeconds);
 	}
 
 	FORCEINLINE float GetDeceleration(float DeltaSeconds) const
 	{
-		return ((bOnGround) ? Deceleration * DeltaSeconds : AirDeceleration * DeltaSeconds);
+		return ((bOnGround)																						//
+					? ((bControl) ? Deceleration * GroundFriction * DeltaSeconds : Deceleration * DeltaSeconds) //
+					: AirDeceleration * DeltaSeconds);
 	}
 };

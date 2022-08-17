@@ -20,7 +20,8 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	Gravity			= 900.f;
 	MaxFallSpeed	= 600.f;
 	Acceleration	= 3000.f;
-	Deceleration	= 3000.f;
+	Deceleration	= 750.f;
+	GroundFriction	= 4.f;
 	JumpHeight		= 450.f;
 	AirAcceleration = 200.f;
 	AirDeceleration = 200.f;
