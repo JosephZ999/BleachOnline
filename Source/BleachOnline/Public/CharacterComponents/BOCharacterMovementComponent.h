@@ -90,6 +90,9 @@ public:
 	void SetMovementVector(const FVector& ForwardVector);
 
 	UFUNCTION(BlueprintCallable)
+	void SetVelocity(const FVector& NewVelocity) { Velocity = NewVelocity; }
+
+	UFUNCTION(BlueprintCallable)
 	void Jump();
 
 	UFUNCTION(BlueprintCallable)
