@@ -34,9 +34,12 @@ private:
 	UBOSpriteComponent* SpriteComp;
 
 	FTimerHandle EndActionTimer;
+	FTimerHandle StandUpTimer;
+	bool bDead = false;
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnLanded(FVector LastVelocity);
 
 	// Wrapper Functions |=========================================================================
 
@@ -55,6 +58,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();
+
+	void StandUp();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsOnGround() const;

@@ -35,5 +35,13 @@ enum class EMovementState : uint8
 	JumpHold,
 	JumpDown,
 	JumpLand,
+
+	Damaged,
+	Hit,
+	Hit2,
+	Hit3,
+
+	Fall,
+	StandUp,
 	Custom,
 };

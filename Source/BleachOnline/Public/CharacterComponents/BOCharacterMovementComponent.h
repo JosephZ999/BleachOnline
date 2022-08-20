@@ -126,6 +126,6 @@ private:
 	{
 		return ((bOnGround)																						//
 					? ((bControl) ? Deceleration * GroundFriction * DeltaSeconds : Deceleration * DeltaSeconds) //
-					: AirDeceleration * DeltaSeconds);
+					: ((bControl) ? AirDeceleration * DeltaSeconds : AirDeceleration * 0.2f * DeltaSeconds));
 	}
 };

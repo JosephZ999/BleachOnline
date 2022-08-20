@@ -30,12 +30,19 @@ public:
 	UPROPERTY(Category = "Damage Options", EditAnywhere, BlueprintReadOnly)
 	bool bRadialImpulse = false;
 
+	UPROPERTY(Category = "Damage Options", EditAnywhere, BlueprintReadOnly)
+	bool bFall = false;
+
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	FVector GetImpulseVector(const AActor* TargetActor) const;
 
 private:
 	void Init(const FDamageInfo& DamageOptions);
 
 	UFUNCTION()
 	void OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherActor);
+
 };

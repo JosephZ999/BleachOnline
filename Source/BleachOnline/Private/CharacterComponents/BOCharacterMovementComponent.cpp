@@ -9,7 +9,7 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterMovement, All, All);
 
-#define JUMP_HOLD_INTERVAL 50.f
+#define JUMP_HOLD_INTERVAL 100.f
 
 UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 {
@@ -24,7 +24,7 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	GroundFriction	= 4.f;
 	JumpHeight		= 450.f;
 	AirAcceleration = 200.f;
-	AirDeceleration = 200.f;
+	AirDeceleration = 750.f;
 }
 
 void UBOCharacterMovementComponent::BeginPlay()
@@ -99,6 +99,8 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 
 void UBOCharacterMovementComponent::UpdateState()
 {
+	if (State > (uint8)EMovementState::Damaged) return;
+
 	if (bOnGround)
 	{
 		if (MovementVelocity.Size() > 0.f && bControl) //

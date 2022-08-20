@@ -4,6 +4,9 @@
 #include "BOCharacterMovementComponent.h"
 #include "BOIndicatorComponent.h"
 #include "BOSpriteComponent.h"
+#include "BODamageActor.h"
+#include "BOCoreTypes.h"
+
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbook.h"
 #include "EngineUtils.h"
@@ -47,6 +50,21 @@ void ABOCharacterBase::BeginPlay()
 
 	OnTakeAnyDamage.AddDynamic(this, &ABOCharacterBase::OnTakeAnyDamageHandle);
 	HealthComp->OnValueZero.BindUObject(this, &ABOCharacterBase::OnDeath);
+	MovementComp->OnLanded.BindUObject(this, &ABOCharacterBase::OnLanded);
+}
+
+void ABOCharacterBase::OnLanded(FVector LastVelocity)
+{
+	if (GetMoveComp()->GetMovementState() == (uint8)EMovementState::Fall)
+	{
+		GetWorldTimerManager().SetTimer(StandUpTimer, this, &ABOCharacterBase::StandUp, 3.f);
+	}
+}
+
+void ABOCharacterBase::StandUp()
+{
+	if (bDead) return;
+	NewAction((uint8)EMovementState::StandUp, "StandUp");
 }
 
 void ABOCharacterBase::Tick(float DeltaTime)
@@ -93,12 +111,34 @@ bool ABOCharacterBase::IsOnGround() const
 void ABOCharacterBase::OnTakeAnyDamageHandle(
 	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	HealthComp->AddValue(-Damage);
+	auto DamageActor = Cast<ABODamageActor>(DamageCauser);
+	if (DamageActor) //
+	{
+		// Impulse
+		GetMoveComp()->Launch(DamageActor->GetImpulseVector(this), false, false);
+
+		// Set State to - Hit / Fall
+		uint8 NewState;
+
+		if (DamageActor->bFall) //
+		{
+			NewState = (uint8)EMovementState::Fall;
+			NewAction(NewState, "None", true);
+		}
+		else
+		{
+			NewState = (uint8)EMovementState::Hit + FMath::RandRange(0, 2);
+			NewAction(NewState, "None", true);
+			EndActionDeferred(0.2f);
+		}
+		HealthComp->AddValue(-Damage);
+	}
 }
 
 void ABOCharacterBase::OnDeath()
 {
-	MovementComp->SetControlEnabled(false);
+	NewAction((uint8)EMovementState::Fall, "None", true);
+	bDead = true;
 }
 
 // Actions
@@ -116,7 +156,12 @@ void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool Lo
 	GetMoveComp()->SetMovementState(NewState, true);
 	GetMoveComp()->SetControlEnabled(false);
 	GetSpriteComp()->SetAnimation(Animation, LoopAnim);
-	if (LoopAnim == false) { EndActionDeferred(GetSpriteComp()->GetFlipbookLength()); }
+	GetWorldTimerManager().ClearTimer(EndActionTimer);
+	if (LoopAnim == false)
+	{
+		EndActionDeferred(GetSpriteComp()->GetFlipbookLength());
+		return;
+	}
 }
 
 void ABOCharacterBase::EndActionDeferred(float WaitTime)
@@ -124,12 +169,16 @@ void ABOCharacterBase::EndActionDeferred(float WaitTime)
 	if (WaitTime > 0.f) { GetWorldTimerManager().SetTimer(EndActionTimer, this, &ABOCharacterBase::EndAction, WaitTime); }
 	else
 	{
+		GetWorldTimerManager().ClearTimer(EndActionTimer);
 		EndAction();
 	}
 }
 
 void ABOCharacterBase::EndAction()
 {
+	// if (bDead) return;
+	// if (GetMoveComp()->GetMovementState() == (uint8)EMovementState::Fall) { return; }
+
 	GetMoveComp()->SetMovementState((uint8)EMovementState::Stand, true);
 	GetMoveComp()->SetControlEnabled(true);
 	GetSpriteComp()->SetLooping(true);

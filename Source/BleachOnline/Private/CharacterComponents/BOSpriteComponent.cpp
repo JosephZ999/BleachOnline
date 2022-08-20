@@ -12,11 +12,20 @@
 DEFINE_LOG_CATEGORY_STATIC(LogSpriteComp, All, All);
 
 // Base Animation Names
-#define AN_STAND	 "Stand"
-#define AN_WALK		 "Walk"
-#define AN_JUMP_UP	 "JumpUp"
-#define AN_JUMP_HOLD "JumpHold"
-#define AN_JUMP_DOWN "JumpDown"
+#define AN_STAND		   "Stand"
+#define AN_WALK			   "Walk"
+#define AN_JUMP_UP		   "JumpUp"
+#define AN_JUMP_HOLD	   "JumpHold"
+#define AN_JUMP_DOWN	   "JumpDown"
+#define AN_HIT			   "Hit"
+#define AN_HIT2			   "Hit2"
+#define AN_HIT3			   "Hit3"
+
+#define AN_FALL_HOLD	   "FallHold"
+#define AN_FALL_UP		   "FallUp"
+#define AN_FALL_DOWN	   "FallDown"
+
+#define FALL_HOLD_INTERVAL 50.f
 
 UBOSpriteComponent::UBOSpriteComponent() {}
 
@@ -68,6 +77,29 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	case EMovementState::JumpHold: NewAnim = Animations.FindRef(AN_JUMP_HOLD); break;
 	case EMovementState::JumpDown: NewAnim = Animations.FindRef(AN_JUMP_DOWN); break;
 
+	case EMovementState::Hit: NewAnim = Animations.FindRef(AN_HIT); break;
+	case EMovementState::Hit2: NewAnim = Animations.FindRef(AN_HIT2); break;
+	case EMovementState::Hit3: NewAnim = Animations.FindRef(AN_HIT3); break;
+
+	case EMovementState::Fall:
+	{
+		if (OwnerMoveComp->IsOnGround())
+		{
+			NewAnim = Animations.FindRef(AN_FALL_HOLD);
+			break;
+		}
+		else if (OwnerMoveComp->GetVelocity().Z > 0.f) //
+		{
+			NewAnim = Animations.FindRef(AN_FALL_UP);
+			break;
+		}
+		else
+		{
+			NewAnim = Animations.FindRef(AN_FALL_DOWN);
+			break;
+		}
+	}
+
 	default: // State type is Custom
 		return;
 	} // Switch end
@@ -82,15 +114,12 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	}
 }
 
-bool UBOSpriteComponent::SetAnimation(const FName & AnimationName, bool Looping)
+bool UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 {
 	bool Success = SetFlipbook(Animations.FindRef(AnimationName));
 	SetLooping(Looping);
 
-	if (Looping == false)
-	{
-		PlayFromStart();
-	}
+	if (Looping == false) { PlayFromStart(); }
 
 	return Success;
 }
