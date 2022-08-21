@@ -33,15 +33,20 @@ public:
 	UPROPERTY(Category = "Damage Options", EditAnywhere, BlueprintReadOnly)
 	bool bFall = false;
 
+private:
+	uint8 Team;
+
 protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions);
+
+	uint8 GetTeam() const { return Team; }
 	FVector GetImpulseVector(const AActor* TargetActor) const;
 
 private:
-	void Init(const FDamageInfo& DamageOptions);
-
 	UFUNCTION()
 	void OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherActor);
 

@@ -20,8 +20,9 @@ void ABODamageActor::BeginPlay()
 	OnActorBeginOverlap.AddDynamic(this, &ABODamageActor::OnBeginOverHandle);
 }
 
-void ABODamageActor::Init(const FDamageInfo& DamageOptions)
+void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
 {
+	Team = CharacterTeam;
 	Damage.Damage *= DamageOptions.Damage;
 	Damage.CritRate *= DamageOptions.CritRate;
 	Damage.CritScale += DamageOptions.CritScale;

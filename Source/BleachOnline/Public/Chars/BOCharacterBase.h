@@ -33,9 +33,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBOSpriteComponent* SpriteComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	uint8 Team;
+
 	FTimerHandle EndActionTimer;
 	FTimerHandle StandUpTimer;
-	bool bDead = false;
+	bool		 bDead = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -55,6 +58,10 @@ public:
 
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
+
+	UFUNCTION(BlueprintCallable)
+	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }
+	uint8 GetTeam() const { return Team; }
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();

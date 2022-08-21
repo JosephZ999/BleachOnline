@@ -114,6 +114,8 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	auto DamageActor = Cast<ABODamageActor>(DamageCauser);
 	if (DamageActor) //
 	{
+		if (DamageActor->GetTeam() == GetTeam()) return;
+
 		// Impulse
 		GetMoveComp()->Launch(DamageActor->GetImpulseVector(this), false, false);
 
