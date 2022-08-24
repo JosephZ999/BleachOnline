@@ -75,7 +75,11 @@ public:
 	bool IsDoingAnything() const;
 
 	UFUNCTION(BlueprintCallable)
-	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false);
+	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false, float EndTime = -1.f);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
+	void NewActionClient(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime);
+
 	void EndActionDeferred(float WaitTime);
 	void EndAction();
 

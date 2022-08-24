@@ -142,11 +142,19 @@ void UBOCharacterMovementComponent::Jump()
 	if (bControl) { Launch(FVector(MovementVelocity.X / 2.f, MovementVelocity.Y / 2.f, JumpHeight), true, true); }
 }
 
-void UBOCharacterMovementComponent::Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
+void UBOCharacterMovementComponent::Launch_Implementation(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
 {
 	Velocity.X = (OverrideXY) ? Impulse.X : Velocity.X + Impulse.X;
 	Velocity.Y = (OverrideXY) ? Impulse.Y : Velocity.Y + Impulse.Y;
 	Velocity.Z = (OverrideZ) ? Impulse.Z : Velocity.Z + Impulse.Z;
+	LaunchClient(Velocity);
+}
+
+void UBOCharacterMovementComponent::LaunchClient_Implementation(const FVector& NewVelocity)
+{
+	if (IsRunningDedicatedServer()) return;
+
+	Velocity = NewVelocity;
 }
 
 void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcibly)

@@ -125,13 +125,12 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 		if (DamageActor->bFall) //
 		{
 			NewState = (uint8)EMovementState::Fall;
-			NewAction(NewState, "None", true);
+			NewAction(NewState, "None", true, 10.f);
 		}
 		else
 		{
 			NewState = (uint8)EMovementState::Hit + FMath::RandRange(0, 2);
-			NewAction(NewState, "None", true);
-			EndActionDeferred(0.2f);
+			NewAction(NewState, "None", true, 0.2f);
 		}
 		HealthComp->AddValue(-Damage);
 	}
@@ -153,17 +152,29 @@ bool ABOCharacterBase::IsDoingAnything() const
 /*
  * If LoopAnim = false - Action will not be ended automaticly
  */
-void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool LoopAnim)
+void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime)
 {
 	GetMoveComp()->SetMovementState(NewState, true);
 	GetMoveComp()->SetControlEnabled(false);
 	GetSpriteComp()->SetAnimation(Animation, LoopAnim);
 	GetWorldTimerManager().ClearTimer(EndActionTimer);
-	if (LoopAnim == false)
+	if (LoopAnim == false) { EndActionDeferred(GetSpriteComp()->GetFlipbookLength()); }
+	else
 	{
-		EndActionDeferred(GetSpriteComp()->GetFlipbookLength());
-		return;
+		EndActionDeferred(EndTime);
 	}
+
+	if (HasAuthority()) //
+	{
+		NewActionClient(NewState, Animation, LoopAnim, EndTime);
+	}
+}
+
+void ABOCharacterBase::NewActionClient_Implementation(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime)
+{
+	if (HasAuthority()) return;
+
+	NewAction(NewState, Animation, LoopAnim, EndTime);
 }
 
 void ABOCharacterBase::EndActionDeferred(float WaitTime)

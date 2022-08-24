@@ -17,7 +17,10 @@ void ABODamageActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnActorBeginOverlap.AddDynamic(this, &ABODamageActor::OnBeginOverHandle);
+	if (HasAuthority()) //
+	{
+		OnActorBeginOverlap.AddDynamic(this, &ABODamageActor::OnBeginOverHandle);
+	}
 }
 
 void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
@@ -41,11 +44,11 @@ void ABODamageActor::OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherAct
 FVector ABODamageActor::GetImpulseVector(const AActor* TargetActor) const
 {
 	auto TargetLoc = TargetActor->GetActorLocation();
-	auto ThisLoc = this->GetActorLocation();
+	auto ThisLoc   = this->GetActorLocation();
 	if (bRadialImpulse) //
 	{
-		TargetLoc.Z		   = 0.f;
-		ThisLoc.Z		   = 0.f;
+		TargetLoc.Z = 0.f;
+		ThisLoc.Z	= 0.f;
 
 		auto LookRotation  = FRotationMatrix::MakeFromX(TargetLoc - ThisLoc).Rotator();
 		auto ImpulseVector = FVector(Impulse.X, 0.f, Impulse.Y);

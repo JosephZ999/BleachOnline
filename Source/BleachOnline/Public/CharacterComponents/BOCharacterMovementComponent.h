@@ -95,8 +95,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void LaunchClient(const FVector& NewVelocity);
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementState(uint8 NewState, bool Forcibly = false);
