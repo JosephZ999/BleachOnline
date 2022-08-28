@@ -111,7 +111,8 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 
 void ABOCharacterBase::OnDeath()
 {
-	NewAction((uint8)EMovementState::Fall, "None", true);
+	EndActionDeferred(0.f);
+	GetMoveComp()->SetFalling(true);
 	bDead = true;
 }
 

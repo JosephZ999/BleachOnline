@@ -25,6 +25,8 @@ public class BleachOnline : ModuleRules
             "BleachOnline/Public/Chars",
             "BleachOnline/Public/Chars/Heroes",
             "BleachOnline/Public/Dev",
+            "BleachOnline/Public/Core",
+            "BleachOnline/Public/UI",
             "BleachOnline/Public/Utils"
         });
 

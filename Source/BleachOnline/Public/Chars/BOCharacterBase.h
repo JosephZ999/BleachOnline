@@ -12,8 +12,7 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 
-UCLASS(abstract)
-class BLEACHONLINE_API ABOCharacterBase : public APawn
+UCLASS(abstract) class BLEACHONLINE_API ABOCharacterBase : public APawn
 {
 	GENERATED_BODY()
 
@@ -55,6 +54,7 @@ protected:
 public:
 	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
+	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;

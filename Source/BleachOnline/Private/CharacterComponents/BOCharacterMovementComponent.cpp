@@ -134,6 +134,16 @@ void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVect
 	bWalking = (bControl && MovementVector.Size() > 0.f) || false;
 }
 
+bool UBOCharacterMovementComponent::SetFalling(bool Value)
+{
+	bFalling = Value;
+	if (bFalling)
+	{
+		SetControlEnabled(false);
+	}
+	return bFalling;
+}
+
 void UBOCharacterMovementComponent::Jump()
 {
 	if (bControl) { Launch(FVector(MovementVelocity.X / 2.f, MovementVelocity.Y / 2.f, JumpHeight), true, true); }
@@ -149,12 +159,11 @@ void UBOCharacterMovementComponent::Launch_Implementation(const FVector& Impulse
 
 void UBOCharacterMovementComponent::LaunchClient_Implementation(const FVector& NewVelocity)
 {
-	if (IsRunningDedicatedServer()) return;
-
+	if (OwnerActor->HasAuthority()) return;
 	Velocity = NewVelocity;
 }
 
 void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcibly)
 {
-	if (Forcibly || (! Forcibly && State < (uint8)EMovementState::Custom)) { State = NewState; }
+	if (Forcibly || ! Forcibly && State < static_cast<uint8>(EMovementState::Custom)) { State = NewState; }
 }

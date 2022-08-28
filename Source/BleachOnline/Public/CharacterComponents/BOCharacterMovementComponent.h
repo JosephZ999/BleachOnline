@@ -94,7 +94,7 @@ public:
 	void SetVelocity(const FVector& NewVelocity) { Velocity = NewVelocity; }
 
 	UFUNCTION(BlueprintCallable)
-	bool SetFalling(bool Value) { return bFalling = Value; }
+	bool SetFalling(bool Value);
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();
@@ -122,7 +122,7 @@ public:
 	bool IsControlEnabled() const { return bControl; }
 
 	UFUNCTION(BlueprintCallable)
-	bool IsDoingAnything() const { return State >= (uint8)EMovementState::Custom; }
+	bool IsDoingAnything() const { return State >= static_cast<uint8>(EMovementState::Custom); }
 
 private:
 	void UpdateVelocity(const float Delta);
