@@ -41,7 +41,7 @@ void UBOSpriteComponent::BeginPlay()
 	OwnerMoveComp = Cast<UBOCharacterMovementComponent>(GetOwner()->FindComponentByClass(UBOCharacterMovementComponent::StaticClass()));
 	checkf(OwnerMoveComp, TEXT("Cannot find the character movement component"));
 
-	if (OwnerMoveComp != nullptr)
+	if (OwnerMoveComp)
 	{
 		GetWorld()->GetTimerManager().SetTimer(
 			AnimationUpdateTimer, this, &UBOSpriteComponent::AnimationUpdateHandle, FMath::Max(AnimationUpdateTick, 0.02f), true);
@@ -69,57 +69,34 @@ void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAni
 void UBOSpriteComponent::AnimationUpdateHandle()
 {
 	UPaperFlipbook* NewAnim = nullptr;
+
+	// clang-format off
 	switch ((EMovementState)OwnerMoveComp->GetMovementState())
 	{
-	case EMovementState::Stand: NewAnim = Animations.FindRef(AN_STAND); break;
-	case EMovementState::Walk: NewAnim = Animations.FindRef(AN_WALK); break;
-	case EMovementState::JumpUp: NewAnim = Animations.FindRef(AN_JUMP_UP); break;
+	case EMovementState::Stand:    NewAnim = Animations.FindRef(AN_STAND);     break;
+	case EMovementState::Walk:     NewAnim = Animations.FindRef(AN_WALK);      break;
+	case EMovementState::JumpUp:   NewAnim = Animations.FindRef(AN_JUMP_UP);   break;
 	case EMovementState::JumpHold: NewAnim = Animations.FindRef(AN_JUMP_HOLD); break;
 	case EMovementState::JumpDown: NewAnim = Animations.FindRef(AN_JUMP_DOWN); break;
-
-	case EMovementState::Hit: NewAnim = Animations.FindRef(AN_HIT); break;
-	case EMovementState::Hit2: NewAnim = Animations.FindRef(AN_HIT2); break;
-	case EMovementState::Hit3: NewAnim = Animations.FindRef(AN_HIT3); break;
-
-	case EMovementState::Fall:
-	{
-		if (OwnerMoveComp->IsOnGround())
-		{
-			NewAnim = Animations.FindRef(AN_FALL_HOLD);
-			break;
-		}
-		else if (OwnerMoveComp->GetVelocity().Z > 0.f) //
-		{
-			NewAnim = Animations.FindRef(AN_FALL_UP);
-			break;
-		}
-		else
-		{
-			NewAnim = Animations.FindRef(AN_FALL_DOWN);
-			break;
-		}
+	case EMovementState::Hit:      NewAnim = Animations.FindRef(AN_HIT);       break;
+	case EMovementState::Hit2:     NewAnim = Animations.FindRef(AN_HIT2);      break;
+	case EMovementState::Hit3:     NewAnim = Animations.FindRef(AN_HIT3);      break;
+	case EMovementState::Fall:     NewAnim = Animations.FindRef(AN_FALL_HOLD); break;
+	case EMovementState::FallUp:   NewAnim = Animations.FindRef(AN_FALL_UP);   break;
+	case EMovementState::FallDown: NewAnim = Animations.FindRef(AN_FALL_DOWN); break;
+	default: return;
 	}
+	// clang-format on
 
-	default: // State type is Custom
-		return;
-	} // Switch end
-
-	if (NewAnim != nullptr) //
+	if (NewAnim) //
 	{
 		SetFlipbook(NewAnim);
 	}
-	else
-	{
-		SetFlipbook(Animations.FindRef(AN_STAND));
-	}
 }
 
-bool UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
+void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 {
-	bool Success = SetFlipbook(Animations.FindRef(AnimationName));
+	SetFlipbook(Animations.FindRef(AnimationName));
 	SetLooping(Looping);
-
-	if (Looping == false) { PlayFromStart(); }
-
-	return Success;
+	if (! Looping) { PlayFromStart(); }
 }

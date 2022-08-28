@@ -99,34 +99,31 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 
 void UBOCharacterMovementComponent::UpdateState()
 {
-	if (State > (uint8)EMovementState::Damaged) return;
+	if (static_cast<EMovementState>(State) > EMovementState::Damaged) return;
+	SetMovementState(static_cast<uint8>(FindDesiredState()));
+}
 
-	if (bOnGround)
+EMovementState UBOCharacterMovementComponent::FindDesiredState()
+{
+	if (!bFalling)
 	{
-		if (MovementVelocity.Size() > 0.f && bControl) //
+		if (bOnGround) //
 		{
-			SetMovementState((uint8)EMovementState::Walk);
+			return (MovementVelocity.Size() > 0.f && bControl) ? EMovementState::Walk : EMovementState::Stand;
 		}
-		else
-		{
-			SetMovementState((uint8)EMovementState::Stand);
-		}
-	}
-	else
-	{
+
 		if (FMath::IsNearlyEqual(Velocity.Z, 0.f, JUMP_HOLD_INTERVAL)) //
 		{
-			SetMovementState((uint8)EMovementState::JumpHold);
+			return EMovementState::JumpHold;
 		}
-		else if (Velocity.Z > 0.f)
-		{
-			SetMovementState((uint8)EMovementState::JumpUp);
-		}
-		else
-		{
-			SetMovementState((uint8)EMovementState::JumpDown);
-		}
+		return (Velocity.Z > 0.f) ? EMovementState::JumpUp : EMovementState::JumpDown;
 	}
+
+	if (bOnGround) //
+	{
+		return EMovementState::Fall;
+	}
+	return (Velocity.Z > 0.f) ? EMovementState::FallUp : EMovementState::FallDown;
 }
 
 void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)

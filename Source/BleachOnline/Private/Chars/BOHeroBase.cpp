@@ -22,8 +22,3 @@ ABOHeroBase::ABOHeroBase()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(CameraArmComp);
 }
-
-void ABOHeroBase::Tick(float Delta)
-{
-	Super::Tick(Delta);
-}

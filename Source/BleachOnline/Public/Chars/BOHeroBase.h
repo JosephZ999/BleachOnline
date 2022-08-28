@@ -26,7 +26,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
-
-public:
-	virtual void Tick(float Delta) override;
 };

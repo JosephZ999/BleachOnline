@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CoreMinimal.h"
 #include "BOCoreTypes.generated.h"
 
 // Damage Actor |==================================================================================
@@ -29,19 +28,21 @@ struct FDamageInfo
 UENUM(BlueprintType)
 enum class EMovementState : uint8
 {
-	Stand,
+	Stand, // "Stand" should always be 0;
 	Walk,
 	JumpUp,
 	JumpHold,
 	JumpDown,
 	JumpLand,
+	Fall,
+	FallUp,
+	FallDown,
 
 	Damaged,
 	Hit,
 	Hit2,
 	Hit3,
 
-	Fall,
 	StandUp,
 	Custom,
 };

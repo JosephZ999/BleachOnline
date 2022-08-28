@@ -59,6 +59,7 @@ private:
 	FVector MovementVector	 = FVector::ZeroVector;
 	bool	bWalking;
 	bool	bOnGround;
+	bool	bFalling;
 	bool	bControl = true;
 
 protected:
@@ -93,6 +94,9 @@ public:
 	void SetVelocity(const FVector& NewVelocity) { Velocity = NewVelocity; }
 
 	UFUNCTION(BlueprintCallable)
+	bool SetFalling(bool Value) { return bFalling = Value; }
+
+	UFUNCTION(BlueprintCallable)
 	void Jump();
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
@@ -112,6 +116,9 @@ public:
 	bool IsWalking() const { return bOnGround && ! MovementVector.IsNearlyZero(); }
 
 	UFUNCTION(BlueprintCallable)
+	bool IsFalling() const { return bFalling; }
+
+	UFUNCTION(BlueprintCallable)
 	bool IsControlEnabled() const { return bControl; }
 
 	UFUNCTION(BlueprintCallable)
@@ -120,6 +127,8 @@ public:
 private:
 	void UpdateVelocity(const float Delta);
 	void UpdateState();
+
+	EMovementState FindDesiredState();
 
 	FORCEINLINE float GetAcceleration(float DeltaSeconds) const
 	{

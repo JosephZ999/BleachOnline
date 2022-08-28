@@ -36,7 +36,7 @@ public:
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
 	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
 
-	bool SetAnimation(const FName& AnimationName, bool Looping);
+	void SetAnimation(const FName& AnimationName, bool Looping);
 
 private:
 	void AnimationUpdateHandle();

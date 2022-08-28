@@ -7,10 +7,10 @@ DEFINE_LOG_CATEGORY_STATIC(LogActorDamage, All, All);
 
 ABODamageActor::ABODamageActor()
 {
+	PrimaryActorTick.bCanEverTick = false;
+
 	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	SetRootComponent(SceneComponent);
-
-	PrimaryActorTick.bCanEverTick = false;
 }
 
 void ABODamageActor::BeginPlay()
@@ -39,26 +39,20 @@ void ABODamageActor::OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherAct
 	OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
 }
 
-// Functionality
+// Utils
 
 FVector ABODamageActor::GetImpulseVector(const AActor* TargetActor) const
 {
-	auto TargetLoc = TargetActor->GetActorLocation();
-	auto ThisLoc   = this->GetActorLocation();
-	if (bRadialImpulse) //
-	{
-		TargetLoc.Z = 0.f;
-		ThisLoc.Z	= 0.f;
+	auto TargetLoc = FVector2D(TargetActor->GetActorLocation());
+	auto ThisLoc   = FVector2D(this->GetActorLocation());
 
-		auto LookRotation  = FRotationMatrix::MakeFromX(TargetLoc - ThisLoc).Rotator();
+	if (bRadialImpulse)
+	{
+		auto LookRotation  = FRotationMatrix::MakeFromX(FVector(TargetLoc, 0.f) - FVector(ThisLoc, 0.f)).Rotator();
 		auto ImpulseVector = FVector(Impulse.X, 0.f, Impulse.Y);
 		return LookRotation.RotateVector(ImpulseVector);
 	}
-	else
-	{
-		return (TargetLoc.X > ThisLoc.X) //
-				   ? FVector(Impulse.X, 0.f, Impulse.Y)
-				   : FVector(Impulse.X * -1.f, 0.f, Impulse.Y);
-	}
-	return FVector::ZeroVector;
+	return (TargetLoc.X > ThisLoc.X)				//
+			   ? FVector(Impulse.X, 0.f, Impulse.Y) //
+			   : FVector(Impulse.X * -1.f, 0.f, Impulse.Y);
 }
