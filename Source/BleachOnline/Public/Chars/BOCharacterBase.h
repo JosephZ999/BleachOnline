@@ -12,6 +12,13 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 
+namespace CharacterConsts
+{
+const FName HealthCompName("HealthComp");
+const FName PowerCompName("PowerComp");
+const FName StaminaCompName("StaminaComp");
+} // namespace CharacterConsts
+
 UCLASS(abstract) class BLEACHONLINE_API ABOCharacterBase : public APawn
 {
 	GENERATED_BODY()
@@ -56,8 +63,11 @@ public:
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 
-	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
-	virtual FVector GetVelocity() const override;
+	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
+	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
+	
+	virtual void				   AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
+	virtual FVector				   GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
 	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }

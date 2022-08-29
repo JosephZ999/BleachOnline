@@ -28,7 +28,7 @@ void UBOIndicatorComponent::AddValue(float nValue)
 
 void UBOIndicatorComponent::OnValueChanged()
 {
-	OnChange.Broadcast(GetPercent());
+	OnChange.Broadcast(this, GetPercent());
 
 	if (bEnabled && Value <= 0.f)
 	{

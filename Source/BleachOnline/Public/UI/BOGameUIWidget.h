@@ -6,8 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "BOGameUIWidget.generated.h"
 
-class UProgressBar;
-
 /**
  *
  */
@@ -17,18 +15,12 @@ class BLEACHONLINE_API UBOGameUIWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(Meta = (BindWidget))
-	UProgressBar* HealthBar;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
+	void OnHealthChanged(float NewValue);
 
-private:
-	float HealthPercent;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
+	void OnPowerChanged(float NewValue);
 
-protected:
-	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
-
-public:
-	void SetHealthPercent(float Value);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnHealthChanged(bool Added);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
+	void OnStaminaChanged(float NewValue);
 };

@@ -7,6 +7,7 @@
 #include "BOHUD.generated.h"
 
 class UBOGameUIWidget;
+class UBOIndicatorComponent;
 /**
  *
  */
@@ -24,7 +25,8 @@ public:
 	void Initialize();
 
 private:
-	void OnPawnDamaged(float HealthPercent);
+	void OnIndicatorChanged(UActorComponent* Component,float Percent);
+	void SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator);
 
 	UBOGameUIWidget* GameUIWidget;
 };

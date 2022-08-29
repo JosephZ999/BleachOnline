@@ -7,7 +7,7 @@
 #include "BOIndicatorComponent.generated.h"
 
 DECLARE_DELEGATE(FOnValueZeroSignature);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnChangeSignature, float);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeSignature, UActorComponent*, float);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BLEACHONLINE_API UBOIndicatorComponent : public UActorComponent

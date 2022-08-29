@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BOHUD.h"
-#include "BOHeroBase.h"
+#include "BOCharacterBase.h"
 #include "BOIndicatorComponent.h"
 #include "BOGameUIWidget.h"
 
@@ -11,20 +11,41 @@ void ABOHUD::Initialize()
 {
 	if (! GetWorld()) return;
 
-	const auto OwningCharacter = Cast<ABOHeroBase>(PlayerOwner->GetPawn());
+	const auto OwningCharacter = Cast<ABOCharacterBase>(PlayerOwner->GetPawn());
 	if (! OwningCharacter) return;
 
-	OwningCharacter->GetHealthComp()->OnChange.AddUObject(this, &ABOHUD::OnPawnDamaged);
+	SubscribeToIndicatorChange(OwningCharacter->GetHealthComp());
+	SubscribeToIndicatorChange(OwningCharacter->GetPowerComp());
+	SubscribeToIndicatorChange(OwningCharacter->GetStaminaComp());
 
 	if (!GameUIWidget)
 	{
 		GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIClass);
-		GameUIWidget->SetHealthPercent(OwningCharacter->GetHealthComp()->GetPercent());
+		GameUIWidget->OnHealthChanged(OwningCharacter->GetHealthComp()->GetPercent());
 		GameUIWidget->AddToViewport();
 	}
 }
 
-void ABOHUD::OnPawnDamaged(float HealthPercent)
+void ABOHUD::OnIndicatorChanged(UActorComponent* Component, float Percent)
 {
-	GameUIWidget->SetHealthPercent(HealthPercent);
+	if (Component->GetFName() == CharacterConsts::HealthCompName)
+	{
+		GameUIWidget->OnHealthChanged(Percent);
+	}
+	else if (Component->GetFName() == CharacterConsts::PowerCompName)
+	{
+		GameUIWidget->OnPowerChanged(Percent);
+	}
+	else if (Component->GetFName() == CharacterConsts::StaminaCompName)
+	{
+		GameUIWidget->OnStaminaChanged(Percent);
+	}
+}
+
+void ABOHUD::SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator)
+{
+	if (Indicator)
+	{
+		Indicator->OnChange.AddUObject(this, &ABOHUD::OnIndicatorChanged);
+	}
 }

@@ -29,7 +29,7 @@ ABOCharacterBase::ABOCharacterBase()
 	SetRootComponent(CapsuleComp);
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
-	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>("HealthComp");
+	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>(CharacterConsts::HealthCompName);
 	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
 	SpriteComp->SetupAttachment(GetRootComponent());
 }
@@ -102,7 +102,8 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	// Impulse
 	GetMoveComp()->Launch(DamageActor->GetImpulseVector(this), false, false);
 
-	if (! GetMoveComp()->SetFalling(DamageActor->bFall)) //
+	const bool CanFall = DamageActor->bFall || bDead;
+	if (! GetMoveComp()->SetFalling(CanFall)) //
 	{
 		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", true, 0.2f);
 	}
@@ -111,9 +112,9 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 
 void ABOCharacterBase::OnDeath()
 {
+	bDead = true;
 	EndActionDeferred(0.f);
 	GetMoveComp()->SetFalling(true);
-	bDead = true;
 }
 
 bool ABOCharacterBase::IsDoingAnything() const
