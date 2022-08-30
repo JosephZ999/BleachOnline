@@ -6,6 +6,7 @@
 #include "BOSpriteComponent.h"
 #include "BODamageActor.h"
 #include "BOCoreTypes.h"
+#include "CharacterConsts.h"
 
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbook.h"
@@ -29,7 +30,7 @@ ABOCharacterBase::ABOCharacterBase()
 	SetRootComponent(CapsuleComp);
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
-	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>(CharacterConsts::HealthCompName);
+	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
 	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
 	SpriteComp->SetupAttachment(GetRootComponent());
 }
@@ -60,7 +61,7 @@ void ABOCharacterBase::StandUp()
 	GetMoveComp()->SetFalling(false);
 }
 
-// Wrapper Functions |=========================================================================
+// Wrapper Functions |=======================================================================//
 void ABOCharacterBase::LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
 {
 	MovementComp->Launch(Impulse, OverrideXY, OverrideZ);
@@ -90,6 +91,7 @@ bool ABOCharacterBase::IsOnGround() const
 {
 	return MovementComp->IsOnGround();
 }
+//=============================================//
 
 void ABOCharacterBase::OnTakeAnyDamageHandle(
 	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)

@@ -46,10 +46,10 @@ public:
 	bool CheckValue(float nValue) const { return Value >= nValue; }
 
 	UFUNCTION(BlueprintCallable)
-	void SetValue(float nValue);
+	void SetValue(float NewValue);
 
 	UFUNCTION(BlueprintCallable)
-	void AddValue(float nValue);
+	void AddValue(float AddValue);
 
 private:
 	inline void OnValueChanged();

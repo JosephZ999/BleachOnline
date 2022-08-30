@@ -3,6 +3,7 @@
 #include "BOHeroBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "CharacterConsts.h"
 
 ABOHeroBase::ABOHeroBase()
 {
@@ -21,4 +22,6 @@ ABOHeroBase::ABOHeroBase()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(CameraArmComp);
+
+	Tags.Add(CharConsts::PickupTag);
 }

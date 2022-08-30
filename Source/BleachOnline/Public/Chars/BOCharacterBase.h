@@ -12,13 +12,6 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 
-namespace CharacterConsts
-{
-const FName HealthCompName("HealthComp");
-const FName PowerCompName("PowerComp");
-const FName StaminaCompName("StaminaComp");
-} // namespace CharacterConsts
-
 UCLASS(abstract) class BLEACHONLINE_API ABOCharacterBase : public APawn
 {
 	GENERATED_BODY()

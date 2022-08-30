@@ -4,6 +4,7 @@
 #include "BOCharacterBase.h"
 #include "BOIndicatorComponent.h"
 #include "BOGameUIWidget.h"
+#include "CharacterConsts.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBOHUD, All, All);
 
@@ -28,15 +29,15 @@ void ABOHUD::Initialize()
 
 void ABOHUD::OnIndicatorChanged(UActorComponent* Component, float Percent)
 {
-	if (Component->GetFName() == CharacterConsts::HealthCompName)
+	if (Component->GetFName() == CharConsts::HealthCompName)
 	{
 		GameUIWidget->OnHealthChanged(Percent);
 	}
-	else if (Component->GetFName() == CharacterConsts::PowerCompName)
+	else if (Component->GetFName() == CharConsts::PowerCompName)
 	{
 		GameUIWidget->OnPowerChanged(Percent);
 	}
-	else if (Component->GetFName() == CharacterConsts::StaminaCompName)
+	else if (Component->GetFName() == CharConsts::StaminaCompName)
 	{
 		GameUIWidget->OnStaminaChanged(Percent);
 	}

@@ -14,15 +14,15 @@ void UBOIndicatorComponent::BeginPlay()
 	check(MaxValue != 0.f);
 }
 
-void UBOIndicatorComponent::SetValue(float nValue)
+void UBOIndicatorComponent::SetValue(float NewValue)
 {
-	Value = nValue;
+	Value = FMath::Clamp(Value + NewValue, 0.f, MaxValue);
 	OnValueChanged();
 }
 
-void UBOIndicatorComponent::AddValue(float nValue)
+void UBOIndicatorComponent::AddValue(float AddValue)
 {
-	Value += nValue;
+	Value = FMath::Clamp(Value + AddValue, 0.f, MaxValue);
 	OnValueChanged();
 }
 
@@ -30,7 +30,7 @@ void UBOIndicatorComponent::OnValueChanged()
 {
 	OnChange.Broadcast(this, GetPercent());
 
-	if (bEnabled && Value <= 0.f)
+	if (bEnabled && FMath::IsNearlyZero(Value))
 	{
 		bEnabled = false;
 		if (OnValueZero.IsBound()) { OnValueZero.Execute(); }
