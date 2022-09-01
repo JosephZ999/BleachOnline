@@ -129,9 +129,8 @@ EMovementState UBOCharacterMovementComponent::FindDesiredState()
 void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)
 {
 	MovementVector	 = ForwardVector;
-	MovementVector.Z = 0.f;
 	MovementVector.Normalize();
-	bWalking = (bControl && MovementVector.Size() > 0.f) || false;
+	bWalking = (bControl && MovementVector.Size2D() > 0.f) || false;
 }
 
 bool UBOCharacterMovementComponent::SetFalling(bool Value)

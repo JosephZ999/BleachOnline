@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UBOInputComponent;
 
 /**
  *
@@ -26,4 +27,23 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
+
+private:
+	FVector MovementVector;
+
+protected:
+	virtual UInputComponent* CreatePlayerInputComponent() override;
+
+public:
+	UFUNCTION(Server, UnReliable)
+	void SetMovementVectorServer(FVector NewVector);
+	void SetMovementVectorServer_Implementation(FVector NewVector);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetMovementVectorClient(FVector NewVector);
+	void SetMovementVectorClient_Implementation(FVector NewVector);
+
+public:
+	UFUNCTION(BlueprintCallable) UBOInputComponent* GetInputComponent() const;
+	virtual void Tick(float DeltaTime) override;
 };
