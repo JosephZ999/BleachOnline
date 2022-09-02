@@ -3,39 +3,53 @@
 #include "BOInputComponent.h"
 #include "BOHeroBase.h"
 
+#include "Components/InputComponent.h"
+#include "TimerManager.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogInputComp, All, All);
 
-void UBOInputComponent::BeginPlay()
+void UBOInputComponent::SetupInputs(UInputComponent* Input)
 {
-	Super::BeginPlay();
-
 	if (! GetOuterHero()) return;
 
-	BindAction("MoveFW", IE_Pressed, this, &UBOInputComponent::MoveFW<true>);
-	BindAction("MoveFW", IE_Released, this, &UBOInputComponent::MoveFW<false>);
+	Input->BindAction("MoveFW", IE_Pressed, this, &UBOInputComponent::MoveFW<true>);
+	Input->BindAction("MoveFW", IE_Released, this, &UBOInputComponent::MoveFW<false>);
 
-	BindAction("MoveBW", IE_Pressed, this, &UBOInputComponent::MoveBW<true>);
-	BindAction("MoveBW", IE_Released, this, &UBOInputComponent::MoveBW<false>);
+	Input->BindAction("MoveBW", IE_Pressed, this, &UBOInputComponent::MoveBW<true>);
+	Input->BindAction("MoveBW", IE_Released, this, &UBOInputComponent::MoveBW<false>);
 
-	BindAction("MoveUW", IE_Pressed, this, &UBOInputComponent::MoveUW<true>);
-	BindAction("MoveUW", IE_Released, this, &UBOInputComponent::MoveUW<false>);
+	Input->BindAction("MoveUW", IE_Pressed, this, &UBOInputComponent::MoveUW<true>);
+	Input->BindAction("MoveUW", IE_Released, this, &UBOInputComponent::MoveUW<false>);
 
-	BindAction("MoveDW", IE_Pressed, this, &UBOInputComponent::MoveDW<true>);
-	BindAction("MoveDW", IE_Released, this, &UBOInputComponent::MoveDW<false>);
+	Input->BindAction("MoveDW", IE_Pressed, this, &UBOInputComponent::MoveDW<true>);
+	Input->BindAction("MoveDW", IE_Released, this, &UBOInputComponent::MoveDW<false>);
 
 	ComboKeys.Empty(10);
 	ComboIndex = 0;
-
-	// UE_LOG(LogInputComp, Display, TEXT("Input comp BeginPlay"));
 }
 
 ABOHeroBase* UBOInputComponent::GetOuterHero()
 {
 	if (! OuterHero)
 	{
-		return OuterHero = Cast<ABOHeroBase>(GetOuter());
+		return OuterHero = Cast<ABOHeroBase>(GetOwner());
 	}
 	return OuterHero;
+}
+
+void UBOInputComponent::SetComboRepTimer()
+{
+	if (!GetOuterHero()) return;
+	
+	if (!GetOuterHero()->GetWorldTimerManager().IsTimerActive(ComboRepTimer))
+	{
+		const float Delay = 0.2f;
+		GetOuterHero()->GetWorldTimerManager().SetTimer(ComboRepTimer, this, &UBOInputComponent::ComboRepTimerHandle, Delay);
+	}
+}
+
+void UBOInputComponent::ComboRepTimerHandle()
+{
 }
 
 // Movement //===================================================================================//
@@ -170,11 +184,11 @@ void UBOInputComponent::AddComboKey(Action Key)
 	ComboKeys.Add(Key);
 }
 
-Action UBOInputComponent::GetNextComboKey() const
+Action UBOInputComponent::GetComboKey(uint8 Index) const
 {
-	if (ComboKeys.IsValidIndex(ComboIndex + 1))
+	if (ComboKeys.IsValidIndex(Index))
 	{
-		return ComboKeys[ComboIndex + 1];
+		return ComboKeys[Index];
 	}
 	return Action::None;
 }
@@ -185,9 +199,14 @@ void UBOInputComponent::ClearComboKeys()
 	ComboIndex = 0;
 }
 
-void UBOInputComponent::IncreaseComboIndex()
+Action UBOInputComponent::SwitchToNextCombo()
 {
 	++ComboIndex;
+	if (ComboKeys.IsValidIndex(ComboIndex))
+	{
+		return ComboKeys[ComboIndex];
+	}
+	return Action::None;
 }
 
 void UBOInputComponent::SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex)

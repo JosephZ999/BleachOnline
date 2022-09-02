@@ -3,10 +3,11 @@
 #include "BOHeroBase.h"
 #include "BOInputComponent.h"
 #include "BOCharacterMovementComponent.h"
+#include "CharacterConsts.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "CharacterConsts.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHero, All, All);
 
@@ -28,24 +29,17 @@ ABOHeroBase::ABOHeroBase()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(CameraArmComp);
 
+	InputComp = CreateDefaultSubobject<UBOInputComponent>("InputComp");
+
 	Tags.Add(CharConsts::PickupTag);
 }
 
-UInputComponent* ABOHeroBase::CreatePlayerInputComponent()
+void ABOHeroBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	const FName InputComponentName(TEXT("PawnInputComponent0"));
-	return InputComp = NewObject<UBOInputComponent>(this, InputComponentName);
-}
-
-void ABOHeroBase::DestroyPlayerInputComponent()
-{
-	Super::DestroyPlayerInputComponent();
-	InputComp = nullptr;
-}
-
-UBOInputComponent* ABOHeroBase::GetInputComponent() const
-{
-	return InputComp;
+	if (InputComp)
+	{
+		InputComp->SetupInputs(PlayerInputComponent);
+	}
 }
 
 void ABOHeroBase::Tick(float DeltaTime)
@@ -82,7 +76,7 @@ void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType, const FV
 		GetInputComponent()->GetComboKeys(),						  //
 		GetMoveComp()->GetMoveVector());
 
-	if (DoAction(ActionInfo.CurrentState, GetInputComponent()->GetCurrentComboKey()))
+	if (DoAction(ActionInfo.CurrentState, GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex())))
 	{
 		DoActionClient_Implementation(ActionInfo);
 	}
@@ -90,11 +84,31 @@ void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType, const FV
 
 void ABOHeroBase::DoActionClient_Implementation(const FReceivedActionInfo& ActionInfo)
 {
-	if (!HasAuthority())
+	if (! HasAuthority())
 	{
 		GetMoveComp()->SetMovementState(ActionInfo.CurrentState, true);
 		GetInputComponent()->SetCombo(ActionInfo.Keys, ActionInfo.KeyIndex);
 		GetMoveComp()->SetMovementVector(ActionInfo.MovementVector);
-		DoAction(ActionInfo.CurrentState, GetInputComponent()->GetCurrentComboKey());
+		DoAction(ActionInfo.CurrentState, GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex()));
 	}
+}
+
+void ABOHeroBase::SetComboTimer(float Delay)
+{
+	if (! GetWorld()) return;
+
+	GetWorldTimerManager().ClearTimer(ComboTimer);
+	MovementStateCache = GetMoveComp()->GetMovementState();
+
+	if (Delay > 0.f)
+	{
+		GetWorldTimerManager().SetTimer(ComboTimer, this, &ABOHeroBase::ComboTimerHandle, Delay);
+		return;
+	}
+	ComboTimerHandle();
+}
+
+void ABOHeroBase::ComboTimerHandle()
+{
+	DoComboAction(MovementStateCache, GetInputComponent()->SwitchToNextCombo());
 }

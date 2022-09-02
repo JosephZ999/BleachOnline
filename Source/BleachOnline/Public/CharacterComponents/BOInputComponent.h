@@ -3,17 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/InputComponent.h"
+#include "Components/ActorComponent.h"
 #include "BOCoreTypes.h"
 #include "BOInputComponent.generated.h"
 
 class ABOHeroBase;
+class UInputComponent;
 
 /**
  *
  */
 UCLASS()
-class BLEACHONLINE_API UBOInputComponent : public UInputComponent
+class BLEACHONLINE_API UBOInputComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -27,8 +28,10 @@ private:
 	TArray<Action> ComboKeys;
 	uint8		   ComboIndex;
 
+	FTimerHandle ComboRepTimer;
+
 protected:
-	virtual void BeginPlay() override;
+	void SetupInputs(UInputComponent* Input);
 
 private:
 	template <bool> void MoveFW();
@@ -38,17 +41,20 @@ private:
 	FVector				 CalculateMovementVector();
 	ABOHeroBase*		 GetOuterHero();
 
-public:
-	void   AddComboKey(Action Key);
-	Action GetNextComboKey() const;
-	void   ClearComboKeys();
-	void   IncreaseComboIndex();
-	void   SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex);
+	void SetComboRepTimer();
+	void ComboRepTimerHandle();
 
+public:
 	UFUNCTION(BlueprintCallable)
 	TArray<EActionType> GetComboKeys() const { return ComboKeys; }
-	EActionType			GetCurrentComboKey() const { return ComboKeys.IsValidIndex(ComboIndex) ? ComboKeys[ComboIndex] : EActionType::None; }
-	uint8				GetComboIndex() const { return ComboIndex; }
+
+	void   AddComboKey(Action Key);
+	Action GetComboKey(uint8 Index) const;
+	uint8  GetComboIndex() const { return ComboIndex; }
+
+	void   ClearComboKeys();
+	void   SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex);
+	Action SwitchToNextCombo();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "InputActions")
@@ -68,4 +74,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "InputActions")
 	void ActionSpellBW();
+
+public:
+	friend ABOHeroBase;
 };
