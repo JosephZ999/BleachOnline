@@ -84,7 +84,7 @@ public:
 	void NewActionClient(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime);
 
 	void EndActionDeferred(float WaitTime);
-	void EndAction();
+	virtual void EndAction();
 
 public:
 	virtual void OnConstruction(const FTransform& NewTransform) override;

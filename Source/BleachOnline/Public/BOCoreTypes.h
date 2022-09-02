@@ -46,3 +46,37 @@ enum class EMovementState : uint8
 	StandUp,
 	Custom,
 };
+
+UENUM(BlueprintType)
+enum class EActionType : uint8
+{
+	None,
+	Attack,
+	AttackFW,
+	AttackBW,
+	Jump,
+	Guard,
+};
+
+typedef EActionType Action;
+
+USTRUCT()
+struct FReceivedActionInfo
+{
+	GENERATED_BODY()
+
+	FReceivedActionInfo() {}
+
+	FReceivedActionInfo(uint8 nCurrentState, uint8 nKeyIndex, const TArray<EActionType>& nKeys, const FVector& nMoveVector)
+		: CurrentState(nCurrentState)
+		, KeyIndex(nKeyIndex)
+		, Keys(nKeys)
+		, MovementVector(nMoveVector)
+	{
+	}
+
+	uint8				CurrentState;
+	uint8				KeyIndex;
+	TArray<EActionType> Keys;
+	FVector				MovementVector;
+};

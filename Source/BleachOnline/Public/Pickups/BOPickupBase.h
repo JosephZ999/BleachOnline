@@ -29,7 +29,7 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	void		 SetPickupOwner(AActor* Owner);
+	void		 SetPickupOwner(AActor* NewOwner);
 
 protected:
 	virtual void BeginPlay() override;

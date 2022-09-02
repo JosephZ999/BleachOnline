@@ -73,9 +73,9 @@ void ABOPickupBase::Pickup(AActor* PickupOwner)
 	WantDestroy();
 }
 
-void ABOPickupBase::SetPickupOwner(AActor* Owner)
+void ABOPickupBase::SetPickupOwner(AActor* NewOwner)
 {
-	PickupCharacter = Owner;
+	PickupCharacter = NewOwner;
 	bPickingup		= false;
 	PickingProgress = 0.f;
 	GetWorldTimerManager().SetTimer(PickupDelayTimer, this, &ABOPickupBase::StartPickup, 1.f);

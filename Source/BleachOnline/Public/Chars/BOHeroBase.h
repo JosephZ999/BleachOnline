@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Chars/BOCharacterBase.h"
+#include "BOCoreTypes.h"
 #include "BOHeroBase.generated.h"
 
 class USpringArmComponent;
@@ -28,22 +29,39 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
 
+	UBOInputComponent* InputComp;
+
 private:
 	FVector MovementVector;
 
 protected:
 	virtual UInputComponent* CreatePlayerInputComponent() override;
+	virtual void			 DestroyPlayerInputComponent() override;
 
 public:
+	virtual void EndAction() override;
+
 	UFUNCTION(Server, UnReliable)
-	void SetMovementVectorServer(FVector NewVector);
-	void SetMovementVectorServer_Implementation(FVector NewVector);
+	void SetMovementVectorServer(const FVector& NewVector);
+	void SetMovementVectorServer_Implementation(const FVector& NewVector);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void SetMovementVectorClient(FVector NewVector);
-	void SetMovementVectorClient_Implementation(FVector NewVector);
+	void SetMovementVectorClient(const FVector& NewVector);
+	void SetMovementVectorClient_Implementation(const FVector& NewVector);
+
+	UFUNCTION(Server, UnReliable)
+	void DoActionServer(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys);
+	void DoActionServer_Implementation(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DoActionClient(const FReceivedActionInfo& ActionInfo);
+	void DoActionClient_Implementation(const FReceivedActionInfo& ActionInfo);
+	
+	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
 
 public:
-	UFUNCTION(BlueprintCallable) UBOInputComponent* GetInputComponent() const;
+	UFUNCTION(BlueprintCallable)
+	UBOInputComponent* GetInputComponent() const;
+
 	virtual void Tick(float DeltaTime) override;
 };

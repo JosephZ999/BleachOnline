@@ -2,6 +2,7 @@
 
 #include "BOHeroBase.h"
 #include "BOInputComponent.h"
+#include "BOCharacterMovementComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -33,12 +34,18 @@ ABOHeroBase::ABOHeroBase()
 UInputComponent* ABOHeroBase::CreatePlayerInputComponent()
 {
 	const FName InputComponentName(TEXT("PawnInputComponent0"));
-	return NewObject<UBOInputComponent>(this, InputComponentName);
+	return InputComp = NewObject<UBOInputComponent>(this, InputComponentName);
+}
+
+void ABOHeroBase::DestroyPlayerInputComponent()
+{
+	Super::DestroyPlayerInputComponent();
+	InputComp = nullptr;
 }
 
 UBOInputComponent* ABOHeroBase::GetInputComponent() const
 {
-	return Cast<UBOInputComponent>(InputComponent);
+	return InputComp;
 }
 
 void ABOHeroBase::Tick(float DeltaTime)
@@ -48,16 +55,46 @@ void ABOHeroBase::Tick(float DeltaTime)
 	AddMovementInput(MovementVector);
 }
 
-void ABOHeroBase::SetMovementVectorServer_Implementation(FVector NewVector)
+void ABOHeroBase::EndAction()
+{
+	Super::EndAction();
+	GetInputComponent()->ClearComboKeys();
+}
+
+void ABOHeroBase::SetMovementVectorServer_Implementation(const FVector& NewVector)
 {
 	MovementVector = NewVector;
 	SetMovementVectorClient(NewVector);
 }
 
-void ABOHeroBase::SetMovementVectorClient_Implementation(FVector NewVector)
+void ABOHeroBase::SetMovementVectorClient_Implementation(const FVector& NewVector)
+{
+	if (! HasAuthority())
+	{
+		MovementVector = NewVector;
+	}
+}
+
+void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys)
+{
+	FReceivedActionInfo ActionInfo(GetMoveComp()->GetMovementState(), //
+		GetInputComponent()->GetComboIndex(),						  //
+		GetInputComponent()->GetComboKeys(),						  //
+		GetMoveComp()->GetMoveVector());
+
+	if (DoAction(ActionInfo.CurrentState, GetInputComponent()->GetCurrentComboKey()))
+	{
+		DoActionClient_Implementation(ActionInfo);
+	}
+}
+
+void ABOHeroBase::DoActionClient_Implementation(const FReceivedActionInfo& ActionInfo)
 {
 	if (!HasAuthority())
 	{
-		MovementVector = NewVector;
+		GetMoveComp()->SetMovementState(ActionInfo.CurrentState, true);
+		GetInputComponent()->SetCombo(ActionInfo.Keys, ActionInfo.KeyIndex);
+		GetMoveComp()->SetMovementVector(ActionInfo.MovementVector);
+		DoAction(ActionInfo.CurrentState, GetInputComponent()->GetCurrentComboKey());
 	}
 }

@@ -9,7 +9,7 @@ void UBOInputComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!GetOuterHero()) return;
+	if (! GetOuterHero()) return;
 
 	BindAction("MoveFW", IE_Pressed, this, &UBOInputComponent::MoveFW<true>);
 	BindAction("MoveFW", IE_Released, this, &UBOInputComponent::MoveFW<false>);
@@ -23,6 +23,9 @@ void UBOInputComponent::BeginPlay()
 	BindAction("MoveDW", IE_Pressed, this, &UBOInputComponent::MoveDW<true>);
 	BindAction("MoveDW", IE_Released, this, &UBOInputComponent::MoveDW<false>);
 
+	ComboKeys.Empty(10);
+	ComboIndex = 0;
+
 	// UE_LOG(LogInputComp, Display, TEXT("Input comp BeginPlay"));
 }
 
@@ -35,9 +38,11 @@ ABOHeroBase* UBOInputComponent::GetOuterHero()
 	return OuterHero;
 }
 
+// Movement //===================================================================================//
+
 template <bool Pressed> void UBOInputComponent::MoveFW()
 {
-	if (!GetOuterHero()) return;
+	if (! GetOuterHero()) return;
 
 	if (Pressed && ! bMoveFWDown)
 	{
@@ -56,7 +61,7 @@ template <bool Pressed> void UBOInputComponent::MoveFW()
 
 template <bool Pressed> void UBOInputComponent::MoveBW()
 {
-	if (!GetOuterHero()) return;
+	if (! GetOuterHero()) return;
 
 	if (Pressed && ! bMoveBWDown)
 	{
@@ -75,7 +80,7 @@ template <bool Pressed> void UBOInputComponent::MoveBW()
 
 template <bool Pressed> void UBOInputComponent::MoveUW()
 {
-	if (!GetOuterHero()) return;
+	if (! GetOuterHero()) return;
 
 	if (Pressed && ! bMoveUWDown)
 	{
@@ -94,7 +99,7 @@ template <bool Pressed> void UBOInputComponent::MoveUW()
 
 template <bool Pressed> void UBOInputComponent::MoveDW()
 {
-	if (!GetOuterHero()) return;
+	if (! GetOuterHero()) return;
 
 	if (Pressed && ! bMoveDWDown)
 	{
@@ -117,4 +122,76 @@ FVector UBOInputComponent::CalculateMovementVector()
 	const float AxisY = 0.f + (float)bMoveDWDown + (-(float)bMoveUWDown);
 
 	return FVector(AxisX, AxisY, 0.f);
+}
+
+// Action //=====================================================================================//
+
+void UBOInputComponent::ActionAttack()
+{
+	if (! GetOuterHero()) return;
+
+	AddComboKey(Action::Attack);
+}
+
+void UBOInputComponent::ActionAttackFW()
+{
+	if (! GetOuterHero()) return;
+
+	AddComboKey(Action::AttackFW);
+}
+
+void UBOInputComponent::ActionAttackBW()
+{
+	if (! GetOuterHero()) return;
+
+	AddComboKey(Action::AttackBW);
+}
+
+void UBOInputComponent::ActionJump()
+{
+	if (! GetOuterHero()) return;
+
+	ClearComboKeys();
+	AddComboKey(Action::Jump);
+}
+
+void UBOInputComponent::ActionSpellFW()
+{
+	if (! GetOuterHero()) return;
+}
+
+void UBOInputComponent::ActionSpellBW()
+{
+	if (! GetOuterHero()) return;
+}
+
+void UBOInputComponent::AddComboKey(Action Key)
+{
+	ComboKeys.Add(Key);
+}
+
+Action UBOInputComponent::GetNextComboKey() const
+{
+	if (ComboKeys.IsValidIndex(ComboIndex + 1))
+	{
+		return ComboKeys[ComboIndex + 1];
+	}
+	return Action::None;
+}
+
+void UBOInputComponent::ClearComboKeys()
+{
+	ComboKeys.Empty(10);
+	ComboIndex = 0;
+}
+
+void UBOInputComponent::IncreaseComboIndex()
+{
+	++ComboIndex;
+}
+
+void UBOInputComponent::SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex)
+{
+	ComboKeys = NewComboKeys;
+	ComboIndex = NewKeyIndex;
 }

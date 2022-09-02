@@ -70,7 +70,8 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//
+	uint8 GetMovementState() const { return State; }
+
 	UFUNCTION(BlueprintCallable)
 	FVector GetVelocity() const { return Velocity; }
 
