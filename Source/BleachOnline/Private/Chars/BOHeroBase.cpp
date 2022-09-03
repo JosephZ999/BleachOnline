@@ -69,10 +69,10 @@ void ABOHeroBase::SetMovementVectorClient_Implementation(const FVector& NewVecto
 	}
 }
 
-void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys)
+void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType)
 {
 	FReceivedActionInfo ActionInfo(GetMoveComp()->GetMovementState(), //
-		GetInputComponent()->GetComboIndex(),						  //
+		ActionType,													  //
 		GetInputComponent()->GetComboKeys(),						  //
 		GetMoveComp()->GetMoveVector());
 
@@ -84,18 +84,18 @@ void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType, const FV
 
 void ABOHeroBase::DoActionClient_Implementation(const FReceivedActionInfo& ActionInfo)
 {
-	if (! HasAuthority())
-	{
-		GetMoveComp()->SetMovementState(ActionInfo.CurrentState, true);
-		GetInputComponent()->SetCombo(ActionInfo.Keys, ActionInfo.KeyIndex);
-		GetMoveComp()->SetMovementVector(ActionInfo.MovementVector);
-		DoAction(ActionInfo.CurrentState, GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex()));
-	}
+	if (HasAuthority()) return;
+
+	GetMoveComp()->SetMovementState(ActionInfo.CurrentState, true);
+	GetMoveComp()->SetMovementVector(ActionInfo.MovementVector);
+	DoAction(ActionInfo.CurrentState, ActionInfo.ActionType);
 }
 
 void ABOHeroBase::SetComboTimer(float Delay)
 {
 	if (! GetWorld()) return;
+
+	if (! HasAuthority()) return;
 
 	GetWorldTimerManager().ClearTimer(ComboTimer);
 	MovementStateCache = GetMoveComp()->GetMovementState();
@@ -110,5 +110,19 @@ void ABOHeroBase::SetComboTimer(float Delay)
 
 void ABOHeroBase::ComboTimerHandle()
 {
-	DoComboAction(MovementStateCache, GetInputComponent()->SwitchToNextCombo());
+	// On Server
+	const auto CurrentState = GetMoveComp()->GetMovementState();
+	const auto NextAction = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex());
+	const bool ActionChanged = DoComboAction(MovementStateCache, GetInputComponent()->SwitchToNextCombo());
+	if (ActionChanged)
+	{
+		DoComboActionClient(CurrentState, NextAction);
+	}
+}
+
+void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState, EActionType NewAction)
+{
+	if (!HasAuthority()) return;
+
+	DoComboAction(InitialMovementState, NewAction);
 }

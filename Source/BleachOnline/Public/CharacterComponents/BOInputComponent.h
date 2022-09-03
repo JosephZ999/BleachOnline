@@ -41,8 +41,17 @@ private:
 	FVector				 CalculateMovementVector();
 	ABOHeroBase*		 GetOuterHero();
 
-	void SetComboRepTimer();
+	void SetComboRepTimer(); // Will not call on server
 	void ComboRepTimerHandle();
+
+
+	UFUNCTION(Server, UnReliable)
+	void UpdateDataServer(const TArray<EActionType>& NewComboKeys);
+	void UpdateDataServer_Implementation(const TArray<EActionType>& NewComboKeys);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateDataClient(const TArray<EActionType>& NewComboKeys);
+	void UpdateDataClient_Implementation(const TArray<EActionType>& NewComboKeys);
 
 public:
 	UFUNCTION(BlueprintCallable)

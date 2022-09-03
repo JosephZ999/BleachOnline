@@ -39,9 +39,9 @@ ABOHeroBase* UBOInputComponent::GetOuterHero()
 
 void UBOInputComponent::SetComboRepTimer()
 {
-	if (!GetOuterHero()) return;
-	
-	if (!GetOuterHero()->GetWorldTimerManager().IsTimerActive(ComboRepTimer))
+	if (! GetOuterHero()) return;
+
+	if (! GetOuterHero()->GetWorldTimerManager().IsTimerActive(ComboRepTimer))
 	{
 		const float Delay = 0.2f;
 		GetOuterHero()->GetWorldTimerManager().SetTimer(ComboRepTimer, this, &UBOInputComponent::ComboRepTimerHandle, Delay);
@@ -50,6 +50,25 @@ void UBOInputComponent::SetComboRepTimer()
 
 void UBOInputComponent::ComboRepTimerHandle()
 {
+	return (! GetOuterHero()->HasAuthority()) ? UpdateDataServer(ComboKeys) : UpdateDataClient(ComboKeys);
+}
+
+void UBOInputComponent::UpdateDataServer_Implementation(const TArray<EActionType>& NewComboKeys)
+{
+	ComboKeys = NewComboKeys;
+	UpdateDataClient(ComboKeys);
+	UE_LOG(LogInputComp, Display, TEXT("Combo is updated on Server"));
+}
+
+void UBOInputComponent::UpdateDataClient_Implementation(const TArray<EActionType>& NewComboKeys)
+{
+	if (GetOuterHero()->IsLocallyControlled()) return;
+
+	if (GetOuterHero()->HasAuthority()) return;
+
+	ComboKeys = NewComboKeys;
+
+	UE_LOG(LogInputComp, Display, TEXT("Combo is updated on client"));
 }
 
 // Movement //===================================================================================//
@@ -144,21 +163,27 @@ void UBOInputComponent::ActionAttack()
 {
 	if (! GetOuterHero()) return;
 
+	SetComboRepTimer();
 	AddComboKey(Action::Attack);
+	GetOuterHero()->DoActionServer(Action::Attack);
 }
 
 void UBOInputComponent::ActionAttackFW()
 {
 	if (! GetOuterHero()) return;
 
+	SetComboRepTimer();
 	AddComboKey(Action::AttackFW);
+	GetOuterHero()->DoActionServer(Action::AttackFW);
 }
 
 void UBOInputComponent::ActionAttackBW()
 {
 	if (! GetOuterHero()) return;
 
+	SetComboRepTimer();
 	AddComboKey(Action::AttackBW);
+	GetOuterHero()->DoActionServer(Action::AttackBW);
 }
 
 void UBOInputComponent::ActionJump()
@@ -166,7 +191,8 @@ void UBOInputComponent::ActionJump()
 	if (! GetOuterHero()) return;
 
 	ClearComboKeys();
-	AddComboKey(Action::Jump);
+	SetComboRepTimer();
+	GetOuterHero()->DoActionServer(Action::Jump);
 }
 
 void UBOInputComponent::ActionSpellFW()
@@ -211,6 +237,6 @@ Action UBOInputComponent::SwitchToNextCombo()
 
 void UBOInputComponent::SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex)
 {
-	ComboKeys = NewComboKeys;
+	ComboKeys  = NewComboKeys;
 	ComboIndex = NewKeyIndex;
 }

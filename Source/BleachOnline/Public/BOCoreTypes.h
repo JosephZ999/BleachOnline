@@ -67,16 +67,16 @@ struct FReceivedActionInfo
 
 	FReceivedActionInfo() {}
 
-	FReceivedActionInfo(uint8 nCurrentState, uint8 nKeyIndex, const TArray<EActionType>& nKeys, const FVector& nMoveVector)
+	FReceivedActionInfo(uint8 nCurrentState, EActionType nActionType, const TArray<EActionType>& nKeys, const FVector& nMoveVector)
 		: CurrentState(nCurrentState)
-		, KeyIndex(nKeyIndex)
+		, ActionType(nActionType)
 		, Keys(nKeys)
 		, MovementVector(nMoveVector)
 	{
 	}
 
 	uint8				CurrentState;
-	uint8				KeyIndex;
+	EActionType			ActionType;
 	TArray<EActionType> Keys;
 	FVector				MovementVector;
 };

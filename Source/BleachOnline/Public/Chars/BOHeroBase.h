@@ -41,7 +41,6 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
 public:
-
 	UFUNCTION(Server, UnReliable)
 	void SetMovementVectorServer(const FVector& NewVector);
 	void SetMovementVectorServer_Implementation(const FVector& NewVector);
@@ -51,8 +50,8 @@ public:
 	void SetMovementVectorClient_Implementation(const FVector& NewVector);
 
 	UFUNCTION(Server, UnReliable)
-	void DoActionServer(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys);
-	void DoActionServer_Implementation(EActionType ActionType, const FVector& MoveVector, const TArray<EActionType>& ComboKeys);
+	void DoActionServer(EActionType ActionType);
+	void DoActionServer_Implementation(EActionType ActionType);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DoActionClient(const FReceivedActionInfo& ActionInfo);
@@ -60,8 +59,13 @@ public:
 
 	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
 	virtual bool DoComboAction(uint8 MovementState, EActionType Action) { return false; }
-	void		 SetComboTimer(float Delay);
-	void		 ComboTimerHandle();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DoComboActionClient(uint8 InitialMovementState, EActionType NewAction);
+	void DoComboActionClient_Implementation(uint8 InitialMovementState, EActionType NewAction);
+
+	void SetComboTimer(float Delay);
+	void ComboTimerHandle();
 
 public:
 	UFUNCTION(BlueprintCallable)
