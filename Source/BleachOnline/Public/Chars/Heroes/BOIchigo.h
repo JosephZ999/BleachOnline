@@ -20,4 +20,12 @@ public:
 private:
 	TMap<FName, UPaperFlipbook*> ShikaiAnimations;
 	TMap<FName, UPaperFlipbook*> BankaiAnimations;
+
+protected:
+	virtual bool DoAction(uint8 MovementState, EActionType Action) override;
+	virtual bool DoComboAction(uint8 MovementState, EActionType Action) override;
+
+private:
+	void Attack_1();
+	void Attack_2();
 };

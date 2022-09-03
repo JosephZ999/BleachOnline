@@ -134,7 +134,7 @@ void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool Lo
 
 	if (HasAuthority()) //
 	{
-		NewActionClient(NewState, Animation, LoopAnim, EndTime);
+		// NewActionClient(NewState, Animation, LoopAnim, EndTime);
 	}
 }
 

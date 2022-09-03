@@ -35,7 +35,6 @@ private:
 private:
 	FVector		 MovementVector;
 	FTimerHandle ComboTimer;
-	uint8		 MovementStateCache;
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
@@ -54,11 +53,8 @@ public:
 	void DoActionServer_Implementation(EActionType ActionType);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void DoActionClient(const FReceivedActionInfo& ActionInfo);
-	void DoActionClient_Implementation(const FReceivedActionInfo& ActionInfo);
-
-	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
-	virtual bool DoComboAction(uint8 MovementState, EActionType Action) { return false; }
+	void DoActionClient(uint8 InitialState, EActionType Action);
+	void DoActionClient_Implementation(uint8 InitialState, EActionType Action);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DoComboActionClient(uint8 InitialMovementState, EActionType NewAction);
@@ -66,6 +62,10 @@ public:
 
 	void SetComboTimer(float Delay);
 	void ComboTimerHandle();
+
+protected:
+	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
+	virtual bool DoComboAction(uint8 MovementState, EActionType Action) { return false; }
 
 public:
 	UFUNCTION(BlueprintCallable)

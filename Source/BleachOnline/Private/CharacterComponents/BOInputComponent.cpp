@@ -57,7 +57,6 @@ void UBOInputComponent::UpdateDataServer_Implementation(const TArray<EActionType
 {
 	ComboKeys = NewComboKeys;
 	UpdateDataClient(ComboKeys);
-	UE_LOG(LogInputComp, Display, TEXT("Combo is updated on Server"));
 }
 
 void UBOInputComponent::UpdateDataClient_Implementation(const TArray<EActionType>& NewComboKeys)
@@ -67,8 +66,6 @@ void UBOInputComponent::UpdateDataClient_Implementation(const TArray<EActionType
 	if (GetOuterHero()->HasAuthority()) return;
 
 	ComboKeys = NewComboKeys;
-
-	UE_LOG(LogInputComp, Display, TEXT("Combo is updated on client"));
 }
 
 // Movement //===================================================================================//
