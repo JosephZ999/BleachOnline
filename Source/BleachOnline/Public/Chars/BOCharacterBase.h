@@ -45,14 +45,9 @@ protected:
 
 	// Wrapper Functions |=========================================================================
 
-	UFUNCTION(BlueprintCallable)
-	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
-
-	UFUNCTION(BlueprintCallable)
-	void AddVelocity(const FVector& Direction, float Length);
-
 public:
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& NewTransform) override;
 
 	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
@@ -65,12 +60,19 @@ public:
 	virtual FVector GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
+	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
+
+	UFUNCTION(BlueprintCallable)
+	void AddVelocity(const FVector& Direction, float Length);
+
+	UFUNCTION(BlueprintCallable)
 	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }
 	uint8 GetTeam() const { return Team; }
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
+	UFUNCTION(BlueprintCallable)
 	void StandUp();
 
 	UFUNCTION(BlueprintCallable)
@@ -88,10 +90,9 @@ public:
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
 
-public:
-	virtual void OnConstruction(const FTransform& NewTransform) override;
-
 private:
+	void UpdateRotation();
+
 	UFUNCTION()
 	void OnTakeAnyDamageHandle(
 		AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -101,6 +102,4 @@ private:
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void OnDeathClient();
-
-	void UpdateRotation();
 };

@@ -29,15 +29,23 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBOInputComponent* InputComp;
 
-private:
 	FVector		 MovementVector;
 	FTimerHandle ComboTimer;
 
+public:
+	virtual void Tick(float DeltaTime) override;
+	virtual void EndAction() override;
+
+	UFUNCTION(BlueprintCallable)
+	UBOInputComponent* GetInputComponent() const { return InputComp; }
+
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
+	virtual bool DoComboAction(uint8 MovementState, EActionType Action) { return false; }
 
 public:
 	UFUNCTION(Server, UnReliable)
@@ -57,15 +65,4 @@ public:
 
 	void SetComboTimer(float Delay);
 	void ComboTimerHandle();
-
-protected:
-	virtual bool DoAction(uint8 MovementState, EActionType Action) { return false; }
-	virtual bool DoComboAction(uint8 MovementState, EActionType Action) { return false; }
-
-public:
-	UFUNCTION(BlueprintCallable)
-	UBOInputComponent* GetInputComponent() const { return InputComp; }
-
-	virtual void Tick(float DeltaTime) override;
-	virtual void EndAction() override;
 };

@@ -29,7 +29,12 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	void		 SetPickupOwner(AActor* NewOwner);
+
+	UFUNCTION(BlueprintCallable)
+	void SetPickupOwner(AActor* NewOwner);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetPickupOwnerClient(AActor* PickupOwner);
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,7 +47,4 @@ protected:
 private:
 	void StartPickup();
 
-public:
-	UFUNCTION(NetMulticast, Reliable)
-	void SetPickupOwnerClient(AActor* PickupOwner);
 };
