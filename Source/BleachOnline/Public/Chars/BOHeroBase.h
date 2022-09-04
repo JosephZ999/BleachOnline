@@ -42,23 +42,18 @@ protected:
 public:
 	UFUNCTION(Server, UnReliable)
 	void SetMovementVectorServer(const FVector& NewVector);
-	void SetMovementVectorServer_Implementation(const FVector& NewVector);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void SetMovementVectorClient(const FVector& NewVector);
-	void SetMovementVectorClient_Implementation(const FVector& NewVector);
 
 	UFUNCTION(Server, UnReliable)
 	void DoActionServer(EActionType ActionType);
-	void DoActionServer_Implementation(EActionType ActionType);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DoActionClient(uint8 InitialState, EActionType Action);
-	void DoActionClient_Implementation(uint8 InitialState, EActionType Action);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DoComboActionClient(uint8 InitialMovementState, EActionType NewAction);
-	void DoComboActionClient_Implementation(uint8 InitialMovementState, EActionType NewAction);
 
 	void SetComboTimer(float Delay);
 	void ComboTimerHandle();

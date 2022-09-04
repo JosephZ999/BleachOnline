@@ -52,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0"), Category = "Movement Settings")
 	float JumpHeight;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Replication")
+	float RepFrequency = 0.1f;
+
 private:
 	uint8	State;
 	FVector Velocity		 = FVector::ZeroVector;
@@ -61,6 +64,8 @@ private:
 	bool	bOnGround;
 	bool	bFalling;
 	bool	bControl = true;
+
+	FTimerHandle RepTimer;
 
 protected:
 	virtual void BeginPlay() override;
@@ -97,6 +102,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetFalling(bool Value);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void SetFallingClient();
+	void SetFallingClient_Implementation();
+
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
@@ -114,7 +123,7 @@ public:
 	bool IsOnGround() const { return bOnGround; }
 
 	UFUNCTION(BlueprintCallable)
-	bool IsWalking() const { return bOnGround && ! MovementVector.IsNearlyZero(); }
+	bool IsWalking() const { return State == static_cast<uint8>(EMovementState::Walk); }
 
 	UFUNCTION(BlueprintCallable)
 	bool IsFalling() const { return bFalling; }
@@ -144,4 +153,11 @@ private:
 					? ((bControl) ? Deceleration * GroundFriction * DeltaSeconds : Deceleration * DeltaSeconds) //
 					: ((bControl) ? AirDeceleration * DeltaSeconds : AirDeceleration * 0.2f * DeltaSeconds));
 	}
+
+private:
+	void SetRepTimer();
+	void RepTimerHandle();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void UpdateOnClient(const FVector& Location);
 };

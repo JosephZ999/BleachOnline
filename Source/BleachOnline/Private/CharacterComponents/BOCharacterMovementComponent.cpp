@@ -14,6 +14,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogCharacterMovement, All, All);
 UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetIsReplicated(true);
 
 	// Base Options
 	WalkSpeed		= 200.f;
@@ -37,11 +38,12 @@ void UBOCharacterMovementComponent::BeginPlay()
 	checkf(OwnerCapsulaComp, TEXT("Owner's RootComponent is not a valid type (CharacterMovementComponent)"));
 
 	OwnerActor = GetOwner();
+	SetRepTimer();
 }
 
 void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if (OwnerActor != nullptr)
+	if (OwnerActor)
 	{
 		UpdateVelocity(DeltaTime);
 		UpdateState();
@@ -63,7 +65,10 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 	{
 		if (Hit.Normal.Z > 0.9f)
 		{
-			if (! bLanded && OnLanded.IsBound()) { OnLanded.Execute(Velocity); }
+			if (! bLanded && OnLanded.IsBound())
+			{
+				OnLanded.Execute(Velocity);
+			}
 			bOnGround  = true;
 			Velocity.Z = 0.f;
 		}
@@ -105,7 +110,7 @@ void UBOCharacterMovementComponent::UpdateState()
 
 EMovementState UBOCharacterMovementComponent::FindDesiredState()
 {
-	if (!bFalling)
+	if (! bFalling)
 	{
 		if (bOnGround) //
 		{
@@ -128,7 +133,7 @@ EMovementState UBOCharacterMovementComponent::FindDesiredState()
 
 void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVector)
 {
-	MovementVector	 = ForwardVector;
+	MovementVector = ForwardVector;
 	MovementVector.Normalize();
 	bWalking = (bControl && MovementVector.Size2D() > 0.f) || false;
 }
@@ -138,14 +143,29 @@ bool UBOCharacterMovementComponent::SetFalling(bool Value)
 	bFalling = Value;
 	if (bFalling)
 	{
-		SetControlEnabled(false);
+		bControl = false;
+		if (OwnerActor->HasAuthority())
+		{
+			SetFallingClient();
+		}
 	}
 	return bFalling;
 }
 
+void UBOCharacterMovementComponent::SetFallingClient_Implementation()
+{
+	if (OwnerActor->HasAuthority()) return;
+
+	bControl = false;
+	bFalling = true;
+}
+
 void UBOCharacterMovementComponent::Jump()
 {
-	if (bControl) { Launch(FVector(MovementVelocity.X / 2.f, MovementVelocity.Y / 2.f, JumpHeight), true, true); }
+	if (bControl)
+	{
+		Launch(FVector(MovementVelocity.X / 2.f, MovementVelocity.Y / 2.f, JumpHeight), true, true);
+	}
 }
 
 void UBOCharacterMovementComponent::Launch_Implementation(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
@@ -164,5 +184,28 @@ void UBOCharacterMovementComponent::LaunchClient_Implementation(const FVector& N
 
 void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcibly)
 {
-	if (Forcibly || ! Forcibly && State < static_cast<uint8>(EMovementState::Custom)) { State = NewState; }
+	if (Forcibly || ! Forcibly && State < static_cast<uint8>(EMovementState::Custom))
+	{
+		State = NewState;
+	}
+}
+
+void UBOCharacterMovementComponent::SetRepTimer()
+{
+	if (! OwnerActor->HasAuthority()) return;
+	OwnerActor->GetWorldTimerManager().SetTimer(
+		RepTimer, this, &UBOCharacterMovementComponent::RepTimerHandle, FMath::Max(RepFrequency, 0.05f), true);
+}
+
+void UBOCharacterMovementComponent::RepTimerHandle()
+{
+	UpdateOnClient(OwnerActor->GetActorLocation());
+}
+
+void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector& Location)
+{
+	if (OwnerActor->HasAuthority()) return;
+
+	const auto NewLocation = FMath::Lerp(Location, OwnerActor->GetActorLocation(), 0.5f);
+	OwnerActor->SetActorLocation(NewLocation);
 }

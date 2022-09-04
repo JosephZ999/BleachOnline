@@ -52,15 +52,17 @@ protected:
 	void AddVelocity(const FVector& Direction, float Length);
 
 public:
+	virtual void Tick(float DeltaTime) override;
+
 	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 
 	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
 	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
-	
-	virtual void				   AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
-	virtual FVector				   GetVelocity() const override;
+
+	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
+	virtual FVector GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
 	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }
@@ -83,7 +85,7 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime);
 
-	void EndActionDeferred(float WaitTime);
+	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
 
 public:
@@ -96,4 +98,9 @@ private:
 
 	UFUNCTION()
 	void OnDeath();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void OnDeathClient();
+
+	void UpdateRotation();
 };

@@ -8,6 +8,7 @@
 #include "BOCoreTypes.h"
 #include "CharacterConsts.h"
 
+#include "GameFramework/Controller.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbook.h"
 #include "EngineUtils.h"
@@ -49,9 +50,17 @@ void ABOCharacterBase::BeginPlay()
 	MovementComp->OnLanded.BindUObject(this, &ABOCharacterBase::OnLanded);
 }
 
+void ABOCharacterBase::Tick(float DeltaTime)
+{
+	UpdateRotation();
+}
+
 void ABOCharacterBase::OnLanded(FVector LastVelocity)
 {
-	if (GetMoveComp()->IsFalling()) { GetWorldTimerManager().SetTimer(StandUpTimer, this, &ABOCharacterBase::StandUp, 3.f); }
+	if (GetMoveComp()->IsFalling())
+	{
+		GetWorldTimerManager().SetTimer(StandUpTimer, this, &ABOCharacterBase::StandUp, 3.f);
+	}
 }
 
 void ABOCharacterBase::StandUp()
@@ -117,6 +126,34 @@ void ABOCharacterBase::OnDeath()
 	bDead = true;
 	EndActionDeferred(0.f);
 	GetMoveComp()->SetFalling(true);
+
+	if (HasAuthority())
+	{
+		OnDeathClient();
+	}
+}
+
+void ABOCharacterBase::OnDeathClient_Implementation()
+{
+	if (HasAuthority()) return;
+
+	OnDeath();
+}
+
+void ABOCharacterBase::UpdateRotation()
+{
+	if (! GetMoveComp()->IsWalking()) return;
+
+	if (FMath::IsNearlyZero(GetMoveComp()->GetMoveVector().X)) return;
+
+	const float RotationYaw = (GetMoveComp()->GetMoveVector().X > 0.f) ? 0.f : 180.f;
+
+	if (IsLocallyControlled())
+	{
+		GetController()->SetControlRotation(FRotator(0.f, RotationYaw, 0.f));
+		return;
+	}
+	SetActorRotation(FRotator(0.f, RotationYaw, 0.f));
 }
 
 bool ABOCharacterBase::IsDoingAnything() const
@@ -132,9 +169,9 @@ void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool Lo
 	GetWorldTimerManager().ClearTimer(EndActionTimer);
 	LoopAnim ? EndActionDeferred(EndTime) : EndActionDeferred(GetSpriteComp()->GetFlipbookLength());
 
-	if (HasAuthority()) //
+	if (HasAuthority())
 	{
-		// NewActionClient(NewState, Animation, LoopAnim, EndTime);
+		NewActionClient(NewState, Animation, LoopAnim, EndTime);
 	}
 }
 
@@ -146,7 +183,7 @@ void ABOCharacterBase::NewActionClient_Implementation(uint8 NewState, const FNam
 
 void ABOCharacterBase::EndActionDeferred(float WaitTime)
 {
-	if (WaitTime > 0.f) //
+	if (WaitTime > 0.f)
 	{
 		GetWorldTimerManager().SetTimer(EndActionTimer, this, &ABOCharacterBase::EndAction, WaitTime);
 	}
