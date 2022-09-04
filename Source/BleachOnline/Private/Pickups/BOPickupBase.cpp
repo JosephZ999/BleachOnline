@@ -7,6 +7,9 @@
 
 ABOPickupBase::ABOPickupBase()
 {
+	SetReplicates(true);
+	bReplicateMovement = false;
+
 	// Moving to character variables
 	PrimaryActorTick.bCanEverTick = true;
 	bPickingup					  = false;
@@ -53,11 +56,15 @@ void ABOPickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
+	if (! HasAuthority()) return;
+
 	if (PickupCharacter) return;
 
-	OtherActor->ActorHasTag(CharConsts::PickupTag);
-	PickupCharacter = OtherActor;
-	GetWorldTimerManager().SetTimer(PickupDelayTimer, this, &ABOPickupBase::StartPickup, 1.f);
+	if (OtherActor->ActorHasTag(CharConsts::PickupTag))
+	{
+		SetPickupOwner(OtherActor);
+		SetPickupOwnerClient(OtherActor);
+	}
 }
 
 void ABOPickupBase::StartPickup()
@@ -79,4 +86,11 @@ void ABOPickupBase::SetPickupOwner(AActor* NewOwner)
 	bPickingup		= false;
 	PickingProgress = 0.f;
 	GetWorldTimerManager().SetTimer(PickupDelayTimer, this, &ABOPickupBase::StartPickup, 1.f);
+}
+
+void ABOPickupBase::SetPickupOwnerClient_Implementation(AActor* PickupOwner)
+{
+	if (HasAuthority()) return;
+
+	SetPickupOwner(PickupOwner);
 }

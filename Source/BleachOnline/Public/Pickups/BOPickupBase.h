@@ -41,4 +41,8 @@ protected:
 
 private:
 	void StartPickup();
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void SetPickupOwnerClient(AActor* PickupOwner);
 };
