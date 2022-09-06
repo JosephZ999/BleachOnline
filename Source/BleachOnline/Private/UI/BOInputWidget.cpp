@@ -29,7 +29,7 @@ FReply UBOInputWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const F
 	{
 		MovementStartPoint	 = (bLockMovement) ? MovementCenter : LocalPosition;
 		MovementPointerIndex = InGestureEvent.GetPointerIndex();
-
+		MovementPressed(MovementStartPoint);
 		if (FVector2D::Distance(MovementStartPoint, LocalPosition) > MinMoveRadius)
 		{
 			const float Angle = (CrossDevisions == 0)
@@ -38,7 +38,7 @@ FReply UBOInputWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const F
 
 			const FVector ForwardVector = FRotator(0.f, Angle, 0.f).Vector();
 			Move.Broadcast(ForwardVector);
-			MovementMoved(LocalPosition, MovementStartPoint, ForwardVector);
+			MovementMoved(LocalPosition, MovementStartPoint, Angle);
 		}
 	}
 
@@ -90,7 +90,11 @@ FReply UBOInputWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPo
 
 			const FVector ForwardVector = FRotator(0.f, Angle, 0.f).Vector();
 			Move.Broadcast(ForwardVector);
-			MovementMoved(LocalPosition, MovementStartPoint, ForwardVector);
+			MovementMoved(LocalPosition, MovementStartPoint, Angle);
+		}
+		else
+		{
+			MovementPressed(MovementStartPoint);
 		}
 	}
 	return Super::NativeOnTouchMoved(InGeometry, InGestureEvent);

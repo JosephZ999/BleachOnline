@@ -24,19 +24,19 @@ public:
 	FDoGuardSignature  DoGuard;
 	FMoveSignature	   Move;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input Widget")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input Widget")
 	bool bAllowMovement = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
 	bool bLockMovement;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bLockMovement))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input Widget", Meta = (EditCondition = bLockMovement))
 	FVector2D MovementCenter;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
 	uint8 CrossDevisions = 8;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input Widget")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input Widget")
 	float ActionBtnSize = 200.f;
 
 private:
@@ -69,10 +69,10 @@ public:
 
 	// Movement
 	UFUNCTION(BlueprintImplementableEvent)
-	void MovementPressed(const FVector2D& Point, const FVector2D& Center, const FVector& ForwardVector);
+	void MovementPressed(const FVector2D& Center);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void MovementMoved(const FVector2D& Point, const FVector2D& Center, const FVector& ForwardVector);
+	void MovementMoved(const FVector2D& Point, const FVector2D& Center, float Angle);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void MovementReleased();
