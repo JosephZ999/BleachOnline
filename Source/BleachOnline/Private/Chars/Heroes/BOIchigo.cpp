@@ -47,13 +47,11 @@ bool ABOIchigo::DoComboAction(uint8 MovementState, EActionType Action)
 
 void ABOIchigo::Attack_1()
 {
-	NewAction(20, FName("Attack_1"));
-	SetComboTimer(1.f);
-	EndActionDeferred(2.f);
+	NewAction(20, FName("Attack_1"), false, 2.f);
+	SetComboTimer(0.5);
 }
 
 void ABOIchigo::Attack_2()
 {
-	NewAction(25, FName("Attack_1"));
-	EndActionDeferred(2.f);
+	NewAction(25, FName("Attack_1"), false, 2.f);
 }

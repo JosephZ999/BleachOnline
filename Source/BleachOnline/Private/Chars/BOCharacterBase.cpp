@@ -167,7 +167,7 @@ void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool Lo
 	GetMoveComp()->SetControlEnabled(false);
 	GetSpriteComp()->SetAnimation(Animation, LoopAnim);
 	GetWorldTimerManager().ClearTimer(EndActionTimer);
-	LoopAnim ? EndActionDeferred(EndTime) : EndActionDeferred(GetSpriteComp()->GetFlipbookLength());
+	FMath::IsNearlyZero(EndTime) ? EndActionDeferred(GetSpriteComp()->GetFlipbookLength()) : EndActionDeferred(EndTime);
 
 	if (HasAuthority())
 	{

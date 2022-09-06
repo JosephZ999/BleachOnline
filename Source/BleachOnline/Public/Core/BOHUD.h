@@ -7,7 +7,9 @@
 #include "BOHUD.generated.h"
 
 class UBOGameUIWidget;
+class UBOInputWidget;
 class UBOIndicatorComponent;
+
 /**
  *
  */
@@ -20,13 +22,17 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UBOGameUIWidget> GameUIClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UBOInputWidget> InputWidgetClass;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Initialize();
 
 private:
-	void OnIndicatorChanged(UActorComponent* Component,float Percent);
+	void OnIndicatorChanged(UActorComponent* Component, float Percent);
 	void SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator);
 
 	UBOGameUIWidget* GameUIWidget;
+	UBOInputWidget*	 InputWidget;
 };

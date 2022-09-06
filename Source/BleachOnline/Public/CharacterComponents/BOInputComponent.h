@@ -63,6 +63,11 @@ public:
 	void   SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex);
 	Action SwitchToNextCombo();
 
+	//
+	void DoActionHandle(EActionType Action);
+	void DoGuardHandle(bool Start);
+	void DoMoveHandle(FVector Direction);
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "InputActions")
 	void ActionAttack();

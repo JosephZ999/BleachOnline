@@ -237,3 +237,21 @@ void UBOInputComponent::SetCombo(TArray<Action> NewComboKeys, uint8 NewKeyIndex)
 	ComboKeys  = NewComboKeys;
 	ComboIndex = NewKeyIndex;
 }
+
+void UBOInputComponent::DoActionHandle(EActionType Action)
+{
+	switch (Action)
+	{ // clang-format off
+	case Action::Attack:   ActionAttack();													break;
+	case Action::AttackFW: OuterHero->IsLookRight() ? ActionAttackFW() : ActionAttackBW();  break;
+	case Action::AttackBW: OuterHero->IsLookRight() ? ActionAttackBW() : ActionAttackFW();	break;
+	case Action::Jump:     ActionJump();													break;
+	} // clang-format on
+}
+
+void UBOInputComponent::DoGuardHandle(bool Start) {}
+
+void UBOInputComponent::DoMoveHandle(FVector Direction)
+{
+	OuterHero->SetMovementVectorServer(Direction);
+}

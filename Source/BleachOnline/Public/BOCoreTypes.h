@@ -56,6 +56,11 @@ enum class EActionType : uint8
 	AttackBW,
 	Jump,
 	Guard,
+
+	// Specials
+	SpecialFW,
+	SpecialBW,
+	PowerCharge,
 };
 
 typedef EActionType Action;

@@ -12,7 +12,8 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 
-UCLASS(abstract) class BLEACHONLINE_API ABOCharacterBase : public APawn
+UCLASS(abstract) 
+class BLEACHONLINE_API ABOCharacterBase : public APawn
 {
 	GENERATED_BODY()
 
@@ -82,7 +83,10 @@ public:
 	bool IsDoingAnything() const;
 
 	UFUNCTION(BlueprintCallable)
-	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false, float EndTime = -1.f);
+	bool IsLookRight() const { return FMath::IsNearlyZero(GetActorRotation().Yaw); }
+
+	UFUNCTION(BlueprintCallable)
+	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false, float EndTime = 0.f);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime);

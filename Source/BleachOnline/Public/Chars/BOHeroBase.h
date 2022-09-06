@@ -40,7 +40,7 @@ public:
 	virtual void EndAction() override;
 
 	UFUNCTION(BlueprintCallable)
-	UBOInputComponent* GetInputComponent() const { return InputComp; }
+	FORCEINLINE UBOInputComponent* GetInputComponent() const { return InputComp; }
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);

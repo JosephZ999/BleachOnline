@@ -95,6 +95,7 @@ FReply UBOInputWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPo
 		else
 		{
 			MovementPressed(MovementStartPoint);
+			Move.Broadcast(FVector::ZeroVector);
 		}
 	}
 	return Super::NativeOnTouchMoved(InGeometry, InGestureEvent);
