@@ -51,6 +51,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddValue(float AddValue);
 
+public:
+	UFUNCTION(Client, Unreliable)
+	void OnValueChanged(float Percent);
+	void OnValueChanged_Implementation(float Percent);
+
 private:
-	inline void OnValueChanged();
+	void CheckForEmpty();
 };

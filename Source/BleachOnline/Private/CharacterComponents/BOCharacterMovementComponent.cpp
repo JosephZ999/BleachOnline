@@ -52,9 +52,16 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+FORCEINLINE FVector UBOCharacterMovementComponent::GetVelocity() const
+{
+	return FVector(Velocity + MovementVelocity).GetSafeNormal() * VelocityLength;
+}
+
 void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 {
 	/* Add Offset Z */ //
+	const auto PreLocation = OwnerActor->GetActorLocation();
+
 	FHitResult Hit;
 	auto	   VelocityOffsetZ = (FMath::IsNearlyEqual(Velocity.Z, 0.f)) ? -100.f : Velocity.Z;
 	OwnerActor->AddActorWorldOffset(FVector(0.f, 0.f, VelocityOffsetZ * Delta), true, &Hit);
@@ -91,8 +98,12 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 		MovementVelocity = MovementVelocity.GetSafeNormal() * ((NewSize <= 0.f) ? 0.f : NewSize);
 	}
 
+
 	OwnerActor->AddActorWorldOffset(FVector((Velocity.X + MovementVelocity.X) * Delta, 0.f, 0.f), true);
 	OwnerActor->AddActorWorldOffset(FVector(0.f, (Velocity.Y + MovementVelocity.Y) * Delta, 0.f), true);
+
+	const auto PostLocation = OwnerActor->GetActorLocation();
+	VelocityLength = FVector::Dist2D(PreLocation, PostLocation) / Delta;
 
 	auto  Velocity2D = FVector(Velocity.X, Velocity.Y, 0.f);
 	float VelSize	 = Velocity2D.Size();
@@ -114,7 +125,7 @@ EMovementState UBOCharacterMovementComponent::FindDesiredState()
 	{
 		if (bOnGround) //
 		{
-			return (MovementVelocity.Size() > 0.f && bControl) ? EMovementState::Walk : EMovementState::Stand;
+			return (bControl && GetVelocity().Size2D() > 25.f) ? EMovementState::Walk : EMovementState::Stand;
 		}
 
 		if (FMath::IsNearlyEqual(Velocity.Z, 0.f, JUMP_HOLD_INTERVAL)) //

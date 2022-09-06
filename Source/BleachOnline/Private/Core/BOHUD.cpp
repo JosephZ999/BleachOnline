@@ -63,5 +63,10 @@ void ABOHUD::SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator)
 	if (Indicator)
 	{
 		Indicator->OnChange.AddUObject(this, &ABOHUD::OnIndicatorChanged);
+
+		if (!HasAuthority())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AAAAAAAAAAAAAA"));
+		}
 	}
 }

@@ -60,6 +60,7 @@ private:
 	FVector Velocity		 = FVector::ZeroVector;
 	FVector MovementVelocity = FVector::ZeroVector;
 	FVector MovementVector	 = FVector::ZeroVector;
+	float	VelocityLength	 = 0.f;
 	bool	bWalking;
 	bool	bOnGround;
 	bool	bFalling;
@@ -78,7 +79,10 @@ public:
 	uint8 GetMovementState() const { return State; }
 
 	UFUNCTION(BlueprintCallable)
-	FVector GetVelocity() const { return Velocity; }
+	FVector GetVelocity() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetVelocityLength() const { return VelocityLength; }
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetMoveVector() const { return MovementVector; }

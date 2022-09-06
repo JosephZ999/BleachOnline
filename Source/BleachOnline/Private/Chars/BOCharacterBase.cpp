@@ -52,6 +52,7 @@ void ABOCharacterBase::BeginPlay()
 
 void ABOCharacterBase::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 	UpdateRotation();
 }
 
