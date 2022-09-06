@@ -10,15 +10,15 @@ constexpr uint8 AttackFWIndex = 2;
 constexpr uint8 AttackBWIndex = 4;
 constexpr uint8 JumpIndex	  = 1;
 constexpr uint8 GuardIndex	  = 3;
+constexpr float MinMoveRadius = 50.f;
 
 FReply UBOInputWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	const auto LocalPosition			= InGeometry.AbsoluteToLocal(InGestureEvent.GetScreenSpacePosition());
 	const bool PressedRightSideOfScreen = LocalPosition.X > InGeometry.GetLocalSize().X / 2.f;
 
-	if (PressedRightSideOfScreen || bOnlyAction)
+	if (PressedRightSideOfScreen || ! bAllowMovement)
 	{
-		// UE_LOG(LogInputWidget, Display, TEXT("Action Pressed"));
 		ActionStartPoint	= LocalPosition;
 		ActionPointerIndex	= InGestureEvent.GetPointerIndex();
 		ActionLastSelection = 0;
@@ -27,10 +27,19 @@ FReply UBOInputWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const F
 	}
 	else
 	{
-		// UE_LOG(LogInputWidget, Display, TEXT("Movement Pressed"));
-		MovementStartPoint	 = LocalPosition;
+		MovementStartPoint	 = (bLockMovement) ? MovementCenter : LocalPosition;
 		MovementPointerIndex = InGestureEvent.GetPointerIndex();
-		MovementPressed(LocalPosition);
+
+		if (FVector2D::Distance(MovementStartPoint, LocalPosition) > MinMoveRadius)
+		{
+			const float Angle = (CrossDevisions == 0)
+									? BOLib::GetAngleBetweenVectors(MovementStartPoint, LocalPosition)
+									: (360.f / CrossDevisions) * BOLib::DivideAngle(LocalPosition, MovementStartPoint, CrossDevisions);
+
+			const FVector ForwardVector = FRotator(0.f, Angle, 0.f).Vector();
+			Move.Broadcast(ForwardVector);
+			MovementMoved(LocalPosition, MovementStartPoint, ForwardVector);
+		}
 	}
 
 	return Super::NativeOnTouchStarted(InGeometry, InGestureEvent);
@@ -40,7 +49,7 @@ FReply UBOInputWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPo
 {
 	const auto	LocalPosition = InGeometry.AbsoluteToLocal(InGestureEvent.GetScreenSpacePosition());
 	const float Distance	  = FVector2D::Distance(ActionStartPoint, LocalPosition);
-	
+
 	if (InGestureEvent.GetPointerIndex() == ActionPointerIndex)
 	{
 		ActionMoved(LocalPosition);
@@ -73,10 +82,17 @@ FReply UBOInputWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPo
 	}
 	else if (InGestureEvent.GetPointerIndex() == MovementPointerIndex)
 	{
-		// UE_LOG(LogInputWidget, Display, TEXT("Movement Moved"));
-		MovementMoved(LocalPosition);
-	}
+		if (FVector2D::Distance(MovementStartPoint, LocalPosition) > MinMoveRadius)
+		{
+			const float Angle = (CrossDevisions == 0)
+									? BOLib::GetAngleBetweenVectors(MovementStartPoint, LocalPosition)
+									: (360.f / CrossDevisions) * BOLib::DivideAngle(LocalPosition, MovementStartPoint, CrossDevisions);
 
+			const FVector ForwardVector = FRotator(0.f, Angle, 0.f).Vector();
+			Move.Broadcast(ForwardVector);
+			MovementMoved(LocalPosition, MovementStartPoint, ForwardVector);
+		}
+	}
 	return Super::NativeOnTouchMoved(InGeometry, InGestureEvent);
 }
 
@@ -98,9 +114,9 @@ FReply UBOInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPo
 	}
 	else if (InGestureEvent.GetPointerIndex() == MovementPointerIndex)
 	{
-		// UE_LOG(LogInputWidget, Display, TEXT("Movement Released"));
 		MovementPointerIndex = -1;
 		MovementReleased();
+		Move.Broadcast(FVector::ZeroVector);
 	}
 
 	return Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
@@ -109,5 +125,4 @@ FReply UBOInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPo
 void UBOInputWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
-	// UE_LOG(LogInputWidget, Display, TEXT("On Mouse Leave"));
 }

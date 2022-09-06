@@ -9,6 +9,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDoActionSignature, EActionType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FDoGuardSignature, bool);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMoveSignature, FVector);
 
 /**
  *
@@ -21,23 +22,28 @@ class BLEACHONLINE_API UBOInputWidget : public UUserWidget
 public:
 	FDoActionSignature DoAction;
 	FDoGuardSignature  DoGuard;
+	FMoveSignature	   Move;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input Widget")
-	bool bOnlyAction = true;
+	bool bAllowMovement = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
+	bool bLockMovement;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bLockMovement))
+	FVector2D MovementCenter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input Widget", Meta = (EditCondition = bAllowMovement))
+	uint8 CrossDevisions = 8;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input Widget")
 	float ActionBtnSize = 200.f;
 
 private:
 	FVector2D ActionStartPoint;
-	FVector2D ActionCurrentPoint;
-	FVector2D ActionEndPoint;
 	int8	  ActionPointerIndex = -1;
 	uint8	  ActionLastSelection;
-
 	FVector2D MovementStartPoint;
-	FVector2D movementCurrentPoint;
-	FVector2D MovementEndPoint;
 	int8	  MovementPointerIndex = -1;
 
 protected:
@@ -63,10 +69,10 @@ public:
 
 	// Movement
 	UFUNCTION(BlueprintImplementableEvent)
-	void MovementPressed(const FVector2D& Point);
+	void MovementPressed(const FVector2D& Point, const FVector2D& Center, const FVector& ForwardVector);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void MovementMoved(const FVector2D& Point);
+	void MovementMoved(const FVector2D& Point, const FVector2D& Center, const FVector& ForwardVector);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void MovementReleased();
