@@ -44,8 +44,8 @@ public:
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-	virtual bool DoAction(uint8 MovementState, EActionType Action);
-	virtual bool DoComboAction(uint8 MovementState, EActionType Action);
+	virtual bool DoAction(const uint8 MovementState, const EActionType Action);
+	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action);
 
 public:
 	UFUNCTION(Server, UnReliable)

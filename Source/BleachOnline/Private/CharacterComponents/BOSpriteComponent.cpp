@@ -17,7 +17,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogSpriteComp, All, All);
 #define AN_JUMP_UP		   "JumpUp"
 #define AN_JUMP_HOLD	   "JumpHold"
 #define AN_JUMP_DOWN	   "JumpDown"
-#define AN_HIT			   "Hit"
+#define AN_HIT			   "Hit1"
 #define AN_HIT2			   "Hit2"
 #define AN_HIT3			   "Hit3"
 

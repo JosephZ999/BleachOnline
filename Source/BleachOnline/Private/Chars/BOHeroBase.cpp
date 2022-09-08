@@ -130,7 +130,7 @@ void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState,
 	DoComboAction(InitialMovementState, NewAction);
 }
 
-bool ABOHeroBase::DoAction(uint8 MovementState, EActionType Action)
+bool ABOHeroBase::DoAction(const uint8 MovementState, const EActionType Action)
 {
 	if (HasAuthority())
 	{
@@ -139,7 +139,7 @@ bool ABOHeroBase::DoAction(uint8 MovementState, EActionType Action)
 	return true;
 }
 
-bool ABOHeroBase::DoComboAction(uint8 MovementState, EActionType Action)
+bool ABOHeroBase::DoComboAction(const uint8 MovementState, const EActionType Action)
 {
 	if (HasAuthority())
 	{

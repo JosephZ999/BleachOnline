@@ -67,6 +67,7 @@ private:
 	bool	bControl = true;
 
 	// Launching
+	uint8	LaunchStateCache;
 	FVector LaunchVelocityCache;
 	bool	bLaunchXYOverrideCache;
 	bool	bLaunchZOverrideCache;
@@ -160,9 +161,12 @@ private:
 
 	FORCEINLINE float GetDeceleration(float DeltaSeconds) const
 	{
-		return ((bOnGround)																						//
-					? ((bControl) ? Deceleration * GroundFriction * DeltaSeconds : Deceleration * DeltaSeconds) //
-					: ((bControl) ? AirDeceleration * DeltaSeconds : AirDeceleration * 0.2f * DeltaSeconds));
+		return ((bOnGround) ? ((!bFalling) //
+									  ? Deceleration * GroundFriction * DeltaSeconds
+									  : Deceleration * DeltaSeconds)
+							: ((!bFalling) //
+									  ? AirDeceleration * DeltaSeconds
+									  : AirDeceleration * 0.2f * DeltaSeconds));
 	}
 
 private:

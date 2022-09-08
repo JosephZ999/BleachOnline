@@ -7,49 +7,136 @@
 
 ABOIchigo::ABOIchigo()
 {
-	UBOSpriteComponent::InitBaseAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/FBook");
-	UBOSpriteComponent::InitBaseAnimations(BankaiAnimations, "/Game/BleachOnline/Texture/Chars/IchigoBankai/FBook");
-	//...
+	UBOSpriteComponent::InitBaseAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
+	// UBOSpriteComponent::InitBaseAnimations(BankaiAnimations, "/Game/BleachOnline/Texture/Chars/IchigoBankai/FBook");
+
 	GetSpriteComp()->SetBaseAnimations(ShikaiAnimations);
 }
 
-bool ABOIchigo::DoAction(uint8 MovementState, EActionType Action)
+bool ABOIchigo::DoAction(const uint8 MovementState, const EActionType Action)
 {
 	bool Continue = Super::DoAction(MovementState, Action);
 	if (! Continue) return false;
 
 	switch (Action)
 	{
-	case EActionType::Attack: Attack_1(); return true;
+	case EActionType::Attack:
+	{
+		if (IsOnGround())
+		{
+			AttackLight();
+			return true;
+		}
+		else
+		{
+			AttackAir();
+		}
+		break;
 	}
+	case EActionType::AttackFW:
+	{
+		if (IsOnGround())
+		{
+			AttackFW();
+			return true;
+		}
+		break;
+	}
+	case EActionType::AttackBW:
+	{
+		if (IsOnGround())
+		{
+			AttackBW();
+			return true;
+		}
+		break;
+	}
+	} // Switch end
 
 	return false;
 }
 
-bool ABOIchigo::DoComboAction(uint8 MovementState, EActionType Action)
+bool ABOIchigo::DoComboAction(const uint8 MovementState, const EActionType Action)
 {
 	bool Continue = Super::DoComboAction(MovementState, Action);
 	if (! Continue) return false;
 
-	if (MovementState == 20 && Action == EActionType::Attack)
+	const EIchigoState State = static_cast<EIchigoState>(MovementState);
+
+	switch (State)
 	{
-		Attack_2();
-		return true;
+	case EIchigoState::AttackL:
+	{
+		if (Action == EActionType::Attack)
+		{
+			AttackMedium();
+		}
+		break;
 	}
+
+	case EIchigoState::AttackM:
+	{
+		if (Action == EActionType::AttackFW)
+		{
+			AttackFW();
+		}
+		else if (Action == EActionType::AttackBW)
+		{
+			AttackBW();
+		}
+	}
+	} // Switch End
 
 	return false;
 }
 
-void ABOIchigo::Attack_1()
-{
-	NewAction(20, FName("Attack_1"), false, 2.f);
-	LaunchCharacter(GetMoveVector(), 250.f, true);
+// Actions //------------------------------------------------------------------------------------//
 
-	SetComboTimer(0.5);
+void ABOIchigo::AttackLight()
+{
+	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackL);
+	const FName AnimationName = "Attack1";
+
+	NewAction(State, AnimationName);
+	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 200.f, GetAnimTime(3.f), true);
+
+	SetComboTimer(GetAnimTime(9.f));
 }
 
-void ABOIchigo::Attack_2()
+void ABOIchigo::AttackMedium()
 {
-	NewAction(25, FName("Attack_1"), false, 2.f);
+	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackM);
+	const FName AnimationName = "Attack2";
+
+	NewAction(State, AnimationName);
+	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 200.f, GetAnimTime(1.f), true);
+
+	SetComboTimer(GetAnimTime(8.f));
+}
+
+void ABOIchigo::AttackFW()
+{
+	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackFW);
+	const FName AnimationName = "AttackFW";
+
+	NewAction(State, AnimationName);
+	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 300.f, GetAnimTime(1.f), true);
+}
+
+void ABOIchigo::AttackBW()
+{
+	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackBW);
+	const FName AnimationName = "AttackBW";
+
+	NewAction(State, AnimationName);
+	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 250.f, GetAnimTime(4.f), true);
+}
+
+void ABOIchigo::AttackAir()
+{
+	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackAirL);
+	const FName AnimationName = "AttackAir";
+
+	NewAction(State, AnimationName);
 	LaunchCharacter(GetMoveVector(), 250.f, true);
 }

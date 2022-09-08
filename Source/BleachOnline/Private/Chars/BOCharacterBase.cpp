@@ -104,6 +104,11 @@ FVector ABOCharacterBase::GetMoveVector() const
 	return MovementComp->GetMoveVector();
 }
 
+float ABOCharacterBase::GetAnimTime(const float Frame)
+{
+	return Frame / FMath::Max(GetSpriteComp()->GetFlipbookFramerate(), 1.f);
+}
+
 void ABOCharacterBase::Jump()
 {
 	MovementComp->Jump();
@@ -129,7 +134,7 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	const bool CanFall = DamageActor->bFall || bDead;
 	if (! GetMoveComp()->SetFalling(CanFall)) //
 	{
-		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", true, 0.2f);
+		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.2f, true);
 	}
 	HealthComp->AddValue(-Damage);
 }
@@ -174,24 +179,24 @@ bool ABOCharacterBase::IsDoingAnything() const
 	return GetMoveComp()->IsDoingAnything();
 }
 
-void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime)
+void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, float Length, bool LoopAnim)
 {
 	GetMoveComp()->SetMovementState(NewState, true);
 	GetMoveComp()->SetControlEnabled(false);
 	GetSpriteComp()->SetAnimation(Animation, LoopAnim);
 	GetWorldTimerManager().ClearTimer(EndActionTimer);
-	FMath::IsNearlyZero(EndTime) ? EndActionDeferred(GetSpriteComp()->GetFlipbookLength()) : EndActionDeferred(EndTime);
+	FMath::IsNearlyZero(Length) ? EndActionDeferred(GetSpriteComp()->GetFlipbookLength()) : EndActionDeferred(Length);
 
 	if (HasAuthority())
 	{
-		NewActionClient(NewState, Animation, LoopAnim, EndTime);
+		NewActionClient(NewState, Animation, Length, LoopAnim);
 	}
 }
 
-void ABOCharacterBase::NewActionClient_Implementation(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime)
+void ABOCharacterBase::NewActionClient_Implementation(uint8 NewState, const FName& Animation, float Length, bool LoopAnim)
 {
 	if (HasAuthority()) return;
-	NewAction(NewState, Animation, LoopAnim, EndTime);
+	NewAction(NewState, Animation, Length, LoopAnim);
 }
 
 void ABOCharacterBase::EndActionDeferred(float WaitTime)

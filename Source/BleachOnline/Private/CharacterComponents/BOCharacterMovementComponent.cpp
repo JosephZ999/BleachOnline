@@ -21,8 +21,8 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	Gravity			= 900.f;
 	MaxFallSpeed	= 600.f;
 	Acceleration	= 3000.f;
-	Deceleration	= 750.f;
-	GroundFriction	= 4.f;
+	Deceleration	= 800.f;
+	GroundFriction	= 2.5f; // Deceleration Multiplier
 	JumpHeight		= 450.f;
 	AirAcceleration = 200.f;
 	AirDeceleration = 750.f;
@@ -154,6 +154,7 @@ bool UBOCharacterMovementComponent::SetFalling(bool Value)
 	if (bFalling)
 	{
 		bControl = false;
+		Velocity.Z += 200.f;
 		if (OwnerActor->HasAuthority())
 		{
 			SetFallingClient();
@@ -168,6 +169,7 @@ void UBOCharacterMovementComponent::SetFallingClient_Implementation()
 
 	bControl = false;
 	bFalling = true;
+	Velocity.Z += 200.f;
 }
 
 void UBOCharacterMovementComponent::Jump()
@@ -198,8 +200,9 @@ void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYO
 
 void UBOCharacterMovementComponent::LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride, bool bZOverride)
 {
-	if (!OwnerActor->HasAuthority()) return;
+	if (! OwnerActor->HasAuthority()) return;
 
+	LaunchStateCache	   = State;
 	LaunchVelocityCache	   = NewVelocity;
 	bLaunchXYOverrideCache = bXYOverride;
 	bLaunchZOverrideCache  = bZOverride;
@@ -212,8 +215,9 @@ void UBOCharacterMovementComponent::LaunchDeferred(const FVector& NewVelocity, f
 	LaunchDeferredHandle();
 }
 
-void UBOCharacterMovementComponent::LaunchDeferredHandle() 
+void UBOCharacterMovementComponent::LaunchDeferredHandle()
 {
+	if (LaunchStateCache != State) return;
 	Launch(LaunchVelocityCache, bLaunchXYOverrideCache, bLaunchZOverrideCache);
 }
 

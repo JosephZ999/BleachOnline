@@ -76,6 +76,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FVector GetMoveVector() const;
 
+	float GetAnimTime(const float Frame);
+
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
@@ -92,10 +94,10 @@ public:
 	bool IsLookRight() const { return FMath::IsNearlyZero(GetActorRotation().Yaw); }
 
 	UFUNCTION(BlueprintCallable)
-	void NewAction(uint8 State, const FName& Animation, bool LoopAnim = false, float EndTime = 0.f);
+	void NewAction(uint8 State, const FName& Animation, float Length=0.f, bool LoopAnim=false);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
-	void NewActionClient(uint8 NewState, const FName& Animation, bool LoopAnim, float EndTime);
+	void NewActionClient(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
 
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
