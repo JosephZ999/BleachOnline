@@ -36,9 +36,6 @@ public:
 private:
 	uint8 Team;
 
-protected:
-	virtual void BeginPlay() override;
-
 public:
 	UFUNCTION(BlueprintCallable)
 	void Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions);
@@ -46,8 +43,7 @@ public:
 	uint8 GetTeam() const { return Team; }
 	FVector GetImpulseVector(const AActor* TargetActor) const;
 
-private:
-	UFUNCTION()
-	void OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherActor);
+protected:
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 };

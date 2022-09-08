@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BODamageActor.h"
-#include "Components/BoxComponent.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogActorDamage, All, All);
+DEFINE_LOG_CATEGORY_STATIC(LogDamageActor, All, All);
 
 ABODamageActor::ABODamageActor()
 {
@@ -11,16 +10,6 @@ ABODamageActor::ABODamageActor()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	SetRootComponent(SceneComponent);
-}
-
-void ABODamageActor::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (HasAuthority()) //
-	{
-		OnActorBeginOverlap.AddDynamic(this, &ABODamageActor::OnBeginOverHandle);
-	}
 }
 
 void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
@@ -33,10 +22,15 @@ void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
 	Damage.ArmorPiercing += DamageOptions.ArmorPiercing;
 }
 
-void ABODamageActor::OnBeginOverHandle(AActor* OverlappedActor, AActor* OtherActor)
+void ABODamageActor::NotifyActorBeginOverlap(AActor * OtherActor)
 {
-	float FinalDamage = Damage.Damage;
-	OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if (HasAuthority())
+	{
+		float FinalDamage = Damage.Damage;
+		OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+	}
 }
 
 // Utils

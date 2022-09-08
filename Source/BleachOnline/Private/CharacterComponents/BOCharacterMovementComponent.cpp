@@ -154,9 +154,9 @@ bool UBOCharacterMovementComponent::SetFalling(bool Value)
 	if (bFalling)
 	{
 		bControl = false;
-		Velocity.Z += 200.f;
 		if (OwnerActor->HasAuthority())
 		{
+			Launch(FVector(0.f, 0.f, 100.f));
 			SetFallingClient();
 		}
 	}
@@ -169,7 +169,6 @@ void UBOCharacterMovementComponent::SetFallingClient_Implementation()
 
 	bControl = false;
 	bFalling = true;
-	Velocity.Z += 200.f;
 }
 
 void UBOCharacterMovementComponent::Jump()
