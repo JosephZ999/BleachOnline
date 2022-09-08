@@ -7,12 +7,13 @@
 #include "BOIchigo.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BLEACHONLINE_API ABOIchigo : public ABOHeroBase
 {
 	GENERATED_BODY()
+
 
 public:
 	ABOIchigo();

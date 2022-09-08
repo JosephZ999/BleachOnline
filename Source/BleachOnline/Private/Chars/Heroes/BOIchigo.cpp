@@ -3,6 +3,7 @@
 #include "BOIchigo.h"
 #include "BOSpriteComponent.h"
 #include "BOCharacterMovementComponent.h"
+#include "GameFramework\Character.h"
 
 ABOIchigo::ABOIchigo()
 {
@@ -14,12 +15,8 @@ ABOIchigo::ABOIchigo()
 
 bool ABOIchigo::DoAction(uint8 MovementState, EActionType Action)
 {
-	if (HasAuthority())
-	{
-		if (! GetMoveComp()->IsControlEnabled()) return false;
-
-		if (! GetMoveComp()->IsOnGround()) return false;
-	}
+	bool Continue = Super::DoAction(MovementState, Action);
+	if (! Continue) return false;
 
 	switch (Action)
 	{
@@ -31,10 +28,8 @@ bool ABOIchigo::DoAction(uint8 MovementState, EActionType Action)
 
 bool ABOIchigo::DoComboAction(uint8 MovementState, EActionType Action)
 {
-	if (HasAuthority())
-	{
-		if (Action == EActionType::None) return false;
-	}
+	bool Continue = Super::DoComboAction(MovementState, Action);
+	if (! Continue) return false;
 
 	if (MovementState == 20 && Action == EActionType::Attack)
 	{
@@ -48,10 +43,13 @@ bool ABOIchigo::DoComboAction(uint8 MovementState, EActionType Action)
 void ABOIchigo::Attack_1()
 {
 	NewAction(20, FName("Attack_1"), false, 2.f);
+	LaunchCharacter(GetMoveVector(), 250.f, true);
+
 	SetComboTimer(0.5);
 }
 
 void ABOIchigo::Attack_2()
 {
 	NewAction(25, FName("Attack_1"), false, 2.f);
+	LaunchCharacter(GetMoveVector(), 250.f, true);
 }

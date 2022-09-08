@@ -12,7 +12,7 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 
-UCLASS(abstract) 
+UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
 {
 	GENERATED_BODY()
@@ -61,7 +61,10 @@ public:
 	virtual FVector GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
-	void LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
+	void LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride=false, bool bZOverride=false);
+
+	UFUNCTION(BlueprintCallable)
+	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride=false, bool bZOverride=false);
 
 	UFUNCTION(BlueprintCallable)
 	void AddVelocity(const FVector& Direction, float Length);
@@ -69,6 +72,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }
 	uint8 GetTeam() const { return Team; }
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetMoveVector() const;
 
 	UFUNCTION(BlueprintCallable)
 	void Jump();

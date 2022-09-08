@@ -72,9 +72,16 @@ void ABOCharacterBase::StandUp()
 }
 
 // Wrapper Functions |=======================================================================//
-void ABOCharacterBase::LaunchCharacter(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
+void ABOCharacterBase::LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride, bool bZOverride)
 {
-	MovementComp->Launch(Impulse, OverrideXY, OverrideZ);
+	const FVector Velocity = Direction * Impulse;
+	MovementComp->Launch(Velocity, bXYOverride, bZOverride);
+}
+
+void ABOCharacterBase::LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride, bool bZOverride)
+{
+	const FVector Velocity = Direction * Impulse;
+	MovementComp->LaunchDeferred(Velocity, Delay, bXYOverride, bZOverride);
 }
 
 void ABOCharacterBase::AddVelocity(const FVector& Direction, float Length)
@@ -90,6 +97,11 @@ void ABOCharacterBase::AddMovementInput(FVector WorldDirection, float ScaleValue
 FVector ABOCharacterBase::GetVelocity() const
 {
 	return MovementComp->GetVelocity();
+}
+
+FVector ABOCharacterBase::GetMoveVector() const
+{
+	return MovementComp->GetMoveVector();
 }
 
 void ABOCharacterBase::Jump()

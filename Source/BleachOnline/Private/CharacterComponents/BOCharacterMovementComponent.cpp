@@ -98,12 +98,11 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 		MovementVelocity = MovementVelocity.GetSafeNormal() * ((NewSize <= 0.f) ? 0.f : NewSize);
 	}
 
-
 	OwnerActor->AddActorWorldOffset(FVector((Velocity.X + MovementVelocity.X) * Delta, 0.f, 0.f), true);
 	OwnerActor->AddActorWorldOffset(FVector(0.f, (Velocity.Y + MovementVelocity.Y) * Delta, 0.f), true);
 
 	const auto PostLocation = OwnerActor->GetActorLocation();
-	VelocityLength = FVector::Dist2D(PreLocation, PostLocation) / Delta;
+	VelocityLength			= FVector::Dist2D(PreLocation, PostLocation) / Delta;
 
 	auto  Velocity2D = FVector(Velocity.X, Velocity.Y, 0.f);
 	float VelSize	 = Velocity2D.Size();
@@ -179,12 +178,43 @@ void UBOCharacterMovementComponent::Jump()
 	}
 }
 
-void UBOCharacterMovementComponent::Launch_Implementation(const FVector& Impulse, bool OverrideXY, bool OverrideZ)
+void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYOverride, bool bZOverride)
 {
-	Velocity.X = (OverrideXY) ? Impulse.X : Velocity.X + Impulse.X;
-	Velocity.Y = (OverrideXY) ? Impulse.Y : Velocity.Y + Impulse.Y;
-	Velocity.Z = (OverrideZ) ? Impulse.Z : Velocity.Z + Impulse.Z;
+	if (! OwnerActor->HasAuthority()) return;
+
+	FVector nVelocity = NewVelocity;
+	if (! bXYOverride)
+	{
+		nVelocity.X += Velocity.X;
+		nVelocity.Y += Velocity.Y;
+	}
+	if (! bZOverride)
+	{
+		nVelocity.Z += Velocity.Z;
+	}
+	Velocity = nVelocity;
 	LaunchClient(Velocity);
+}
+
+void UBOCharacterMovementComponent::LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride, bool bZOverride)
+{
+	if (!OwnerActor->HasAuthority()) return;
+
+	LaunchVelocityCache	   = NewVelocity;
+	bLaunchXYOverrideCache = bXYOverride;
+	bLaunchZOverrideCache  = bZOverride;
+
+	if (Delay > 0.f)
+	{
+		OwnerActor->GetWorldTimerManager().SetTimer(LaunchTimer, this, &UBOCharacterMovementComponent::LaunchDeferredHandle, Delay);
+		return;
+	}
+	LaunchDeferredHandle();
+}
+
+void UBOCharacterMovementComponent::LaunchDeferredHandle() 
+{
+	Launch(LaunchVelocityCache, bLaunchXYOverrideCache, bLaunchZOverrideCache);
 }
 
 void UBOCharacterMovementComponent::LaunchClient_Implementation(const FVector& NewVelocity)

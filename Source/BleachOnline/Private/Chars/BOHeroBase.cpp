@@ -114,8 +114,8 @@ void ABOHeroBase::SetComboTimer(float Delay)
 void ABOHeroBase::ComboTimerHandle()
 {
 	// On Server
-	const auto CurrentState = GetMoveComp()->GetMovementState();
-	const auto NextAction = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex());
+	const auto CurrentState	 = GetMoveComp()->GetMovementState();
+	const auto NextAction	 = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex());
 	const bool ActionChanged = DoComboAction(CurrentState, GetInputComponent()->SwitchToNextCombo());
 	if (ActionChanged)
 	{
@@ -128,4 +128,22 @@ void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState,
 	if (HasAuthority()) return;
 
 	DoComboAction(InitialMovementState, NewAction);
+}
+
+bool ABOHeroBase::DoAction(uint8 MovementState, EActionType Action)
+{
+	if (HasAuthority())
+	{
+		if (!GetMoveComp()->IsControlEnabled()) return false;
+	}
+	return true;
+}
+
+bool ABOHeroBase::DoComboAction(uint8 MovementState, EActionType Action)
+{
+	if (HasAuthority())
+	{
+		if (Action == EActionType::None) return false;
+	}
+	return true;
 }

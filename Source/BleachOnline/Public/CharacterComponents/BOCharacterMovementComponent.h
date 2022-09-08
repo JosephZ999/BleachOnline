@@ -66,7 +66,13 @@ private:
 	bool	bFalling;
 	bool	bControl = true;
 
+	// Launching
+	FVector LaunchVelocityCache;
+	bool	bLaunchXYOverrideCache;
+	bool	bLaunchZOverrideCache;
+
 	FTimerHandle RepTimer;
+	FTimerHandle LaunchTimer;
 
 protected:
 	virtual void BeginPlay() override;
@@ -113,8 +119,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void Launch(const FVector& Impulse, bool OverrideXY, bool OverrideZ);
+	void Launch(const FVector& NewVelocity, bool bXYOverride = false, bool bZOverride = false);
+	void LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride = false, bool bZOverride = false);
+	void LaunchDeferredHandle();
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void LaunchClient(const FVector& NewVelocity);
