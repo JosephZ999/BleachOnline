@@ -8,6 +8,24 @@ struct FDamageInfo
 {
 	GENERATED_BODY()
 
+	FDamageInfo()
+		: Damage(1.f)
+		, CritRate(1.f)
+		, CritScale(0.5f)
+		, ImpulseScale(1.f)
+		, ArmorPiercing(0.f)
+	{
+	}
+
+	FDamageInfo(float InDamage, float InCritRate, float InCritScale, float InImpulseScale, float InArmorPiercing)
+		: Damage(InDamage)
+		, CritRate(InCritRate)
+		, CritScale(InCritScale)
+		, ImpulseScale(InImpulseScale)
+		, ArmorPiercing(InArmorPiercing)
+	{
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0", ClampMax = "100", ToolTip = "Damage multiplier"))
 	float Damage = 1.f;
 

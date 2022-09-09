@@ -76,7 +76,6 @@ bool ABOIchigo::DoComboAction(const uint8 MovementState, const EActionType Actio
 		}
 		break;
 	}
-
 	case EIchigoState::AttackM:
 	{
 		if (Action == EActionType::AttackFW)
@@ -87,10 +86,11 @@ bool ABOIchigo::DoComboAction(const uint8 MovementState, const EActionType Actio
 		{
 			AttackBW();
 		}
+		break;
 	}
 	} // Switch End
 
-	return false;
+	return true;
 }
 
 // Actions //------------------------------------------------------------------------------------//
@@ -102,6 +102,7 @@ void ABOIchigo::AttackLight()
 
 	NewAction(State, AnimationName);
 	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 200.f, GetAnimTime(3.f), true);
+	GetDamageActorComp()->SpawnDamageActor("Attack_1", FVector(14.f, 0.f, 0.f), GetAnimTime(4.5f));
 
 	SetComboTimer(GetAnimTime(9.f));
 }
@@ -113,6 +114,7 @@ void ABOIchigo::AttackMedium()
 
 	NewAction(State, AnimationName);
 	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 200.f, GetAnimTime(1.f), true);
+	GetDamageActorComp()->SpawnDamageActor("Attack_2", FVector(14.f, 0.f, 0.f), GetAnimTime(3));
 
 	SetComboTimer(GetAnimTime(8.f));
 }
@@ -124,6 +126,7 @@ void ABOIchigo::AttackFW()
 
 	NewAction(State, AnimationName);
 	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 300.f, GetAnimTime(1.f), true);
+	GetDamageActorComp()->SpawnDamageActor("Attack_FW", FVector(14.f, 0.f, 0.f), GetAnimTime(6));
 }
 
 void ABOIchigo::AttackBW()
@@ -133,6 +136,12 @@ void ABOIchigo::AttackBW()
 
 	NewAction(State, AnimationName);
 	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 250.f, GetAnimTime(4.f), true);
+	GetDamageActorComp()->SpawnDamageActor("Attack_BW", FVector(12.f, 0.f, 18.f), GetAnimTime(5.5f));
+
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Display, TEXT("Attack Back"));
+	}
 }
 
 void ABOIchigo::AttackAir()

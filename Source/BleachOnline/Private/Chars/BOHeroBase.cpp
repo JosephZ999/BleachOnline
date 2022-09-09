@@ -115,8 +115,9 @@ void ABOHeroBase::ComboTimerHandle()
 {
 	// On Server
 	const auto CurrentState	 = GetMoveComp()->GetMovementState();
-	const auto NextAction	 = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex());
+	const auto NextAction	 = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex() + 1);
 	const bool ActionChanged = DoComboAction(CurrentState, GetInputComponent()->SwitchToNextCombo());
+	
 	if (ActionChanged)
 	{
 		DoComboActionClient(CurrentState, NextAction);
@@ -127,6 +128,7 @@ void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState,
 {
 	if (HasAuthority()) return;
 
+	GetMoveComp()->SetMovementState(InitialMovementState, true);
 	DoComboAction(InitialMovementState, NewAction);
 }
 

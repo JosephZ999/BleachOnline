@@ -6,7 +6,6 @@
 #include "BOSpriteComponent.h"
 #include "BODamageActorComponent.h"
 #include "BODamageActor.h"
-#include "BOCoreTypes.h"
 #include "CharacterConsts.h"
 
 #include "GameFramework/Controller.h"
@@ -61,6 +60,11 @@ void ABOCharacterBase::Tick(float DeltaTime)
 	UpdateRotation();
 }
 
+FDamageInfo ABOCharacterBase::GetDamageInfo()
+{
+	return FDamageInfo();
+}
+
 void ABOCharacterBase::OnLanded(FVector LastVelocity)
 {
 	if (GetMoveComp()->IsFalling())
@@ -102,6 +106,11 @@ void ABOCharacterBase::AddMovementInput(FVector WorldDirection, float ScaleValue
 FVector ABOCharacterBase::GetVelocity() const
 {
 	return MovementComp->GetVelocity();
+}
+
+uint8 ABOCharacterBase::GetMovementState()
+{
+	return GetMoveComp()->GetMovementState();
 }
 
 FVector ABOCharacterBase::GetMoveVector() const

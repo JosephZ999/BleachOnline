@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "BOCoreTypes.h"
 #include "BOCharacterBase.generated.h"
 
 class UCapsuleComponent;
@@ -62,50 +63,37 @@ public:
 	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
 	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
 
+	virtual FDamageInfo GetDamageInfo();
+
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
 
-	UFUNCTION(BlueprintCallable)
 	void LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride = false, bool bZOverride = false);
-
-	UFUNCTION(BlueprintCallable)
 	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
-
-	UFUNCTION(BlueprintCallable)
 	void AddVelocity(const FVector& Direction, float Length);
 
 	UFUNCTION(BlueprintCallable)
-	void  SetTeam(uint8 NewTeam) { Team = NewTeam; }
-	uint8 GetTeam() const { return Team; }
+	void	SetTeam(uint8 NewTeam) { Team = NewTeam; }
 
-	UFUNCTION(BlueprintCallable)
+	uint8	GetTeam() const { return Team; }
+	uint8	GetMovementState();
 	FVector GetMoveVector() const;
+	float	GetAnimTime(const float Frame);
 
-	float GetAnimTime(const float Frame);
-
-	UFUNCTION(BlueprintCallable)
-	void Jump();
-
-	UFUNCTION(BlueprintCallable)
-	void StandUp();
-
-	UFUNCTION(BlueprintCallable)
 	bool IsOnGround() const;
-
-	UFUNCTION(BlueprintCallable)
 	bool IsDoingAnything() const;
+	bool IsLookRight() const { return GetActorForwardVector().X > 0.f; }
 
-	UFUNCTION(BlueprintCallable)
-	bool IsLookRight() const { return FMath::IsNearlyZero(GetActorRotation().Yaw); }
-
-	UFUNCTION(BlueprintCallable)
 	void NewAction(uint8 State, const FName& Animation, float Length = 0.f, bool LoopAnim = false);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
 
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
+
+	void Jump();
+	void StandUp();
 
 private:
 	void UpdateRotation();

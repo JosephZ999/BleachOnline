@@ -40,10 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions);
 
-	uint8 GetTeam() const { return Team; }
+	uint8	GetTeam() const { return Team; }
 	FVector GetImpulseVector(const AActor* TargetActor) const;
 
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
-
 };
