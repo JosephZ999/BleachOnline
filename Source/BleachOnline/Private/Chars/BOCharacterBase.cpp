@@ -4,6 +4,7 @@
 #include "BOCharacterMovementComponent.h"
 #include "BOIndicatorComponent.h"
 #include "BOSpriteComponent.h"
+#include "BODamageActorComponent.h"
 #include "BODamageActor.h"
 #include "BOCoreTypes.h"
 #include "CharacterConsts.h"
@@ -31,9 +32,13 @@ ABOCharacterBase::ABOCharacterBase()
 	SetRootComponent(CapsuleComp);
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
+	
 	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
+	
 	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
 	SpriteComp->SetupAttachment(GetRootComponent());
+
+	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
 }
 
 void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)

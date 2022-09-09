@@ -11,6 +11,7 @@ class UBOCharacterMovementComponent;
 class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
+class UBODamageActorComponent;
 
 UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
@@ -34,6 +35,9 @@ private:
 	UBOSpriteComponent* SpriteComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UBODamageActorComponent* DamageActorComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	uint8 Team;
 
 	FTimerHandle EndActionTimer;
@@ -53,6 +57,7 @@ public:
 	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
+	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
 
 	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
 	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
@@ -61,10 +66,10 @@ public:
 	virtual FVector GetVelocity() const override;
 
 	UFUNCTION(BlueprintCallable)
-	void LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride=false, bool bZOverride=false);
+	void LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride = false, bool bZOverride = false);
 
 	UFUNCTION(BlueprintCallable)
-	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride=false, bool bZOverride=false);
+	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
 
 	UFUNCTION(BlueprintCallable)
 	void AddVelocity(const FVector& Direction, float Length);
@@ -94,7 +99,7 @@ public:
 	bool IsLookRight() const { return FMath::IsNearlyZero(GetActorRotation().Yaw); }
 
 	UFUNCTION(BlueprintCallable)
-	void NewAction(uint8 State, const FName& Animation, float Length=0.f, bool LoopAnim=false);
+	void NewAction(uint8 State, const FName& Animation, float Length = 0.f, bool LoopAnim = false);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);

@@ -34,7 +34,7 @@ protected:
 public:
 	void Construction();
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
-	static void InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder);
+	static void InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder);
 
 	void SetAnimation(const FName& AnimationName, bool Looping);
 

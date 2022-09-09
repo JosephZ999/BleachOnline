@@ -4,11 +4,14 @@
 #include "BOSpriteComponent.h"
 #include "BOCharacterMovementComponent.h"
 #include "GameFramework\Character.h"
+#include "BODamageActorComponent.h"
 
 ABOIchigo::ABOIchigo()
 {
-	UBOSpriteComponent::InitBaseAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
+	UBOSpriteComponent::InitAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
 	// UBOSpriteComponent::InitBaseAnimations(BankaiAnimations, "/Game/BleachOnline/Texture/Chars/IchigoBankai/FBook");
+
+	GetDamageActorComp()->InitDamageActors("/Game/BleachOnline/Blueprints/Chars/Ichigo/HitBoxes");
 
 	GetSpriteComp()->SetBaseAnimations(ShikaiAnimations);
 }

@@ -53,7 +53,7 @@ void UBOSpriteComponent::SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnim
 	Animations = NewAnimations;
 }
 
-void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, FString AnimsFolder)
+void UBOSpriteComponent::InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder)
 {
 	OutAnimations.Empty();
 
@@ -62,7 +62,10 @@ void UBOSpriteComponent::InitBaseAnimations(TMap<FName, UPaperFlipbook*>& OutAni
 	for (auto Asset : AnimAsset)
 	{
 		auto Flipbook = Cast<UPaperFlipbook>(Asset);
-		if (Flipbook != nullptr) { OutAnimations.Add(Flipbook->GetFName(), Flipbook); }
+		if (Flipbook != nullptr)
+		{
+			OutAnimations.Add(Flipbook->GetFName(), Flipbook);
+		}
 	}
 }
 
@@ -98,5 +101,8 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 {
 	SetFlipbook(Animations.FindRef(AnimationName));
 	SetLooping(Looping);
-	if (! Looping) { PlayFromStart(); }
+	if (! Looping)
+	{
+		PlayFromStart();
+	}
 }

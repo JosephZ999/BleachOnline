@@ -7,7 +7,7 @@
 #include "BOCoreTypes.h"
 #include "BODamageActor.generated.h"
 
-UCLASS()
+UCLASS(abstract)
 class BLEACHONLINE_API ABODamageActor : public AActor
 {
 	GENERATED_BODY()
