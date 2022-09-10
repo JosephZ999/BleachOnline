@@ -125,7 +125,15 @@ float ABOCharacterBase::GetAnimTime(const float Frame)
 
 void ABOCharacterBase::Jump()
 {
-	MovementComp->Jump();
+	const FName AnimName = "JumpStart";
+	if (!GetSpriteComp()->ContainsAnim(AnimName))
+	{
+		GetMoveComp()->Jump();
+		return;
+	}
+
+	const uint8 NewState = static_cast<uint8>(EMovementState::JumpStart);
+	NewAction(NewState, AnimName);
 }
 
 bool ABOCharacterBase::IsOnGround() const
@@ -228,6 +236,11 @@ void ABOCharacterBase::EndActionDeferred(float WaitTime)
 
 void ABOCharacterBase::EndAction()
 {
+	if (GetMovementState() == static_cast<uint8>(EMovementState::JumpStart))
+	{
+		GetMoveComp()->Jump();
+	}
+
 	GetMoveComp()->SetMovementState(0, true);
 	GetMoveComp()->SetControlEnabled(true);
 	GetSpriteComp()->SetLooping(true);

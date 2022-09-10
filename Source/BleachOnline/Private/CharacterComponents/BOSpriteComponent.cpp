@@ -106,3 +106,8 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 		PlayFromStart();
 	}
 }
+
+bool UBOSpriteComponent::ContainsAnim(const FName & AnimName)
+{
+	return Animations.Contains(AnimName);
+}

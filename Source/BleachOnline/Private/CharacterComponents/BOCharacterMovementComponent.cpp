@@ -173,10 +173,7 @@ void UBOCharacterMovementComponent::SetFallingClient_Implementation()
 
 void UBOCharacterMovementComponent::Jump()
 {
-	if (bControl)
-	{
-		Launch(FVector(MovementVelocity.X / 2.f, MovementVelocity.Y / 2.f, JumpHeight), true, true);
-	}
+	Launch(FVector(MovementVector.X * WalkSpeed, MovementVector.Y * WalkSpeed, JumpHeight), true, true);
 }
 
 void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYOverride, bool bZOverride)

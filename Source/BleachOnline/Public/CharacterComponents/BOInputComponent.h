@@ -17,7 +17,7 @@ UCLASS()
 class BLEACHONLINE_API UBOInputComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
+		
 private:
 	ABOHeroBase* OuterHero;
 	bool		 bMoveFWDown;

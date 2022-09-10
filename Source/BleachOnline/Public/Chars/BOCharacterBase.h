@@ -92,7 +92,8 @@ public:
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
 
-	void Jump();
+	/* On Server */
+	void Jump(); 
 	void StandUp();
 
 private:

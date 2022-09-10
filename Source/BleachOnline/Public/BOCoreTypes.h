@@ -56,11 +56,13 @@ enum class EMovementState : uint8
 	FallUp,
 	FallDown,
 
+	// Then animation will not update every frame
 	Damaged,
 	Hit,
 	Hit2,
 	Hit3,
 
+	JumpStart,
 	StandUp,
 	Custom,
 };

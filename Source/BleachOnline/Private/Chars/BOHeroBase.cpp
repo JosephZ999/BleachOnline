@@ -71,12 +71,6 @@ void ABOHeroBase::SetMovementVectorClient_Implementation(const FVector& NewVecto
 
 void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType)
 {
-
-	if (ActionType == EActionType::None)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server ACtion is none"));
-	}
-
 	const auto CurrentState = GetMoveComp()->GetMovementState();
 	if (DoAction(CurrentState, ActionType))
 	{
@@ -88,10 +82,6 @@ void ABOHeroBase::DoActionClient_Implementation(uint8 InitialState, EActionType 
 {
 	if (HasAuthority()) return;
 
-	if (Action == EActionType::None)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client ACtion is none"));
-	}
 	DoAction(InitialState, Action);
 }
 
@@ -117,7 +107,7 @@ void ABOHeroBase::ComboTimerHandle()
 	const auto CurrentState	 = GetMoveComp()->GetMovementState();
 	const auto NextAction	 = GetInputComponent()->GetComboKey(GetInputComponent()->GetComboIndex() + 1);
 	const bool ActionChanged = DoComboAction(CurrentState, GetInputComponent()->SwitchToNextCombo());
-	
+
 	if (ActionChanged)
 	{
 		DoComboActionClient(CurrentState, NextAction);
@@ -134,11 +124,23 @@ void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState,
 
 bool ABOHeroBase::DoAction(const uint8 MovementState, const EActionType Action)
 {
+	bool Success = true;
 	if (HasAuthority())
 	{
-		if (!GetMoveComp()->IsControlEnabled()) return false;
+		if (GetMoveComp()->IsControlEnabled())
+		{
+			if (Action == EActionType::Jump && GetMoveComp()->IsOnGround())
+			{
+				Jump();
+				Success = true;
+			}
+		}
+		else
+		{
+			Success = false;
+		}
 	}
-	return true;
+	return Success;
 }
 
 bool ABOHeroBase::DoComboAction(const uint8 MovementState, const EActionType Action)

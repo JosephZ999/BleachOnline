@@ -27,7 +27,7 @@ private:
 	UBOCharacterMovementComponent* OwnerMoveComp;
 	TMap<FName, UPaperFlipbook*> Animations;
 	FTimerHandle AnimationUpdateTimer;
-
+	
 protected:
 	void BeginPlay() override;
 
@@ -37,7 +37,7 @@ public:
 	static void InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder);
 
 	void SetAnimation(const FName& AnimationName, bool Looping);
-
+	bool ContainsAnim(const FName& AnimName);
 private:
 	void AnimationUpdateHandle();
 };
