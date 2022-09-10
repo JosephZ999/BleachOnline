@@ -246,3 +246,19 @@ void ABOCharacterBase::EndAction()
 	GetSpriteComp()->SetLooping(true);
 	GetSpriteComp()->Play();
 }
+
+
+void ABOCharacterBase::SetCharacterCollision(bool Enabled)
+{
+	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, Enabled ? ECR_Overlap : ECR_Ignore);
+}
+
+void ABOCharacterBase::SetCharacterVisibility(bool Visible)
+{
+	SpriteComp->SetVisibility(Visible);
+}
+
+void ABOCharacterBase::DestroyDamageActor()
+{
+	DamageActorComp->Destroy();
+}

@@ -96,6 +96,10 @@ public:
 	void Jump(); 
 	void StandUp();
 
+	void SetCharacterCollision(bool Enabled);
+	void SetCharacterVisibility(bool Visible);
+	void DestroyDamageActor();
+
 private:
 	void UpdateRotation();
 

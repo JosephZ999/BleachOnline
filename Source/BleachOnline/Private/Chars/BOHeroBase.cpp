@@ -53,6 +53,8 @@ void ABOHeroBase::EndAction()
 {
 	Super::EndAction();
 	GetInputComponent()->ClearComboKeys();
+	SetCharacterCollision(true);
+	SetCharacterVisibility(true);
 }
 
 void ABOHeroBase::SetMovementVectorServer_Implementation(const FVector& NewVector)
@@ -150,4 +152,34 @@ bool ABOHeroBase::DoComboAction(const uint8 MovementState, const EActionType Act
 		if (Action == EActionType::None) return false;
 	}
 	return true;
+}
+
+void ABOHeroBase::FlashStep(const FVector& Direction, float Distance)
+{
+	const FVector NewDirection = Direction * Distance;
+	FlashStepServer(NewDirection);
+}
+
+void ABOHeroBase::FlashStepServer_Implementation(const FVector& Direction)
+{
+	if (GetMovementState() == static_cast<uint8>(EMovementState::Teleport)) return;
+
+	const uint8 NewState = static_cast<uint8>(EMovementState::Teleport);
+	NewAction(NewState, FName(), 0.5f);
+	SetCharacterCollision(false);
+	SetCharacterVisibility(false);
+	DestroyDamageActor();
+
+	const FVector NewLocation = GetActorLocation() + Direction;
+	SetActorLocation(NewLocation, true);
+	FlashStepClient(GetActorLocation());
+}
+
+void ABOHeroBase::FlashStepClient_Implementation(const FVector& NewLocation)
+{
+	if (HasAuthority()) return;
+
+	SetCharacterVisibility(false);
+	DestroyDamageActor();
+	SetActorLocation(NewLocation, true);
 }

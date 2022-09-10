@@ -64,6 +64,7 @@ enum class EMovementState : uint8
 
 	JumpStart,
 	StandUp,
+	Teleport,
 	Custom,
 };
 

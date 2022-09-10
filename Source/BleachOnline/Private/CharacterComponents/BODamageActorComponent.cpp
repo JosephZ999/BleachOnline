@@ -74,7 +74,6 @@ void UBODamageActorComponent::SpawnDamageActor(const FName& AssetName, const FVe
 
 void UBODamageActorComponent::Spawning()
 {
-	
 
 	TSubclassOf<ABODamageActor> Class = DamageActors.FindRef(DamageAssetName);
 	if (! Class) return;
@@ -83,33 +82,31 @@ void UBODamageActorComponent::Spawning()
 	const FVector  Location = GetOwner()->GetActorLocation();
 	DamageActorOffset.X *= GetOwner()->GetActorForwardVector().X;
 	DamageActorOffset.Y += 1.f;
-
 	const FTransform Transform(Rotation, Location + DamageActorOffset, FVector::OneVector);
 
-	ABODamageActor* NewActor;
 	if (OwnerCharacter)
 	{
 		if (OwnerCharacter->GetMovementState() != OwnerStateCache) return;
 
-		NewActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
-		if (NewActor)
+		LastDamageActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
+		if (LastDamageActor)
 		{
-			NewActor->Init(OwnerCharacter->GetTeam(), OwnerCharacter->GetDamageInfo());
-			NewActor->FinishSpawning(Transform);
+			LastDamageActor->Init(OwnerCharacter->GetTeam(), OwnerCharacter->GetDamageInfo());
+			LastDamageActor->FinishSpawning(Transform);
 		}
 	}
 	else
 	{
-		NewActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
-		if (NewActor)
+		LastDamageActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
+		if (LastDamageActor)
 		{
-			NewActor->Init(DefaultTeam, DefaultDamageOptions);
-			NewActor->FinishSpawning(Transform);
+			LastDamageActor->Init(DefaultTeam, DefaultDamageOptions);
+			LastDamageActor->FinishSpawning(Transform);
 		}
 	}
 
 	// Attachment
-	if (NewActor && bAttach)
+	if (LastDamageActor && bAttach)
 	{
 		const auto AttachmentRules = FAttachmentTransformRules( //
 			EAttachmentRule::SnapToTarget,						//
@@ -117,7 +114,15 @@ void UBODamageActorComponent::Spawning()
 			EAttachmentRule::KeepWorld,							//
 			false);
 
-		NewActor->AttachToActor(GetOwner(), AttachmentRules);
-		NewActor->SetActorLocation(Transform.GetLocation());
+		LastDamageActor->AttachToActor(GetOwner(), AttachmentRules);
+		LastDamageActor->SetActorLocation(Transform.GetLocation());
+	}
+}
+
+void UBODamageActorComponent::Destroy()
+{
+	if (LastDamageActor)
+	{
+		LastDamageActor->Destroy();
 	}
 }

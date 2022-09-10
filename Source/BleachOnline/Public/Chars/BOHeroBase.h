@@ -65,4 +65,15 @@ public:
 
 	void SetComboTimer(float Delay);
 	void ComboTimerHandle();
+
+	UFUNCTION(BlueprintCallable)
+	void FlashStep(const FVector& Direction, float Distance=100.f);
+
+	UFUNCTION(Server, Unreliable)
+	void FlashStepServer(const FVector& Direction);
+	void FlashStepServer_Implementation(const FVector& Direction);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void FlashStepClient(const FVector& NewLocation);
+	void FlashStepClient_Implementation(const FVector& NewLocation);
 };
