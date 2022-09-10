@@ -103,6 +103,19 @@ FReply UBOInputWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPo
 
 FReply UBOInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
+	TouchEnded(InGeometry, InGestureEvent);
+	return Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+}
+
+void UBOInputWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	TouchEnded(GetCachedGeometry(), InMouseEvent);
+	Super::NativeOnMouseLeave(InMouseEvent);
+}
+
+
+void UBOInputWidget::TouchEnded(const FGeometry & InGeometry, const FPointerEvent & InGestureEvent)
+{
 	if (InGestureEvent.GetPointerIndex() == ActionPointerIndex)
 	{
 		// UE_LOG(LogInputWidget, Display, TEXT("Action Released"));
@@ -123,11 +136,4 @@ FReply UBOInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPo
 		MovementReleased();
 		Move.Broadcast(FVector::ZeroVector);
 	}
-
-	return Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
-}
-
-void UBOInputWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseLeave(InMouseEvent);
 }

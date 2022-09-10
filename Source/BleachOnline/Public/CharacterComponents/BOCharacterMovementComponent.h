@@ -161,10 +161,10 @@ private:
 
 	FORCEINLINE float GetDeceleration(float DeltaSeconds) const
 	{
-		return ((bOnGround) ? ((!bFalling) //
+		return ((bOnGround) ? ((! bFalling) //
 									  ? Deceleration * GroundFriction * DeltaSeconds
 									  : Deceleration * DeltaSeconds)
-							: ((!bFalling) //
+							: ((! bFalling) //
 									  ? AirDeceleration * DeltaSeconds
 									  : AirDeceleration * 0.2f * DeltaSeconds));
 	}

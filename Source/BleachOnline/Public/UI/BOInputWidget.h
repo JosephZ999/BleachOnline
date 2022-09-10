@@ -52,6 +52,9 @@ protected:
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 	virtual void   NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
+private:
+	void TouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent);
+
 public:
 	// Action
 	UFUNCTION(BlueprintImplementableEvent)

@@ -73,7 +73,7 @@ public:
 	void AddVelocity(const FVector& Direction, float Length);
 
 	UFUNCTION(BlueprintCallable)
-	void	SetTeam(uint8 NewTeam) { Team = NewTeam; }
+	void SetTeam(uint8 NewTeam) { Team = NewTeam; }
 
 	uint8	GetTeam() const { return Team; }
 	uint8	GetMovementState();
@@ -83,6 +83,7 @@ public:
 	bool IsOnGround() const;
 	bool IsDoingAnything() const;
 	bool IsLookRight() const { return GetActorForwardVector().X > 0.f; }
+	bool IsDead() { return bDead; }
 
 	void NewAction(uint8 State, const FName& Animation, float Length = 0.f, bool LoopAnim = false);
 
@@ -93,7 +94,7 @@ public:
 	virtual void EndAction();
 
 	/* On Server */
-	void Jump(); 
+	void Jump();
 	void StandUp();
 
 	void SetCharacterCollision(bool Enabled);

@@ -162,10 +162,10 @@ void ABOHeroBase::FlashStep(const FVector& Direction, float Distance)
 
 void ABOHeroBase::FlashStepServer_Implementation(const FVector& Direction)
 {
-	if (GetMovementState() == static_cast<uint8>(EMovementState::Teleport)) return;
+	if (GetMovementState() == static_cast<uint8>(EMovementState::Teleport) || IsDead()) return;
 
 	const uint8 NewState = static_cast<uint8>(EMovementState::Teleport);
-	NewAction(NewState, FName(), 0.5f);
+	NewAction(NewState, FName(), 0.2f);
 	SetCharacterCollision(false);
 	SetCharacterVisibility(false);
 	DestroyDamageActor();

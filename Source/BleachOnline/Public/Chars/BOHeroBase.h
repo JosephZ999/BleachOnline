@@ -67,7 +67,7 @@ public:
 	void ComboTimerHandle();
 
 	UFUNCTION(BlueprintCallable)
-	void FlashStep(const FVector& Direction, float Distance=100.f);
+	void FlashStep(const FVector& Direction, float Distance = 100.f);
 
 	UFUNCTION(Server, Unreliable)
 	void FlashStepServer(const FVector& Direction);
