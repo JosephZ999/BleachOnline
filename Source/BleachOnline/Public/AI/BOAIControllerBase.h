@@ -41,8 +41,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Wait(float Delay);
 
-	UFUNCTION(BlueprintCallable)
-	ABOCharacterBase* FindEnemy();
+	template <typename Predicate>
+	ABOCharacterBase* FindCharacter(Predicate Pred);
 
 private:
 	void SetTickTimer(float Delay);

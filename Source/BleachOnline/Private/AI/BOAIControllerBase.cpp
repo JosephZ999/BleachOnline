@@ -40,7 +40,8 @@ void ABOAIControllerBase::Wait(float Delay)
 	SetTickTimer(Delay);
 }
 
-ABOCharacterBase* ABOAIControllerBase::FindEnemy()
+template <typename Predicate> //
+inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 {
 	if (! GetWorld()) return nullptr;
 
@@ -58,13 +59,16 @@ ABOCharacterBase* ABOAIControllerBase::FindEnemy()
 		TArray<FOverlapResult> Overlaps;
 		GetWorld()->OverlapMultiByChannel(Overlaps, Pos, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(Radius), Params);
 
-		for (auto O : Overlaps)
+		auto LocalPredicate = [&](FOverlapResult& Overlap)
 		{
-			ABOCharacterBase* Char = Cast<ABOCharacterBase>(O.GetActor());
+			ABOCharacterBase* Char = Cast<ABOCharacterBase>(Overlap.GetActor());
+			return Char && ! Char->IsDead() && Pred(Char);
+		};
 
-			if (! Char) continue;
-			if (Char->GetTeam() == ControlledCharacter->GetTeam() || Char->IsDead()) continue;
-			return Char;
+		const FOverlapResult* Result = Overlaps.FindByPredicate(LocalPredicate);
+		if (Result)
+		{
+			return Cast<ABOCharacterBase>(Result->GetActor());
 		}
 	}
 	return nullptr;
@@ -72,5 +76,4 @@ ABOCharacterBase* ABOAIControllerBase::FindEnemy()
 
 void ABOAIControllerBase::AIBody()
 {
-	//
 }
