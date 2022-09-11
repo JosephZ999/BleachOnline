@@ -29,6 +29,8 @@ public class BleachOnline : ModuleRules
             "BleachOnline/Public/UI",
             "BleachOnline/Public/Utils",
             "BleachOnline/Public/Pickups",
+            "BleachOnline/Public/AI",
+
         });
 
         // Uncomment if you are using Slate UI

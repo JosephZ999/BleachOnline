@@ -38,7 +38,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBODamageActorComponent* DamageActorComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	uint8 Team;
 
 	FTimerHandle EndActionTimer;
