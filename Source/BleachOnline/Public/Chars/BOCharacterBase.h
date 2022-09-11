@@ -100,6 +100,7 @@ public:
 	void SetCharacterCollision(bool Enabled);
 	void SetCharacterVisibility(bool Visible);
 	void DestroyDamageActor();
+	void SetMoveVector(const FVector& NewVector);
 
 private:
 	void UpdateRotation();

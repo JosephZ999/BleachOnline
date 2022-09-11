@@ -14,6 +14,8 @@ ABOAIControllerBase::ABOAIControllerBase()
 	TickFrequency	= 0.1f;
 	FindEnemyRadius = 500.f;
 	FindEnemyChunks = 5;
+	CloseDistance	= 100.f;
+	LongDistance	= 200.f;
 }
 
 void ABOAIControllerBase::OnPossess(APawn* InPawn)
@@ -74,6 +76,41 @@ inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 	return nullptr;
 }
 
-void ABOAIControllerBase::AIBody()
+bool ABOAIControllerBase::SearchEnemy()
 {
+	if (Enemy && ! Enemy->IsDead()) return true;
+	return Enemy = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() != Char->GetTeam(); });
+}
+
+bool ABOAIControllerBase::SearchAlly()
+{
+	if (Ally && ! Ally->IsDead()) return true;
+	return Ally = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() == Char->GetTeam(); });
+}
+
+bool ABOAIControllerBase::IsEnemyNear() 
+{
+	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Enemy->GetActorLocation()) < CloseDistance;
+}
+
+bool ABOAIControllerBase::IsEnemyFar() 
+{
+	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Enemy->GetActorLocation()) > LongDistance;
+}
+
+bool ABOAIControllerBase::IsAllyNear() 
+{
+	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Ally->GetActorLocation()) < CloseDistance;
+}
+
+bool ABOAIControllerBase::IsAllyFar() 
+{
+	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Ally->GetActorLocation()) > LongDistance;
+}
+
+void ABOAIControllerBase::MoveToPoint(const FVector & NewLocation)
+{
+	const FVector Location = ControlledCharacter->GetActorLocation();
+	const FVector ForwardVector = FRotationMatrix::MakeFromX(NewLocation - Location).Rotator().Vector();
+	ControlledCharacter->SetMoveVector(ForwardVector);
 }

@@ -28,6 +28,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
 	uint8 FindEnemyChunks;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	float CloseDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	float LongDistance;
+	
+	ABOCharacterBase* Enemy;
+	ABOCharacterBase* Ally;
+
+
 private:
 	ABOCharacterBase* ControlledCharacter;
 	FTimerHandle	  TickTimer;
@@ -35,7 +45,16 @@ private:
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
-	virtual void AIBody(); // AI Tick
+	virtual void AIBody() {}
+
+	bool SearchEnemy();
+	bool SearchAlly();
+	bool IsEnemyNear();
+	bool IsEnemyFar();
+	bool IsAllyNear();
+	bool IsAllyFar();
+
+	void MoveToPoint(const FVector& NewLocation);
 
 public:
 	UFUNCTION(BlueprintCallable)

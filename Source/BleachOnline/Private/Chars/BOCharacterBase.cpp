@@ -263,3 +263,8 @@ void ABOCharacterBase::DestroyDamageActor()
 {
 	DamageActorComp->Destroy();
 }
+
+void ABOCharacterBase::SetMoveVector(const FVector & NewVector)
+{
+	GetMoveComp()->SetMovementVector(NewVector);
+}
