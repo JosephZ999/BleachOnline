@@ -145,7 +145,7 @@ void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVect
 {
 	MovementVector = ForwardVector;
 	MovementVector.Normalize();
-	bWalking = (bControl && MovementVector.Size2D() > 0.f) || false;
+	bWalking = (bControl && MovementVector.Size2D() > 0.f) && !bFalling;
 }
 
 bool UBOCharacterMovementComponent::SetFalling(bool Value)

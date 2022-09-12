@@ -50,13 +50,14 @@ void ABOMeleeAI::GoToEnemy()
 		return;
 	}
 
-	if (IsEnemyFar())
+	if (IsEnemyFar() && SearchAlly())
 	{
 		Task = EAITasks::GoToAlly;
 		return;
 	}
 
-	MoveToPoint(Enemy->GetActorLocation());
+	MoveToPoint(Enemy->GetActorLocation(), CloseDistance / 2.f);
+	Wait(0.2f);
 }
 void ABOMeleeAI::GoToAlly()
 {
@@ -68,14 +69,19 @@ void ABOMeleeAI::GoToAlly()
 		return;
 	}
 
-	MoveToPoint(Ally->GetActorLocation());
-
+	MoveToPoint(Ally->GetActorLocation(), CloseDistance / 2.f);
 }
 void ABOMeleeAI::AttackEnemy()
 {
 	UE_LOG(LogMeleeAI, Display, TEXT("Attack"));
-	Task = EAITasks::GoToAlly;
-	Wait(0.5f);
+
+	if (GetControlledChar()->GetMovementState() <= 1)
+	{
+		Task = EAITasks::GoToEnemy;
+		MoveToPoint(Enemy->GetActorLocation(), 0.f);
+		GetControlledChar()->DoActionServer(EActionType::Attack);
+		Wait(1.f);
+	}
 }
 
 void ABOMeleeAI::Dodge() {}

@@ -5,6 +5,7 @@
 
 #include "TimerManager.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogAI, All, All);
 
@@ -24,6 +25,7 @@ void ABOAIControllerBase::OnPossess(APawn* InPawn)
 	if (ControlledCharacter)
 	{
 		SetTickTimer(1.f);
+		ControlledCharacter->OnDead.AddDynamic(this, &ABOAIControllerBase::OnDeadHandle);
 	}
 }
 
@@ -40,6 +42,11 @@ void ABOAIControllerBase::SetTickTimer(float Delay)
 void ABOAIControllerBase::Wait(float Delay)
 {
 	SetTickTimer(Delay);
+}
+
+void ABOAIControllerBase::OnDeadHandle(APawn * Killer, APawn * Victim)
+{
+	GetWorldTimerManager().ClearTimer(TickTimer);
 }
 
 template <typename Predicate> //
@@ -88,29 +95,49 @@ bool ABOAIControllerBase::SearchAlly()
 	return Ally = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() == Char->GetTeam(); });
 }
 
-bool ABOAIControllerBase::IsEnemyNear() 
+bool ABOAIControllerBase::IsEnemyNear()
 {
-	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Enemy->GetActorLocation()) < CloseDistance;
+	const auto Location		 = ControlledCharacter->GetActorLocation();
+	const auto EnemyLocation = Enemy->GetActorLocation();
+	const auto DistanceX	 = FMath::Sqrt(FMath::Square(Location.X - EnemyLocation.X));
+	const auto DistanceY	 = FMath::Sqrt(FMath::Square(Location.Y - EnemyLocation.Y));
+
+	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
 }
 
-bool ABOAIControllerBase::IsEnemyFar() 
+bool ABOAIControllerBase::IsEnemyFar()
 {
 	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Enemy->GetActorLocation()) > LongDistance;
 }
 
-bool ABOAIControllerBase::IsAllyNear() 
+bool ABOAIControllerBase::IsAllyNear()
 {
-	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Ally->GetActorLocation()) < CloseDistance;
+	const auto Location		= ControlledCharacter->GetActorLocation();
+	const auto AllyLocation = Ally->GetActorLocation();
+	const auto DistanceX	= FMath::Sqrt(FMath::Square(Location.X - AllyLocation.X));
+	const auto DistanceY	= FMath::Sqrt(FMath::Square(Location.Y - AllyLocation.Y));
+
+	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
 }
 
-bool ABOAIControllerBase::IsAllyFar() 
+bool ABOAIControllerBase::IsAllyFar()
 {
 	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Ally->GetActorLocation()) > LongDistance;
 }
 
-void ABOAIControllerBase::MoveToPoint(const FVector & NewLocation)
+void ABOAIControllerBase::MoveToPoint(const FVector& NewLocation, float Distance)
 {
-	const FVector Location = ControlledCharacter->GetActorLocation();
-	const FVector ForwardVector = FRotationMatrix::MakeFromX(NewLocation - Location).Rotator().Vector();
-	ControlledCharacter->SetMoveVector(ForwardVector);
+	const FVector Location		 = ControlledCharacter->GetActorLocation();
+	const FVector TargetLocation = FVector((Location.X > NewLocation.X) ? NewLocation.X + Distance : NewLocation.X - Distance, //
+		NewLocation.Y, NewLocation.Z);
+
+	const FVector ForwardVector = FRotationMatrix::MakeFromX(TargetLocation - Location).Rotator().Vector();
+	ControlledCharacter->SetMovementVectorServer(ForwardVector);
+	DrawDebugLine(GetWorld(), Location, TargetLocation, FColor::Cyan, false, TickFrequency, 0, 2.f);
+	DrawDebugCapsule(GetWorld(), TargetLocation, 15.f, 7.f, FQuat(FRotator::ZeroRotator), FColor::Cyan, false, TickFrequency, 1, 2.f);
+}
+
+void ABOAIControllerBase::StopMoving()
+{
+	ControlledCharacter->SetMovementVectorServer(FVector::ZeroVector);
 }

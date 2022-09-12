@@ -91,6 +91,7 @@ void UBODamageActorComponent::Spawning()
 		LastDamageActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
 		if (LastDamageActor)
 		{
+			LastDamageActor->Instigator = OwnerCharacter;
 			LastDamageActor->Init(OwnerCharacter->GetTeam(), OwnerCharacter->GetDamageInfo());
 			LastDamageActor->FinishSpawning(Transform);
 		}
@@ -100,6 +101,7 @@ void UBODamageActorComponent::Spawning()
 		LastDamageActor = GetWorld()->SpawnActorDeferred<ABODamageActor>(Class, Transform);
 		if (LastDamageActor)
 		{
+			LastDamageActor->Instigator = OwnerCharacter;
 			LastDamageActor->Init(DefaultTeam, DefaultDamageOptions);
 			LastDamageActor->FinishSpawning(Transform);
 		}

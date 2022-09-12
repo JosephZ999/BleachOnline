@@ -54,7 +54,10 @@ protected:
 	bool IsAllyNear();
 	bool IsAllyFar();
 
-	void MoveToPoint(const FVector& NewLocation);
+	void MoveToPoint(const FVector& NewLocation, float Distance);
+	void StopMoving();
+
+	FORCEINLINE ABOCharacterBase* GetControlledChar() { return ControlledCharacter; }
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -65,4 +68,7 @@ public:
 
 private:
 	void SetTickTimer(float Delay);
+
+	UFUNCTION()
+	void OnDeadHandle(APawn* Killer, APawn* Victim);
 };

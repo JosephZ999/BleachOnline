@@ -32,11 +32,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBOInputComponent* InputComp;
 
-	FVector		 MovementVector;
 	FTimerHandle ComboTimer;
 
 public:
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 	virtual void EndAction() override;
 
 	UFUNCTION(BlueprintCallable)
@@ -44,21 +43,11 @@ public:
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-	virtual bool DoAction(const uint8 MovementState, const EActionType Action);
-	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action);
+	virtual bool DoAction(const uint8 MovementState, const EActionType Action) override;
+	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action) override;
 
 public:
-	UFUNCTION(Server, UnReliable)
-	void SetMovementVectorServer(const FVector& NewVector);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void SetMovementVectorClient(const FVector& NewVector);
-
-	UFUNCTION(Server, UnReliable)
-	void DoActionServer(EActionType ActionType);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void DoActionClient(uint8 InitialState, EActionType Action);
+	
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DoComboActionClient(uint8 InitialMovementState, EActionType NewAction);

@@ -7,6 +7,8 @@
 #include "BOCoreTypes.h"
 #include "BOCharacterBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeathSignature, APawn*, KillerPawn, APawn*, VictimPawn);
+
 class UCapsuleComponent;
 class UBOCharacterMovementComponent;
 class UBOIndicatorComponent;
@@ -21,6 +23,9 @@ class BLEACHONLINE_API ABOCharacterBase : public APawn
 
 public:
 	ABOCharacterBase();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDead;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
@@ -44,10 +49,14 @@ private:
 	FTimerHandle EndActionTimer;
 	FTimerHandle StandUpTimer;
 	bool		 bDead = false;
+	FVector		 MovementVector;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnLanded(FVector LastVelocity);
+
+	virtual bool DoAction(const uint8 MovementState, const EActionType Action) { return false; }
+	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action) { return false; }
 
 	// Wrapper Functions |=========================================================================
 
@@ -93,6 +102,22 @@ public:
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
 
+	UFUNCTION(Server, UnReliable)
+	void SetMovementVectorServer(const FVector& NewVector);
+	void SetMovementVectorServer_Implementation(const FVector& NewVector);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetMovementVectorClient(const FVector& NewVector);
+	void SetMovementVectorClient_Implementation(const FVector& NewVector);
+
+	UFUNCTION(Server, UnReliable)
+	void DoActionServer(EActionType ActionType);
+	void DoActionServer_Implementation(EActionType ActionType);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DoActionClient(uint8 InitialState, EActionType Action);
+	void DoActionClient_Implementation(uint8 InitialState, EActionType Action);
+
 	/* On Server */
 	void Jump();
 	void StandUp();
@@ -100,7 +125,6 @@ public:
 	void SetCharacterCollision(bool Enabled);
 	void SetCharacterVisibility(bool Visible);
 	void DestroyDamageActor();
-	void SetMoveVector(const FVector& NewVector);
 
 private:
 	void UpdateRotation();

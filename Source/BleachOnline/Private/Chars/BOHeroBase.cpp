@@ -42,49 +42,12 @@ void ABOHeroBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	}
 }
 
-void ABOHeroBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	AddMovementInput(MovementVector);
-}
-
 void ABOHeroBase::EndAction()
 {
 	Super::EndAction();
 	GetInputComponent()->ClearComboKeys();
 	SetCharacterCollision(true);
 	SetCharacterVisibility(true);
-}
-
-void ABOHeroBase::SetMovementVectorServer_Implementation(const FVector& NewVector)
-{
-	MovementVector = NewVector;
-	SetMovementVectorClient(NewVector);
-}
-
-void ABOHeroBase::SetMovementVectorClient_Implementation(const FVector& NewVector)
-{
-	if (! HasAuthority())
-	{
-		MovementVector = NewVector;
-	}
-}
-
-void ABOHeroBase::DoActionServer_Implementation(EActionType ActionType)
-{
-	const auto CurrentState = GetMoveComp()->GetMovementState();
-	if (DoAction(CurrentState, ActionType))
-	{
-		DoActionClient(CurrentState, ActionType);
-	}
-}
-
-void ABOHeroBase::DoActionClient_Implementation(uint8 InitialState, EActionType Action)
-{
-	if (HasAuthority()) return;
-
-	DoAction(InitialState, Action);
 }
 
 void ABOHeroBase::SetComboTimer(float Delay)

@@ -32,10 +32,10 @@ ABOCharacterBase::ABOCharacterBase()
 	SetRootComponent(CapsuleComp);
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
-	
-	HealthComp	 = CreateDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
-	
-	SpriteComp	 = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
+
+	HealthComp = CreateDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
+
+	SpriteComp = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
 	SpriteComp->SetupAttachment(GetRootComponent());
 
 	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
@@ -59,6 +59,7 @@ void ABOCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdateRotation();
+	AddMovementInput(MovementVector);
 }
 
 FDamageInfo ABOCharacterBase::GetDamageInfo()
@@ -127,7 +128,7 @@ float ABOCharacterBase::GetAnimTime(const float Frame)
 void ABOCharacterBase::Jump()
 {
 	const FName AnimName = "JumpStart";
-	if (!GetSpriteComp()->ContainsAnim(AnimName))
+	if (! GetSpriteComp()->ContainsAnim(AnimName))
 	{
 		GetMoveComp()->Jump();
 		return;
@@ -151,6 +152,8 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 
 	if (DamageActor->GetTeam() == GetTeam()) return;
 
+	HealthComp->AddValue(-Damage);
+
 	// Impulse
 	GetMoveComp()->Launch(DamageActor->GetImpulseVector(this), false, false);
 
@@ -159,7 +162,10 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	{
 		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.2f, true);
 	}
-	HealthComp->AddValue(-Damage);
+	if (HealthComp->GetValue() <= 0.f)
+	{
+		OnDead.Broadcast(DamageCauser->GetInstigator(), this);
+	}
 }
 
 void ABOCharacterBase::OnDeath()
@@ -248,6 +254,35 @@ void ABOCharacterBase::EndAction()
 	GetSpriteComp()->Play();
 }
 
+void ABOCharacterBase::SetMovementVectorServer_Implementation(const FVector& NewVector)
+{
+	MovementVector = NewVector;
+	SetMovementVectorClient(NewVector);
+}
+
+void ABOCharacterBase::SetMovementVectorClient_Implementation(const FVector& NewVector)
+{
+	if (! HasAuthority())
+	{
+		MovementVector = NewVector;
+	}
+}
+
+void ABOCharacterBase::DoActionServer_Implementation(EActionType ActionType)
+{
+	const auto CurrentState = GetMoveComp()->GetMovementState();
+	if (DoAction(CurrentState, ActionType))
+	{
+		DoActionClient(CurrentState, ActionType);
+	}
+}
+
+void ABOCharacterBase::DoActionClient_Implementation(uint8 InitialState, EActionType Action)
+{
+	if (HasAuthority()) return;
+
+	DoAction(InitialState, Action);
+}
 
 void ABOCharacterBase::SetCharacterCollision(bool Enabled)
 {
@@ -262,9 +297,4 @@ void ABOCharacterBase::SetCharacterVisibility(bool Visible)
 void ABOCharacterBase::DestroyDamageActor()
 {
 	DamageActorComp->Destroy();
-}
-
-void ABOCharacterBase::SetMoveVector(const FVector & NewVector)
-{
-	GetMoveComp()->SetMovementVector(NewVector);
 }
