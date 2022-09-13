@@ -38,6 +38,8 @@ public:
 
 	void SetAnimation(const FName& AnimationName, bool Looping);
 	bool ContainsAnim(const FName& AnimName);
+
 private:
 	void AnimationUpdateHandle();
+	UPaperFlipbook* GetHitAnim(const FName& AnimName);
 };

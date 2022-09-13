@@ -17,7 +17,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogSpriteComp, All, All);
 #define AN_JUMP_UP		   "JumpUp"
 #define AN_JUMP_HOLD	   "JumpHold"
 #define AN_JUMP_DOWN	   "JumpDown"
-#define AN_HIT			   "Hit1"
+#define AN_HIT1			   "Hit1"
 #define AN_HIT2			   "Hit2"
 #define AN_HIT3			   "Hit3"
 
@@ -76,17 +76,17 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	// clang-format off
 	switch ((EMovementState)OwnerMoveComp->GetMovementState())
 	{
-	case EMovementState::Stand:    NewAnim = Animations.FindRef(AN_STAND);     break;
-	case EMovementState::Walk:     NewAnim = Animations.FindRef(AN_WALK);      break;
-	case EMovementState::JumpUp:   NewAnim = Animations.FindRef(AN_JUMP_UP);   break;
-	case EMovementState::JumpHold: NewAnim = Animations.FindRef(AN_JUMP_HOLD); break;
-	case EMovementState::JumpDown: NewAnim = Animations.FindRef(AN_JUMP_DOWN); break;
-	case EMovementState::Hit:      NewAnim = Animations.FindRef(AN_HIT);       break;
-	case EMovementState::Hit2:     NewAnim = Animations.FindRef(AN_HIT2);      break;
-	case EMovementState::Hit3:     NewAnim = Animations.FindRef(AN_HIT3);      break;
-	case EMovementState::Fall:     NewAnim = Animations.FindRef(AN_FALL_HOLD); break;
-	case EMovementState::FallUp:   NewAnim = Animations.FindRef(AN_FALL_UP);   break;
-	case EMovementState::FallDown: NewAnim = Animations.FindRef(AN_FALL_DOWN); break;
+	case EMovementState::Stand:		NewAnim = Animations.FindRef(AN_STAND);		break;
+	case EMovementState::Walk:		NewAnim = Animations.FindRef(AN_WALK);		break;
+	case EMovementState::JumpUp:	NewAnim = Animations.FindRef(AN_JUMP_UP);	break;
+	case EMovementState::JumpHold:	NewAnim = Animations.FindRef(AN_JUMP_HOLD);	break;
+	case EMovementState::JumpDown:	NewAnim = Animations.FindRef(AN_JUMP_DOWN);	break;
+	case EMovementState::Hit:		NewAnim = GetHitAnim(AN_HIT1);				break;
+	case EMovementState::Hit2:		NewAnim = GetHitAnim(AN_HIT2);				break;
+	case EMovementState::Hit3:		NewAnim = GetHitAnim(AN_HIT3);				break;
+	case EMovementState::Fall:		NewAnim = Animations.FindRef(AN_FALL_HOLD);	break;
+	case EMovementState::FallUp:	NewAnim = Animations.FindRef(AN_FALL_UP);	break;
+	case EMovementState::FallDown:	NewAnim = Animations.FindRef(AN_FALL_DOWN);	break;
 	default: return;
 	}
 	// clang-format on
@@ -107,7 +107,13 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 	}
 }
 
-bool UBOSpriteComponent::ContainsAnim(const FName & AnimName)
+bool UBOSpriteComponent::ContainsAnim(const FName& AnimName)
 {
 	return Animations.Contains(AnimName);
+}
+
+UPaperFlipbook* UBOSpriteComponent::GetHitAnim(const FName& AnimName)
+{
+	UPaperFlipbook* NewAnim = Animations.FindRef(AnimName);
+	return (NewAnim) ? NewAnim : Animations.FindRef(AN_HIT1);
 }
