@@ -69,6 +69,11 @@ void UBOSpriteComponent::InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimati
 	}
 }
 
+void UBOSpriteComponent::InitAnimations(const FString & AnimsFolder)
+{
+	InitAnimations(Animations, AnimsFolder);
+}
+
 void UBOSpriteComponent::AnimationUpdateHandle()
 {
 	UPaperFlipbook* NewAnim = nullptr;

@@ -25,7 +25,10 @@ public:
 
 private:
 	UBOCharacterMovementComponent* OwnerMoveComp;
+
+	UPROPERTY(EditAnywhere)
 	TMap<FName, UPaperFlipbook*> Animations;
+
 	FTimerHandle AnimationUpdateTimer;
 	
 protected:
@@ -34,7 +37,10 @@ protected:
 public:
 	void Construction();
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
-	static void InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder);
+	void InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder);
+
+	UFUNCTION(BlueprintCallable)
+	void InitAnimations(const FString& AnimsFolder);
 
 	void SetAnimation(const FName& AnimationName, bool Looping);
 	bool ContainsAnim(const FName& AnimName);

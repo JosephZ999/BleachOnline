@@ -8,7 +8,7 @@
 
 ABOIchigo::ABOIchigo()
 {
-	UBOSpriteComponent::InitAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
+	GetSpriteComp()->InitAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
 	// UBOSpriteComponent::InitBaseAnimations(BankaiAnimations, "/Game/BleachOnline/Texture/Chars/IchigoBankai/FBook");
 
 	GetDamageActorComp()->InitDamageActors("/Game/BleachOnline/Blueprints/Chars/Ichigo/HitBoxes");
