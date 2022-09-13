@@ -50,6 +50,7 @@ private:
 	FTimerHandle StandUpTimer;
 	bool		 bDead = false;
 	FVector		 MovementVector;
+	FVector		 DesiredForwardVector;
 
 protected:
 	virtual void BeginPlay() override;
@@ -81,6 +82,13 @@ public:
 	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void AddVelocity(const FVector& Direction, float Length);
 
+	void SetRotation(float RotationYaw);
+	void TurnCharacter();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void TurnCharacterClient(float RotationYaw);
+	void TurnCharacterClient_Implementation(float RotationYaw);
+
 	UFUNCTION(BlueprintCallable)
 	void SetTeam(uint8 NewTeam) { Team = NewTeam; }
 
@@ -88,6 +96,7 @@ public:
 	uint8	GetMovementState();
 	FVector GetMoveVector() const;
 	float	GetAnimTime(const float Frame);
+	FVector GetDesiredForwardVector() { return DesiredForwardVector; }
 
 	bool IsOnGround() const;
 	bool IsDoingAnything() const;
@@ -127,7 +136,7 @@ public:
 	void DestroyDamageActor();
 
 private:
-	void UpdateRotation();
+	void SetMovementRotation();
 
 	UFUNCTION()
 	void OnTakeAnyDamageHandle(

@@ -58,8 +58,8 @@ void ABOCharacterBase::BeginPlay()
 void ABOCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UpdateRotation();
 	AddMovementInput(MovementVector);
+	SetMovementRotation();
 }
 
 FDamageInfo ABOCharacterBase::GetDamageInfo()
@@ -85,12 +85,14 @@ void ABOCharacterBase::StandUp()
 // Wrapper Functions |=======================================================================//
 void ABOCharacterBase::LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride, bool bZOverride)
 {
+	if (!HasAuthority()) return;
 	const FVector Velocity = Direction * Impulse;
 	MovementComp->Launch(Velocity, bXYOverride, bZOverride);
 }
 
 void ABOCharacterBase::LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride, bool bZOverride)
 {
+	if (!HasAuthority()) return;
 	const FVector Velocity = Direction * Impulse;
 	MovementComp->LaunchDeferred(Velocity, Delay, bXYOverride, bZOverride);
 }
@@ -187,20 +189,45 @@ void ABOCharacterBase::OnDeathClient_Implementation()
 	OnDeath();
 }
 
-void ABOCharacterBase::UpdateRotation()
+void ABOCharacterBase::SetMovementRotation()
 {
 	if (! GetMoveComp()->IsWalking()) return;
 
 	if (FMath::IsNearlyZero(GetMoveComp()->GetMoveVector().X)) return;
 
-	const float RotationYaw = (GetMoveComp()->GetMoveVector().X > 0.f) ? 0.f : 180.f;
+	const float Yaw = (GetMoveComp()->GetMoveVector().X > 0.f) ? 0.f : 180.f;
+	SetRotation(Yaw);
+}
 
+void ABOCharacterBase::SetRotation(float RotationYaw)
+{
+	const FRotator NewRotation = FRotator(0.f, RotationYaw, 0.f);
+	DesiredForwardVector	   = NewRotation.Vector();
 	if (IsLocallyControlled())
 	{
-		GetController()->SetControlRotation(FRotator(0.f, RotationYaw, 0.f));
+		GetController()->SetControlRotation(NewRotation);
 		return;
 	}
-	SetActorRotation(FRotator(0.f, RotationYaw, 0.f));
+	SetActorRotation(NewRotation);
+}
+
+void ABOCharacterBase::TurnCharacter()
+{
+	if (HasAuthority())
+	{
+		if (FMath::Abs(GetMoveVector().X) > 0.f)
+		{
+			const float NewRotationYaw = GetMoveVector().X > 0.f ? 0.f : 180.f;
+			SetRotation(NewRotationYaw);
+			TurnCharacterClient(NewRotationYaw);
+		}
+	}
+}
+
+void ABOCharacterBase::TurnCharacterClient_Implementation(float RotationYaw)
+{
+	if (HasAuthority()) return;
+	SetRotation(RotationYaw);
 }
 
 bool ABOCharacterBase::IsDoingAnything() const

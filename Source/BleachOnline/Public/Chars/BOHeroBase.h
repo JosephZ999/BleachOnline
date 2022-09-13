@@ -35,8 +35,9 @@ private:
 	FTimerHandle ComboTimer;
 
 public:
-	// virtual void Tick(float DeltaTime) override;
 	virtual void EndAction() override;
+	// virtual void Tick(float DeltaTime) override;
+	// virtual void OnConstruction(const FTransform& NewTransform) override;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UBOInputComponent* GetInputComponent() const { return InputComp; }
@@ -47,8 +48,6 @@ protected:
 	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action) override;
 
 public:
-	
-
 	UFUNCTION(NetMulticast, Reliable)
 	void DoComboActionClient(uint8 InitialMovementState, EActionType NewAction);
 
