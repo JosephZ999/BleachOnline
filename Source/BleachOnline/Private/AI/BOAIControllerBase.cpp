@@ -44,9 +44,18 @@ void ABOAIControllerBase::Wait(float Delay)
 	SetTickTimer(Delay);
 }
 
-void ABOAIControllerBase::OnDeadHandle(APawn * Killer, APawn * Victim)
+void ABOAIControllerBase::OnDeadHandle(APawn* Killer, APawn* Victim)
 {
 	GetWorldTimerManager().ClearTimer(TickTimer);
+}
+
+FORCEINLINE bool ABOAIControllerBase::IsPointNear(const FVector& TargetPoint)
+{
+	const auto Location	 = ControlledCharacter->GetActorLocation();
+	const auto DistanceX = FMath::Sqrt(FMath::Square(Location.X - TargetPoint.X));
+	const auto DistanceY = FMath::Sqrt(FMath::Square(Location.Y - TargetPoint.Y));
+
+	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
 }
 
 template <typename Predicate> //
@@ -66,7 +75,7 @@ inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 		const float Radius = (FindEnemyRadius / (float)FindEnemyChunks) * i;
 
 		TArray<FOverlapResult> Overlaps;
-		GetWorld()->OverlapMultiByChannel(Overlaps, Pos, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(Radius), Params);
+		GetWorld()->OverlapMultiByChannel(Overlaps, Pos, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(Radius), Params);
 
 		auto LocalPredicate = [&](FOverlapResult& Overlap)
 		{
@@ -97,12 +106,7 @@ bool ABOAIControllerBase::SearchAlly()
 
 bool ABOAIControllerBase::IsEnemyNear()
 {
-	const auto Location		 = ControlledCharacter->GetActorLocation();
-	const auto EnemyLocation = Enemy->GetActorLocation();
-	const auto DistanceX	 = FMath::Sqrt(FMath::Square(Location.X - EnemyLocation.X));
-	const auto DistanceY	 = FMath::Sqrt(FMath::Square(Location.Y - EnemyLocation.Y));
-
-	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
+	return IsPointNear(Enemy->GetActorLocation());
 }
 
 bool ABOAIControllerBase::IsEnemyFar()
@@ -112,12 +116,7 @@ bool ABOAIControllerBase::IsEnemyFar()
 
 bool ABOAIControllerBase::IsAllyNear()
 {
-	const auto Location		= ControlledCharacter->GetActorLocation();
-	const auto AllyLocation = Ally->GetActorLocation();
-	const auto DistanceX	= FMath::Sqrt(FMath::Square(Location.X - AllyLocation.X));
-	const auto DistanceY	= FMath::Sqrt(FMath::Square(Location.Y - AllyLocation.Y));
-
-	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
+	return IsPointNear(Ally->GetActorLocation());
 }
 
 bool ABOAIControllerBase::IsAllyFar()
@@ -142,7 +141,7 @@ void ABOAIControllerBase::StopMoving()
 	ControlledCharacter->SetMovementVectorServer(FVector::ZeroVector);
 }
 
-FVector ABOAIControllerBase::MakeForwardVector(const FVector & TargetLocation)
+FVector ABOAIControllerBase::MakeForwardVector(const FVector& TargetLocation)
 {
 	return FRotationMatrix::MakeFromX(TargetLocation - GetControlledChar()->GetActorLocation()).Rotator().Vector();
 }

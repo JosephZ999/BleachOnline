@@ -73,4 +73,6 @@ private:
 
 	UFUNCTION()
 	void OnDeadHandle(APawn* Killer, APawn* Victim);
+
+	bool IsPointNear(const FVector& TargetPoint);
 };

@@ -287,6 +287,7 @@ void ABOCharacterBase::SetMovementVector(const FVector& NewVector)
 	if (! HasAuthority()) return;
 	MovementVector = NewVector;
 	MovementComp->SetMovementVector(MovementVector);
+	SetMovementVectorClient(MovementVector);
 }
 
 void ABOCharacterBase::SetMovementVectorServer_Implementation(const FVector& NewVector)
