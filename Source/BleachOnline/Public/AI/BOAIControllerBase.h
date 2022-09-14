@@ -56,6 +56,8 @@ protected:
 
 	void MoveToPoint(const FVector& NewLocation, float Distance);
 	void StopMoving();
+	
+	FVector MakeForwardVector(const FVector& TargetLocation);
 
 	FORCEINLINE ABOCharacterBase* GetControlledChar() { return ControlledCharacter; }
 

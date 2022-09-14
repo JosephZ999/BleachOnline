@@ -9,8 +9,6 @@ void ABOMeleeAI::AIBody()
 {
 	Super::AIBody();
 
-	UE_LOG(LogMeleeAI, Display, TEXT("AI Body"));
-
 	switch (Task)
 	{ // clang-format off
 	case EAITasks::GoToEnemy:   GoToEnemy();   return;
@@ -19,6 +17,7 @@ void ABOMeleeAI::AIBody()
 	case EAITasks::Dodge:       Dodge();       return;
 	} // clang-format on
 
+	// When task is none
 	if (SearchEnemy())
 	{
 		Task = EAITasks::GoToEnemy;
@@ -30,7 +29,6 @@ void ABOMeleeAI::AIBody()
 		Task = EAITasks::GoToAlly;
 		return;
 	}
-
 	Wait(3.f); // Disable AI for 3 seconds
 }
 
@@ -65,23 +63,26 @@ void ABOMeleeAI::GoToAlly()
 
 	if (! SearchAlly())
 	{
+		UE_LOG(LogMeleeAI, Display, TEXT("Cannot find Ally"));
 		Task = EAITasks::None;
+		GetControlledChar()->SetMovementVector(FVector::ZeroVector);
 		return;
 	}
-
 	MoveToPoint(Ally->GetActorLocation(), CloseDistance / 2.f);
 }
 void ABOMeleeAI::AttackEnemy()
 {
 	UE_LOG(LogMeleeAI, Display, TEXT("Attack"));
 
-	if (GetControlledChar()->GetMovementState() <= 1)
+	if (GetControlledChar()->GetMovementState() <= 1 && IsEnemyNear())
 	{
-		Task = EAITasks::GoToEnemy;
-		MoveToPoint(Enemy->GetActorLocation(), 0.f);
+		const FVector MoveVector = MakeForwardVector(Enemy->GetActorLocation());
+		
+		GetControlledChar()->SetMovementVector(MoveVector);
 		GetControlledChar()->DoActionServer(EActionType::Attack);
 		Wait(1.f);
 	}
+	Task = EAITasks::GoToEnemy;
 }
 
 void ABOMeleeAI::Dodge() {}

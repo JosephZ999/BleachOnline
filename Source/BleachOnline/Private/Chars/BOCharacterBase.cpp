@@ -85,14 +85,14 @@ void ABOCharacterBase::StandUp()
 // Wrapper Functions |=======================================================================//
 void ABOCharacterBase::LaunchCharacter(const FVector& Direction, float Impulse, bool bXYOverride, bool bZOverride)
 {
-	if (!HasAuthority()) return;
+	if (! HasAuthority()) return;
 	const FVector Velocity = Direction * Impulse;
 	MovementComp->Launch(Velocity, bXYOverride, bZOverride);
 }
 
 void ABOCharacterBase::LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride, bool bZOverride)
 {
-	if (!HasAuthority()) return;
+	if (! HasAuthority()) return;
 	const FVector Velocity = Direction * Impulse;
 	MovementComp->LaunchDeferred(Velocity, Delay, bXYOverride, bZOverride);
 }
@@ -202,7 +202,6 @@ void ABOCharacterBase::SetMovementRotation()
 void ABOCharacterBase::SetRotation(float RotationYaw)
 {
 	const FRotator NewRotation = FRotator(0.f, RotationYaw, 0.f);
-	DesiredForwardVector	   = NewRotation.Vector();
 	if (IsLocallyControlled())
 	{
 		GetController()->SetControlRotation(NewRotation);
@@ -211,7 +210,7 @@ void ABOCharacterBase::SetRotation(float RotationYaw)
 	SetActorRotation(NewRotation);
 }
 
-void ABOCharacterBase::TurnCharacter()
+FRotator ABOCharacterBase::TurnCharacter()
 {
 	if (HasAuthority())
 	{
@@ -220,8 +219,10 @@ void ABOCharacterBase::TurnCharacter()
 			const float NewRotationYaw = GetMoveVector().X > 0.f ? 0.f : 180.f;
 			SetRotation(NewRotationYaw);
 			TurnCharacterClient(NewRotationYaw);
+			return FRotator(0.f, NewRotationYaw, 0.f);
 		}
 	}
+	return GetActorRotation();
 }
 
 void ABOCharacterBase::TurnCharacterClient_Implementation(float RotationYaw)
@@ -279,6 +280,13 @@ void ABOCharacterBase::EndAction()
 	GetMoveComp()->SetControlEnabled(true);
 	GetSpriteComp()->SetLooping(true);
 	GetSpriteComp()->Play();
+}
+
+void ABOCharacterBase::SetMovementVector(const FVector& NewVector)
+{
+	if (! HasAuthority()) return;
+	MovementVector = NewVector;
+	MovementComp->SetMovementVector(MovementVector);
 }
 
 void ABOCharacterBase::SetMovementVectorServer_Implementation(const FVector& NewVector)

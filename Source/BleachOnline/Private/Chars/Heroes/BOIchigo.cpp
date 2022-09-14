@@ -97,62 +97,61 @@ bool ABOIchigo::DoComboAction(const uint8 MovementState, const EActionType Actio
 
 void ABOIchigo::AttackLight()
 {
-	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackL);
-	const FName AnimationName = "Attack1";
+	const uint8	   State		 = static_cast<uint8>(EIchigoState::AttackL);
+	const FName	   AnimationName = "Attack1";
+	const FRotator NewRotation	 = TurnCharacter();
 
 	NewAction(State, AnimationName);
-	TurnCharacter();
 
-	LaunchCharacterDeferred(GetMoveVector() + GetActorForwardVector(), 200.f, GetAnimTime(3.f), true);
+	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 200.f, GetAnimTime(3.f), true);
 	GetDamageActorComp()->SpawnDamageActor("Attack_1", FVector(14.f, 0.f, 0.f), GetAnimTime(4.5f));
 	SetComboTimer(GetAnimTime(9.f));
 }
 
 void ABOIchigo::AttackMedium()
 {
-	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackM);
-	const FName AnimationName = "Attack2";
+	const uint8	   State		 = static_cast<uint8>(EIchigoState::AttackM);
+	const FName	   AnimationName = "Attack2";
+	const FRotator NewRotation	 = TurnCharacter();
 
 	NewAction(State, AnimationName);
-	TurnCharacter();
 
-	LaunchCharacterDeferred(GetMoveVector() + GetDesiredForwardVector(), 200.f, GetAnimTime(1.f), true);
+	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 200.f, GetAnimTime(1.f), true);
 	GetDamageActorComp()->SpawnDamageActor("Attack_2", FVector(14.f, 0.f, 0.f), GetAnimTime(3));
 	SetComboTimer(GetAnimTime(8.f));
 }
 
 void ABOIchigo::AttackFW()
 {
-	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackFW);
-	const FName AnimationName = "AttackFW";
+	const uint8	   State		 = static_cast<uint8>(EIchigoState::AttackFW);
+	const FName	   AnimationName = "AttackFW";
+	const FRotator NewRotation	 = TurnCharacter();
 
 	NewAction(State, AnimationName);
-	TurnCharacter();
 
-	LaunchCharacterDeferred(GetMoveVector() + GetDesiredForwardVector(), 300.f, GetAnimTime(1.f), true);
+	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 300.f, GetAnimTime(1.f), true);
 	GetDamageActorComp()->SpawnDamageActor("Attack_FW", FVector(14.f, 0.f, 0.f), GetAnimTime(6));
 }
 
 void ABOIchigo::AttackBW()
 {
-	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackBW);
-	const FName AnimationName = "AttackBW";
+	const uint8	   State		 = static_cast<uint8>(EIchigoState::AttackBW);
+	const FName	   AnimationName = "AttackBW";
+	const FRotator NewRotation	 = TurnCharacter();
 
 	NewAction(State, AnimationName);
-	TurnCharacter();
 
-	LaunchCharacterDeferred(GetMoveVector() + GetDesiredForwardVector(), 250.f, GetAnimTime(4.f), true);
+	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 250.f, GetAnimTime(4.f), true);
 	GetDamageActorComp()->SpawnDamageActor("Attack_BW", FVector(12.f, 0.f, 18.f), GetAnimTime(5.5f));
-
 }
 
 void ABOIchigo::AttackAir()
 {
-	const uint8 State		  = static_cast<uint8>(EIchigoState::AttackAirL);
-	const FName AnimationName = "AttackAir";
+	const uint8	   State		 = static_cast<uint8>(EIchigoState::AttackAirL);
+	const FName	   AnimationName = "AttackAir";
+	const FRotator NewRotation	 = TurnCharacter();
 
 	NewAction(State, AnimationName);
-	TurnCharacter();
 
-	LaunchCharacter(GetMoveVector(), 250.f, true);
+	LaunchCharacter(GetMoveVector() + NewRotation.Vector(), 250.f, true);
 }

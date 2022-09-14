@@ -141,3 +141,8 @@ void ABOAIControllerBase::StopMoving()
 {
 	ControlledCharacter->SetMovementVectorServer(FVector::ZeroVector);
 }
+
+FVector ABOAIControllerBase::MakeForwardVector(const FVector & TargetLocation)
+{
+	return FRotationMatrix::MakeFromX(TargetLocation - GetControlledChar()->GetActorLocation()).Rotator().Vector();
+}

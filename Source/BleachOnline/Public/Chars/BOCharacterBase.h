@@ -50,7 +50,6 @@ private:
 	FTimerHandle StandUpTimer;
 	bool		 bDead = false;
 	FVector		 MovementVector;
-	FVector		 DesiredForwardVector;
 
 protected:
 	virtual void BeginPlay() override;
@@ -83,7 +82,7 @@ public:
 	void AddVelocity(const FVector& Direction, float Length);
 
 	void SetRotation(float RotationYaw);
-	void TurnCharacter();
+	FRotator TurnCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void TurnCharacterClient(float RotationYaw);
@@ -96,7 +95,6 @@ public:
 	uint8	GetMovementState();
 	FVector GetMoveVector() const;
 	float	GetAnimTime(const float Frame);
-	FVector GetDesiredForwardVector() { return DesiredForwardVector; }
 
 	bool IsOnGround() const;
 	bool IsDoingAnything() const;
@@ -110,6 +108,8 @@ public:
 
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
+
+	void SetMovementVector(const FVector& NewVector);
 
 	UFUNCTION(Server, UnReliable)
 	void SetMovementVectorServer(const FVector& NewVector);
