@@ -4,21 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BOAbilityTypes.h"
 #include "BOAbilitySystemComponent.generated.h"
 
+class UBOAbilityBase;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+/**/
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BLEACHONLINE_API UBOAbilitySystemComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UBOAbilitySystemComponent();
+
+	UPROPERTY(Category = "Ablility Settings", EditAnywhere)
+	TArray<FAbilityType> Abilities;
+
+private:
+	TMap<FName, UBOAbilityBase*> AbilityObjects;
 
 protected:
 	virtual void BeginPlay() override;
-
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-		
 };
