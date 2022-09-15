@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BOCoreTypes.h"
+#include "BOAbilityTypes.h"
 #include "BOAbilityBase.generated.h"
 
 class ABOCharacterBase;
@@ -42,5 +43,6 @@ public:
 
 	FName GetName() const { return Name; }
 
-	virtual void ActivateSkill() {}
+	virtual void Activate() {}
+	virtual void ActivateWithParam(const FAbilityParam& Param) {}
 };

@@ -9,6 +9,27 @@
 
 class UBOAbilityBase;
 
+USTRUCT(BlueprintType)
+struct FAbilityType
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UBOAbilityBase> Class;
+
+	UPROPERTY(EditAnywhere)
+	EIndicatorType IndicatorType;
+
+	UPROPERTY(EditAnywhere)
+	float Consumption;
+
+	UPROPERTY(EditAnywhere)
+	float Cooldown;
+
+	UPROPERTY(EditAnywhere)
+	uint8 ChargesNum;
+};
+
 /**/
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BLEACHONLINE_API UBOAbilitySystemComponent : public UActorComponent
@@ -25,7 +46,8 @@ private:
 	TMap<FName, UBOAbilityBase*> AbilityObjects;
 
 public:
-	void ActivateAbilityByName(const FName& AbilityName);
+	void ActivateAbility(const FName& AbilityName);
+	void ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param);
 
 protected:
 	virtual void BeginPlay() override;

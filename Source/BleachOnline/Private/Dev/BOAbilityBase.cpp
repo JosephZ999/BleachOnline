@@ -1,6 +1,7 @@
 // Authors MoonDi & JosephZzz for Bleach Online fan game
 
 #include "BOAbilityBase.h"
+#include "BOAbilityTypes.h"
 #include "BOCharacterBase.h"
 #include "BOIndicatorComponent.h"
 

@@ -1,26 +1,27 @@
 #pragma once
 
-#include "BOAbilityBase.h"
 #include "BOCoreTypes.h"
 #include "BOAbilityTypes.generated.h"
 
+UENUM(BlueprintType)
+enum class EAbilityParamType : uint8
+{
+	None,
+	Float,
+	Integer,
+	Vector,
+	Object,
+};
+
 USTRUCT(BlueprintType)
-struct FAbilityType
+struct FAbilityParam
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UBOAbilityBase> Class;
+	EAbilityParamType Type;
 
-	UPROPERTY(EditAnywhere)
-	EIndicatorType IndicatorType;
-
-	UPROPERTY(EditAnywhere)
-	float Consumption;
-
-	UPROPERTY(EditAnywhere)
-	float Cooldown;
-
-	UPROPERTY(EditAnywhere)
-	uint8 ChargesNum;
+	float	 FloatValue;
+	int32	 IntegerValue;
+	FVector	 VectorValue;
+	UObject* ObjectValue;
 };

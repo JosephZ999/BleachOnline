@@ -2,6 +2,7 @@
 
 #include "BOAbilitySystemComponent.h"
 #include "BOCharacterBase.h"
+#include "BOAbilityBase.h"
 
 UBOAbilitySystemComponent::UBOAbilitySystemComponent()
 {
@@ -27,11 +28,20 @@ void UBOAbilitySystemComponent::BeginPlay()
 	}
 }
 
-void UBOAbilitySystemComponent::ActivateAbilityByName(const FName & AbilityName)
+void UBOAbilitySystemComponent::ActivateAbility(const FName& AbilityName)
 {
 	UBOAbilityBase* Ability = AbilityObjects.FindRef(AbilityName);
 	if (Ability)
 	{
-		Ability->ActivateSkill();
+		Ability->Activate();
+	}
+}
+
+void UBOAbilitySystemComponent::ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param)
+{
+	UBOAbilityBase* Ability = AbilityObjects.FindRef(AbilityName);
+	if (Ability)
+	{
+		Ability->ActivateWithParam(Param);
 	}
 }

@@ -15,6 +15,7 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 class UBODamageActorComponent;
+class UBOAbilitySystemComponent;
 
 UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
@@ -46,6 +47,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBODamageActorComponent* DamageActorComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UBOAbilitySystemComponent* AbilityComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	uint8 Team;
 
@@ -71,10 +75,10 @@ public:
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
+	FORCEINLINE UBOAbilitySystemComponent* GetAbilityCOmp() const { return AbilityComp; }
 
 	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
-
-	virtual FDamageInfo GetDamageInfo();
+	virtual FDamageInfo			   GetDamageInfo();
 
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;
