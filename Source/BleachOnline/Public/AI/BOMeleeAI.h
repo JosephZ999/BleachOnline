@@ -25,6 +25,10 @@ class BLEACHONLINE_API ABOMeleeAI : public ABOAIControllerBase
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY()
+	float AttackVelocityScale = 3.f;
+
 private:
 	EAITasks Task;
 

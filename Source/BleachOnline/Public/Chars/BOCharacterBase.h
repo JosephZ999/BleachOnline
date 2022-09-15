@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDead;
 
+	UPROPERTY(EditDefaultsOnly)
+	float StandUpDelay = 2.f;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* CapsuleComp;
@@ -81,7 +84,7 @@ public:
 	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void AddVelocity(const FVector& Direction, float Length);
 
-	void SetRotation(float RotationYaw);
+	void	 SetRotation(float RotationYaw);
 	FRotator TurnCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)

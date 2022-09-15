@@ -39,6 +39,8 @@ void ABOPickupBase::Tick(float DeltaTime)
 
 	if (bPickingup)
 	{
+		if (! PickupCharacter) return;
+
 		PickingProgress += 1.f * DeltaTime;
 
 		const auto NewLocation = FMath::Lerp(InitialLocation, PickupCharacter->GetActorLocation(), PickingProgress);
@@ -85,7 +87,10 @@ void ABOPickupBase::SetPickupOwner(AActor* NewOwner)
 	PickupCharacter = NewOwner;
 	bPickingup		= false;
 	PickingProgress = 0.f;
-	GetWorldTimerManager().SetTimer(PickupDelayTimer, this, &ABOPickupBase::StartPickup, 1.f);
+	if (PickupCharacter)
+	{
+		GetWorldTimerManager().SetTimer(PickupDelayTimer, this, &ABOPickupBase::StartPickup, 1.f);
+	}
 }
 
 void ABOPickupBase::SetPickupOwnerClient_Implementation(AActor* PickupOwner)

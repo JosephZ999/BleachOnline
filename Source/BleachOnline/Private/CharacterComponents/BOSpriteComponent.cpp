@@ -104,12 +104,20 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 
 void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 {
-	SetFlipbook(Animations.FindRef(AnimationName));
-	SetLooping(Looping);
-	if (! Looping)
+	UPaperFlipbook* NewAnim = Animations.FindRef(AnimationName);
+	if (NewAnim)
 	{
-		PlayFromStart();
+		SetFlipbook(NewAnim);
+		SetLooping(Looping);
+		if (!Looping)
+		{
+			PlayFromStart();
+		}
+		return;
 	}
+	SetFlipbook(Animations.FindRef(AN_STAND));
+	SetLooping(true);
+	Play();
 }
 
 bool UBOSpriteComponent::ContainsAnim(const FName& AnimName)

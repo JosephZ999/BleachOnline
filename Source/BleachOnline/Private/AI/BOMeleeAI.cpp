@@ -77,8 +77,10 @@ void ABOMeleeAI::AttackEnemy()
 	if (GetControlledChar()->GetMovementState() <= 1 && IsEnemyNear())
 	{
 		const FVector MoveVector = MakeForwardVector(Enemy->GetActorLocation());
-		
+		const float	  Distance	 = FVector::Dist2D(GetControlledChar()->GetActorLocation(), Enemy->GetActorLocation());
+
 		GetControlledChar()->SetMovementVector(MoveVector);
+		GetControlledChar()->LaunchCharacter(MoveVector, Distance * AttackVelocityScale, true, true);
 		GetControlledChar()->DoActionServer(EActionType::Attack);
 		Wait(1.f);
 	}

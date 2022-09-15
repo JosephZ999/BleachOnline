@@ -17,7 +17,9 @@ public:
 	ABOPickupBase();
 
 private:
+	UPROPERTY()
 	AActor*		 PickupCharacter;
+
 	FTimerHandle PickupDelayTimer;
 	bool		 bPickingup;
 	float		 PickingProgress;

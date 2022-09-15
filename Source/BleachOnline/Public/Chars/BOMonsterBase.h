@@ -9,15 +9,17 @@
 /**
  *
  */
-UCLASS()
+UCLASS(abstract)
 class BLEACHONLINE_API ABOMonsterBase : public ABOCharacterBase
 {
 	GENERATED_BODY()
 
 public:
 	ABOMonsterBase();
-	virtual void PostInitializeComponents() override;
-	
+	virtual void PostInitProperties() override;
+
+protected:
+	virtual bool DoAction(const uint8 MovementState, const EActionType Action) override;
 
 protected:
 	/*
@@ -26,4 +28,7 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString AnimPath; // = "Hollows/Type1/Anim_1";
+
+private:
+	void Attack();
 };

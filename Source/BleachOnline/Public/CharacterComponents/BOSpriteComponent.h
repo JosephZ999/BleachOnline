@@ -30,7 +30,7 @@ private:
 	TMap<FName, UPaperFlipbook*> Animations;
 
 	FTimerHandle AnimationUpdateTimer;
-	
+
 protected:
 	void BeginPlay() override;
 
@@ -45,7 +45,9 @@ public:
 	void SetAnimation(const FName& AnimationName, bool Looping);
 	bool ContainsAnim(const FName& AnimName);
 
+	bool IsAnimsEmpty() const { return Animations.Num() == 0; }
+
 private:
-	void AnimationUpdateHandle();
+	void			AnimationUpdateHandle();
 	UPaperFlipbook* GetHitAnim(const FName& AnimName);
 };

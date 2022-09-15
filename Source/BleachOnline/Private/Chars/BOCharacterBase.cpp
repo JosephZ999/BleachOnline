@@ -71,7 +71,7 @@ void ABOCharacterBase::OnLanded(FVector LastVelocity)
 {
 	if (GetMoveComp()->IsFalling())
 	{
-		GetWorldTimerManager().SetTimer(StandUpTimer, this, &ABOCharacterBase::StandUp, 3.f);
+		GetWorldTimerManager().SetTimer(StandUpTimer, this, &ABOCharacterBase::StandUp, FMath::Max(StandUpDelay, 0.1f));
 	}
 }
 
