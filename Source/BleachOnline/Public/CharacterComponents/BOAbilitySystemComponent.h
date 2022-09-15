@@ -24,6 +24,9 @@ public:
 private:
 	TMap<FName, UBOAbilityBase*> AbilityObjects;
 
+public:
+	void ActivateAbilityByName(const FName& AbilityName);
+
 protected:
 	virtual void BeginPlay() override;
 };

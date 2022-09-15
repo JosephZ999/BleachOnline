@@ -72,8 +72,7 @@ public:
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
 
-	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
-	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
+	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
 
 	virtual FDamageInfo GetDamageInfo();
 

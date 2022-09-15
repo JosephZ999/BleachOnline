@@ -106,3 +106,14 @@ struct FReceivedActionInfo
 	TArray<EActionType> Keys;
 	FVector				MovementVector;
 };
+
+
+UENUM(BlueprintType)
+enum class EIndicatorType : uint8
+{
+	None,
+	Health,
+	Power,
+	Stamina,
+	Custom,
+};

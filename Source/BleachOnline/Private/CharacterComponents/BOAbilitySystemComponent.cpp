@@ -26,3 +26,12 @@ void UBOAbilitySystemComponent::BeginPlay()
 		Ability->Initialize(OwnerChar, AbilityInfo.IndicatorType, AbilityInfo.Consumption, AbilityInfo.Cooldown, AbilityInfo.ChargesNum);
 	}
 }
+
+void UBOAbilitySystemComponent::ActivateAbilityByName(const FName & AbilityName)
+{
+	UBOAbilityBase* Ability = AbilityObjects.FindRef(AbilityName);
+	if (Ability)
+	{
+		Ability->ActivateSkill();
+	}
+}

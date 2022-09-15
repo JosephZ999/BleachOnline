@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BOAbilityBase.h"
+#include "BOCoreTypes.h"
 #include "BOAbilityTypes.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,7 +13,7 @@ struct FAbilityType
 	TSubclassOf<UBOAbilityBase> Class;
 
 	UPROPERTY(EditAnywhere)
-	EConsumptionType IndicatorType;
+	EIndicatorType IndicatorType;
 
 	UPROPERTY(EditAnywhere)
 	float Consumption;

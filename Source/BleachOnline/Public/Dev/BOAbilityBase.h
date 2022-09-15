@@ -4,19 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "BOCoreTypes.h"
 #include "BOAbilityBase.generated.h"
 
 class ABOCharacterBase;
-
-UENUM(BlueprintType)
-enum class EConsumptionType : uint8
-{
-	None,
-	Health,
-	Power,
-	Stamina,
-	Custom,
-};
+class UBOIndicatorComponent;
 
 /**
  *
@@ -27,17 +19,28 @@ class BLEACHONLINE_API UBOAbilityBase : public UObject
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly)
 	FName Name;
 
-	ABOCharacterBase* OwnerCharacter;
-	EConsumptionType  IndicatorType;
-	float			  Consumption;
-	float			  Cooldown;
-	uint8			  ChargesNum;
+private:
+	ABOCharacterBase*	   OwnerCharacter;
+	UBOIndicatorComponent* CharacterIndicator;
+
+	EIndicatorType IndicatorType;
+	float		   Consumption;
+	float		   Cooldown;
+	uint8		   ChargesNum;
+	bool		   bUseIndicator;
 
 public:
-	void Initialize(
-		ABOCharacterBase* InOwnerChar, EConsumptionType InIndicatorType, float InConsumption, float InCooldown, uint8 InChargesNum);
+	void Initialize(					   //
+		ABOCharacterBase* InOwnerChar,	   //
+		EIndicatorType	  InIndicatorType, //
+		float			  InConsumption,   //
+		float			  InCooldown,	   //
+		uint8			  InChargesNum);
 
 	FName GetName() const { return Name; }
+
+	virtual void ActivateSkill() {}
 };
