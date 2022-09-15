@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Authors MoonDi & JosephZzz for Bleach Online fan game
 
 #include "BOCharacterBase.h"
 #include "BOCharacterMovementComponent.h"

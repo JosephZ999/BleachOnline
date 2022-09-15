@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Authors MoonDi & JosephZzz for Bleach Online fan game
 
 #include "BOMeleeAI.h"
 #include "BOCharacterBase.h"

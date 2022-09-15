@@ -1,3 +1,5 @@
+// Authors MoonDi & JosephZzz for Bleach Online fan game
+
 #pragma once
 
 #include "BOCoreTypes.generated.h"
