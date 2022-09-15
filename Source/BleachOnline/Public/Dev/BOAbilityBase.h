@@ -21,7 +21,7 @@ enum class EConsumptionType : uint8
 /**
  *
  */
-UCLASS(abstract)
+UCLASS(abstract, Blueprintable)
 class BLEACHONLINE_API UBOAbilityBase : public UObject
 {
 	GENERATED_BODY()

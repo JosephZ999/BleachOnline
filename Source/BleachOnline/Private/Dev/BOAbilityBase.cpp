@@ -3,6 +3,8 @@
 #include "BOAbilityBase.h"
 #include "BOCharacterBase.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogAbility, All, All);
+
 void UBOAbilityBase::Initialize(	   //
 	ABOCharacterBase* InOwnerChar,	   //
 	EConsumptionType  InIndicatorType, //
@@ -17,4 +19,5 @@ void UBOAbilityBase::Initialize(	   //
 	ChargesNum	   = InChargesNum;
 
 	checkf(OwnerCharacter, TEXT("Character is null"));
+	UE_LOG(LogAbility, Display, TEXT("Ability created and initialized successfully"));
 }
