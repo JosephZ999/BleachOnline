@@ -24,7 +24,10 @@ protected:
 	FName Name;
 
 private:
-	ABOCharacterBase*	   OwnerCharacter;
+	UPROPERTY()
+	ABOCharacterBase* OwnerCharacter;
+
+	UPROPERTY()
 	UBOIndicatorComponent* CharacterIndicator;
 
 	EIndicatorType IndicatorType;
@@ -32,6 +35,7 @@ private:
 	float		   Cooldown;
 	uint8		   ChargesNum;
 	bool		   bUseIndicator;
+	bool		   bActive;
 
 public:
 	void Initialize(					   //
@@ -49,6 +53,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ABOCharacterBase* GetOwner() const { return OwnerCharacter; }
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnActivate(FAbilityParam Param);
+	bool IsActive() const { return bActive; }
+
+	UFUNCTION(BlueprintImplementableEvent) void OnActivate(FAbilityParam Param);
+
+private:
+	void SetCooldownTimer();
+	void OnCooldown();
 };

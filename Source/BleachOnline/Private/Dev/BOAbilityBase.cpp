@@ -4,6 +4,7 @@
 #include "BOAbilityTypes.h"
 #include "BOCharacterBase.h"
 #include "BOIndicatorComponent.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogAbility, All, All);
 
@@ -29,14 +30,42 @@ void UBOAbilityBase::Initialize(	   //
 
 	checkf(OwnerCharacter, TEXT("Character is null"));
 	UE_LOG(LogAbility, Display, TEXT("Ability created and initialized successfully"));
+
+	bActive = true;
 }
 
 void UBOAbilityBase::Activate()
 {
-	OnActivate(FAbilityParam());
+	if (bActive)
+	{
+		OnActivate(FAbilityParam());
+		bActive = false;
+		SetCooldownTimer();
+	}
 }
 
 void UBOAbilityBase::ActivateWithParam(const FAbilityParam& Param)
 {
-	OnActivate(Param);
+	if (bActive)
+	{
+		OnActivate(Param);
+		bActive = false;
+		SetCooldownTimer();
+	}
+}
+
+void UBOAbilityBase::SetCooldownTimer()
+{
+	if (Cooldown > 0.f)
+	{
+		FTimerHandle CooldownTimer;
+		OwnerCharacter->GetWorldTimerManager().SetTimer(CooldownTimer, this, &ThisClass::OnCooldown, Cooldown);
+		return;
+	}
+	OnCooldown();
+}
+
+void UBOAbilityBase::OnCooldown() 
+{
+	bActive = true;
 }

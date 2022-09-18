@@ -56,18 +56,22 @@ void ABOMeleeAI::GoToEnemy()
 		Task = EAITasks::AttackEnemy;
 		return;
 	}
-	
+
 	if (Enemy && IsEnemyFar())
 	{
-		GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam("Dash", FAbilityParam(Enemy->GetActorLocation()));
-		return;
-	}
+		if (GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam( //
+				AbilityTypes::DashName,										 //
+				FAbilityParam(Enemy->GetActorLocation())))
+		{
+			return;
+		}
 
-	/*if (IsEnemyFar() && SearchAlly())
-	{
-		Task = EAITasks::GoToAlly;
-		return;
-	}*/
+		if (SearchAlly())
+		{
+			Task = EAITasks::GoToAlly;
+			return;
+		}
+	}
 
 	MoveToPoint(Enemy->GetActorLocation(), CloseDistance / 2.f);
 	Wait(0.2f);

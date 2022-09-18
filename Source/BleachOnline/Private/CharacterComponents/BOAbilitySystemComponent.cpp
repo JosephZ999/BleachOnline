@@ -28,22 +28,26 @@ void UBOAbilitySystemComponent::BeginPlay()
 	}
 }
 
-void UBOAbilitySystemComponent::ActivateAbility(const FName& AbilityName)
+bool UBOAbilitySystemComponent::ActivateAbility(const FName& AbilityName)
 {
 	UBOAbilityBase* Ability = AbilityObjects.FindRef(AbilityName);
-	if (Ability)
+	if (Ability && Ability->IsActive())
 	{
 		Ability->Activate();
+		return true;
 	}
+	return false;
 }
 
-void UBOAbilitySystemComponent::ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param)
+bool UBOAbilitySystemComponent::ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param)
 {
 	UBOAbilityBase* Ability = AbilityObjects.FindRef(AbilityName);
-	if (Ability)
+	if (Ability && Ability->IsActive())
 	{
 		Ability->ActivateWithParam(Param);
+		return true;
 	}
+	return false;
 }
 
 bool UBOAbilitySystemComponent::HasAbility(const FName& AbilityName)

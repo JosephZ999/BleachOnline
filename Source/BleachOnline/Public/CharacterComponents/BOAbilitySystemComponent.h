@@ -47,8 +47,8 @@ private:
 	TMap<FName, UBOAbilityBase*> AbilityObjects;
 
 public:
-	void ActivateAbility(const FName& AbilityName);
-	void ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param);
+	bool ActivateAbility(const FName& AbilityName);
+	bool ActivateAbilityWithParam(const FName& AbilityName, const FAbilityParam& Param);
 
 	bool HasAbility(const FName& AbilityName);
 
