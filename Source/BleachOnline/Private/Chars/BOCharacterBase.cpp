@@ -164,7 +164,7 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	const bool CanFall = DamageActor->bFall || bDead;
 	if (! GetMoveComp()->SetFalling(CanFall)) //
 	{
-		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.2f, true);
+		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.4f, true);
 	}
 	if (HealthComp->GetValue() <= 0.f)
 	{

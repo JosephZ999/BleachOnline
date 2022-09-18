@@ -15,7 +15,10 @@ void ABOMonsterBase::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	GetSpriteComp()->InitAnimations("/Game/BleachOnline/Texture/" + AnimPath);
+	if (GetSpriteComp()->IsAnimsEmpty())
+	{
+		GetSpriteComp()->InitAnimations("/Game/BleachOnline/Texture/" + AnimPath);
+	}
 }
 
 bool ABOMonsterBase::DoAction(const uint8 MovementState, const EActionType Action)

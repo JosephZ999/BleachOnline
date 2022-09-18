@@ -45,3 +45,8 @@ void UBOAbilitySystemComponent::ActivateAbilityWithParam(const FName& AbilityNam
 		Ability->ActivateWithParam(Param);
 	}
 }
+
+bool UBOAbilitySystemComponent::HasAbility(const FName& AbilityName)
+{
+	return AbilityObjects.Contains(AbilityName);
+}

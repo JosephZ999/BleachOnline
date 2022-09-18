@@ -2,8 +2,17 @@
 
 #include "BOMeleeAI.h"
 #include "BOCharacterBase.h"
+#include "BOAbilitySystemComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMeleeAI, All, All);
+
+void ABOMeleeAI::OnInit()
+{
+	if (GetControlledChar())
+	{
+		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityTypes::DashName);
+	}
+}
 
 void ABOMeleeAI::AIBody()
 {
@@ -47,12 +56,18 @@ void ABOMeleeAI::GoToEnemy()
 		Task = EAITasks::AttackEnemy;
 		return;
 	}
+	
+	if (Enemy && IsEnemyFar())
+	{
+		GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam("Dash", FAbilityParam(Enemy->GetActorLocation()));
+		return;
+	}
 
-	if (IsEnemyFar() && SearchAlly())
+	/*if (IsEnemyFar() && SearchAlly())
 	{
 		Task = EAITasks::GoToAlly;
 		return;
-	}
+	}*/
 
 	MoveToPoint(Enemy->GetActorLocation(), CloseDistance / 2.f);
 	Wait(0.2f);

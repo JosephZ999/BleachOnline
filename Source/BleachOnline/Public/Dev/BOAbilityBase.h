@@ -41,8 +41,14 @@ public:
 		float			  InCooldown,	   //
 		uint8			  InChargesNum);
 
+	virtual void Activate();
+	virtual void ActivateWithParam(const FAbilityParam& Param);
+
 	FName GetName() const { return Name; }
 
-	virtual void Activate() {}
-	virtual void ActivateWithParam(const FAbilityParam& Param) {}
+	UFUNCTION(BlueprintCallable)
+	ABOCharacterBase* GetOwner() const { return OwnerCharacter; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnActivate(FAbilityParam Param);
 };

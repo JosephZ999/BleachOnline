@@ -30,3 +30,13 @@ void UBOAbilityBase::Initialize(	   //
 	checkf(OwnerCharacter, TEXT("Character is null"));
 	UE_LOG(LogAbility, Display, TEXT("Ability created and initialized successfully"));
 }
+
+void UBOAbilityBase::Activate()
+{
+	OnActivate(FAbilityParam());
+}
+
+void UBOAbilityBase::ActivateWithParam(const FAbilityParam& Param)
+{
+	OnActivate(Param);
+}

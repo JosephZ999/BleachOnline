@@ -46,6 +46,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 	virtual void AIBody() {}
+	virtual void OnInit() {}
 
 	bool SearchEnemy();
 	bool SearchAlly();

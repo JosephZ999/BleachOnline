@@ -75,7 +75,7 @@ public:
 	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
 	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
 	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
-	FORCEINLINE UBOAbilitySystemComponent* GetAbilityCOmp() const { return AbilityComp; }
+	FORCEINLINE UBOAbilitySystemComponent* GetAbilityComp() const { return AbilityComp; }
 
 	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
 	virtual FDamageInfo			   GetDamageInfo();
