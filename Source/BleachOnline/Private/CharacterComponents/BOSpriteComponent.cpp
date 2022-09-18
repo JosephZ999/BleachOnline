@@ -69,17 +69,20 @@ void UBOSpriteComponent::InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimati
 	}
 }
 
-void UBOSpriteComponent::InitAnimations(const FString & AnimsFolder)
+void UBOSpriteComponent::InitAnimations(const FString& AnimsFolder)
 {
 	InitAnimations(Animations, AnimsFolder);
 }
 
 void UBOSpriteComponent::AnimationUpdateHandle()
 {
-	UPaperFlipbook* NewAnim = nullptr;
+	if (OwnerMoveComp->GetMovementState() >= static_cast<uint8>(EMovementState::Custom)) return;
+
+	UPaperFlipbook*		 NewAnim			  = nullptr;
+	const EMovementState CurrentMovementState = static_cast<EMovementState>(OwnerMoveComp->GetMovementState());
 
 	// clang-format off
-	switch ((EMovementState)OwnerMoveComp->GetMovementState())
+	switch (CurrentMovementState)
 	{
 	case EMovementState::Stand:		NewAnim = Animations.FindRef(AN_STAND);		break;
 	case EMovementState::Walk:		NewAnim = Animations.FindRef(AN_WALK);		break;
@@ -92,7 +95,6 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 	case EMovementState::Fall:		NewAnim = Animations.FindRef(AN_FALL_HOLD);	break;
 	case EMovementState::FallUp:	NewAnim = Animations.FindRef(AN_FALL_UP);	break;
 	case EMovementState::FallDown:	NewAnim = Animations.FindRef(AN_FALL_DOWN);	break;
-	default: return;
 	}
 	// clang-format on
 
@@ -109,7 +111,7 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 	{
 		SetFlipbook(NewAnim);
 		SetLooping(Looping);
-		if (!Looping)
+		if (! Looping)
 		{
 			PlayFromStart();
 		}

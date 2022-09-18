@@ -83,6 +83,7 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
 	uint8 GetMovementState() const { return State; }
 
 	UFUNCTION(BlueprintCallable)
@@ -97,8 +98,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FVector GetMoveVelocity() const { return MovementVelocity; }
 
-	UFUNCTION(BlueprintCallable)
-	uint8 GetMovementState() { return State; }
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -120,11 +119,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
+	UFUNCTION(BlueprintCallable)
 	void Launch(const FVector& NewVelocity, bool bXYOverride = false, bool bZOverride = false);
 	void LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void LaunchDeferredHandle();
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void LaunchClient(const FVector& NewVelocity);
 
 	UFUNCTION(BlueprintCallable)

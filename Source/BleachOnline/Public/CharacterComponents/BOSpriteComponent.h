@@ -42,7 +42,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitAnimations(const FString& AnimsFolder);
 
+	UFUNCTION(BlueprintCallable)
 	void SetAnimation(const FName& AnimationName, bool Looping);
+
+	UFUNCTION(BlueprintCallable)
 	bool ContainsAnim(const FName& AnimName);
 
 	bool IsAnimsEmpty() const { return Animations.Num() == 0; }

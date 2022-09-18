@@ -71,11 +71,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& NewTransform) override;
 
-	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
-	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
-	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
-	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
-	FORCEINLINE UBOAbilitySystemComponent* GetAbilityComp() const { return AbilityComp; }
+	// clang=format off
+	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp; }
+	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp; }
+	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp; }
+	FORCEINLINE UBODamageActorComponent*		GetDamageActorComp()	const	{ return DamageActorComp; }
+	FORCEINLINE UBOAbilitySystemComponent*		GetAbilityComp()		const	{ return AbilityComp; }
+	// clang-format on
 
 	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
 	virtual FDamageInfo			   GetDamageInfo();
@@ -88,6 +90,8 @@ public:
 	void AddVelocity(const FVector& Direction, float Length);
 
 	void	 SetRotation(float RotationYaw);
+
+	UFUNCTION(BlueprintCallable)
 	FRotator TurnCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)
