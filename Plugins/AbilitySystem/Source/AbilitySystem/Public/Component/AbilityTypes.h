@@ -1,7 +1,6 @@
 #pragma once
 
-#include "BOCoreTypes.h"
-#include "BOAbilityTypes.generated.h"
+#include "AbilityTypes.generated.h"
 
 UENUM(BlueprintType)
 enum class EAbilityParamType : uint8
@@ -11,6 +10,16 @@ enum class EAbilityParamType : uint8
 	Integer,
 	Vector,
 	Object,
+};
+
+UENUM(BlueprintType)
+enum class EIndicatorType : uint8
+{
+	None,
+	Health,
+	Power,
+	Stamina,
+	Custom,
 };
 
 USTRUCT(BlueprintType)
@@ -60,7 +69,7 @@ struct FAbilityParam
 	// clang-format on
 };
 
-namespace AbilityTypes
+namespace AbilityNames
 {
 const FName DashName("Dash");
 }

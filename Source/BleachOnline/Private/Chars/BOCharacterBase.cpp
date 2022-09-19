@@ -6,7 +6,8 @@
 #include "BOSpriteComponent.h"
 #include "BODamageActorComponent.h"
 #include "BODamageActor.h"
-#include "BOAbilitySystemComponent.h"
+#include "AbilitySystemComponent.h"
+
 #include "CharacterConsts.h"
 
 #include "GameFramework/Controller.h"
@@ -40,7 +41,7 @@ ABOCharacterBase::ABOCharacterBase()
 	SpriteComp->SetupAttachment(GetRootComponent());
 
 	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
-	AbilityComp = CreateDefaultSubobject<UBOAbilitySystemComponent>("AbilityComp");
+	AbilityComp = CreateDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
 }
 
 void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)

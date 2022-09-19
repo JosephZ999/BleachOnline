@@ -2,7 +2,7 @@
 
 #include "BOMeleeAI.h"
 #include "BOCharacterBase.h"
-#include "BOAbilitySystemComponent.h"
+#include "AbilitySystemComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMeleeAI, All, All);
 
@@ -10,7 +10,7 @@ void ABOMeleeAI::OnInit()
 {
 	if (GetControlledChar())
 	{
-		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityTypes::DashName);
+		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityNames::DashName);
 	}
 }
 
@@ -60,7 +60,7 @@ void ABOMeleeAI::GoToEnemy()
 	if (Enemy && IsEnemyFar())
 	{
 		if (GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam( //
-				AbilityTypes::DashName,										 //
+				AbilityNames::DashName,										 //
 				FAbilityParam(Enemy->GetActorLocation())))
 		{
 			return;

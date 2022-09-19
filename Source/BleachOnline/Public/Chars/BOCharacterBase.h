@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "BOCoreTypes.h"
+#include "AbilityTypes.h"
 #include "BOCharacterBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeathSignature, APawn*, KillerPawn, APawn*, VictimPawn);
@@ -15,7 +16,7 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 class UBODamageActorComponent;
-class UBOAbilitySystemComponent;
+class UAbilitySystemComponent;
 
 UCLASS(abstract)
 class BLEACHONLINE_API ABOCharacterBase : public APawn
@@ -48,7 +49,7 @@ private:
 	UBODamageActorComponent* DamageActorComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	UBOAbilitySystemComponent* AbilityComp;
+	UAbilitySystemComponent* AbilityComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	uint8 Team;
@@ -72,11 +73,11 @@ public:
 	virtual void OnConstruction(const FTransform& NewTransform) override;
 
 	// clang=format off
-	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp; }
-	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp; }
-	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp; }
-	FORCEINLINE UBODamageActorComponent*		GetDamageActorComp()	const	{ return DamageActorComp; }
-	FORCEINLINE UBOAbilitySystemComponent*		GetAbilityComp()		const	{ return AbilityComp; }
+	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp;		}
+	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp;		}
+	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp;		}
+	FORCEINLINE UBODamageActorComponent*		GetDamageActorComp()	const	{ return DamageActorComp;	}
+	FORCEINLINE UAbilitySystemComponent*		GetAbilityComp()		const	{ return AbilityComp;		}
 	// clang-format on
 
 	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
@@ -115,6 +116,7 @@ public:
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
+	void NewActionClient_Implementation(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
 
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
@@ -157,4 +159,6 @@ private:
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void OnDeathClient();
+	void OnDeathClient_Implementation();
+
 };

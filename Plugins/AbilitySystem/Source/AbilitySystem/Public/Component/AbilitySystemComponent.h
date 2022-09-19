@@ -1,13 +1,13 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BOAbilityTypes.h"
-#include "BOAbilitySystemComponent.generated.h"
+#include "AbilityTypes.h"
+#include "AbilitySystemComponent.generated.h"
 
-class UBOAbilityBase;
+class UAbilityBase;
 
 USTRUCT(BlueprintType)
 struct FAbilityType
@@ -15,7 +15,7 @@ struct FAbilityType
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UBOAbilityBase> Class;
+	TSubclassOf<UAbilityBase> Class;
 
 	UPROPERTY(EditAnywhere)
 	EIndicatorType IndicatorType;
@@ -30,21 +30,20 @@ struct FAbilityType
 	uint8 ChargesNum;
 };
 
-/**/
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class BLEACHONLINE_API UBOAbilitySystemComponent : public UActorComponent
+class ABILITYSYSTEM_API UAbilitySystemComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UBOAbilitySystemComponent();
+	UAbilitySystemComponent();
 
 	UPROPERTY(Category = "Ablility Settings", EditAnywhere)
 	TArray<FAbilityType> Abilities;
 
 private:
 	UPROPERTY()
-	TMap<FName, UBOAbilityBase*> AbilityObjects;
+	TMap<FName, UAbilityBase*> AbilityObjects;
 
 public:
 	bool ActivateAbility(const FName& AbilityName);
