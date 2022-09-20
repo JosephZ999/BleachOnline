@@ -21,7 +21,7 @@ void UAbilityBase::Initialize(		//
 	Consumption	  = InConsumption;
 	Cooldown	  = InCooldown;
 	ChargesNum	  = InChargesNum;
-	
+
 	const bool bUseIndicator = IndicatorType != EIndicatorType::None;
 	if (bUseIndicator)
 	{
@@ -30,7 +30,7 @@ void UAbilityBase::Initialize(		//
 		{
 			Indicator = CHI->IGetIndicator(IndicatorType);
 		}
-		if (!Indicator)
+		if (! Indicator)
 		{
 			UE_LOG(LogAbility, Error, TEXT("Cannot find Character indicator"));
 		}
@@ -44,7 +44,7 @@ void UAbilityBase::Initialize(		//
 
 void UAbilityBase::Activate()
 {
-	if (bActive)
+	if (bActive && IsEnoughtPower())
 	{
 		OnActivate();
 		bActive = false;
@@ -54,7 +54,7 @@ void UAbilityBase::Activate()
 
 void UAbilityBase::ActivateWithParam(const FAbilityParam& Param)
 {
-	if (bActive)
+	if (bActive && IsEnoughtPower())
 	{
 		OnActivateWithParam(Param);
 		bActive = false;
@@ -76,4 +76,31 @@ void UAbilityBase::SetCooldownTimer()
 void UAbilityBase::OnCooldown()
 {
 	bActive = true;
+}
+
+bool UAbilityBase::IsEnoughtPower()
+{
+	auto IndicatorInterface = Cast<IASIndicatorInterface>(Indicator);
+	if (!IndicatorInterface) return true;
+
+	return IndicatorInterface->IGetValue() >= Consumption;
+}
+
+void UAbilityBase::OnActivate()
+{
+	auto IndicatorInterface = Cast<IASIndicatorInterface>(Indicator);
+	if (! IndicatorInterface) return;
+
+	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
+	UE_LOG(LogAbility, Warning, TEXT("--Power"));
+
+}
+
+void UAbilityBase::OnActivateWithParam(const FAbilityParam& Param) 
+{
+	auto IndicatorInterface = Cast<IASIndicatorInterface>(Indicator);
+	if (!IndicatorInterface) return;
+
+	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
+	UE_LOG(LogAbility, Warning, TEXT("--Power"));
 }

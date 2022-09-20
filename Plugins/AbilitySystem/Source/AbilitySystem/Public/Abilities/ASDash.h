@@ -16,4 +16,9 @@ class ABILITYSYSTEM_API UASDash : public UAbilityBase
 
 public:
 	UASDash();
+	
+protected:
+	virtual void OnActivate() override;
+	virtual void OnActivateWithParam(const FAbilityParam& Param) override;
+
 };

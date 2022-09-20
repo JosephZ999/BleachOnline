@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "AbilityTypes.h"
+
 #include "AbilityBase.generated.h"
 
 class AActor;
@@ -35,6 +36,13 @@ private:
 	bool		   bActive;
 
 public:
+	FORCEINLINE FName GetName() const { return Name; }
+	FORCEINLINE AActor* GetOwner() const { return Owner; }
+	FORCEINLINE UObject* GetIndicator() const { return Indicator; }
+
+	bool IsActive() const { return bActive; }
+	bool IsEnoughtPower();
+
 	void Initialize(					//
 		AActor*		   InOwnerChar,		//
 		EIndicatorType InIndicatorType, //
@@ -45,14 +53,9 @@ public:
 	void Activate();
 	void ActivateWithParam(const FAbilityParam& Param);
 
-	virtual void OnActivate() {}
-	virtual void OnActivateWithParam(const FAbilityParam& Param) {}
-
-	FORCEINLINE FName GetName() const { return Name; }
-	FORCEINLINE AActor* GetOwner() const { return Owner; }
-	FORCEINLINE UObject* GetIndicator() const { return Indicator; }
-
-	bool IsActive() const { return bActive; }
+protected:
+	virtual void OnActivate();
+	virtual void OnActivateWithParam(const FAbilityParam& Param);
 
 private:
 	void SetCooldownTimer();

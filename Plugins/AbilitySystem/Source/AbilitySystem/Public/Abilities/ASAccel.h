@@ -16,4 +16,8 @@ class ABILITYSYSTEM_API UASAccel : public UAbilityBase
 	
 public:
 	UASAccel();
+
+protected:
+	virtual void OnActivate() override;
+	virtual void OnActivateWithParam(const FAbilityParam& Param) override;
 };

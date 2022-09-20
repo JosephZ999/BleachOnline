@@ -165,7 +165,7 @@ void ABOIchigo::Accelerate()
 	GetAbilityComp()->ActivateAbility(AbilityNames::Accel);
 }
 
-void ABOIchigo::Dash(const FVector& Location)
+void ABOIchigo::Dash()
 {
-	GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, FAbilityParam(GetMoveVector()));
+	GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, FAbilityParam(GetMoveVector() * 200.f));
 }

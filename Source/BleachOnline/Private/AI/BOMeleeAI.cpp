@@ -10,7 +10,7 @@ void ABOMeleeAI::OnInit()
 {
 	if (GetControlledChar())
 	{
-		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityNames::DashName);
+		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityNames::Dash);
 	}
 }
 
@@ -60,7 +60,7 @@ void ABOMeleeAI::GoToEnemy()
 	if (Enemy && IsEnemyFar())
 	{
 		if (GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam( //
-				AbilityNames::DashName,										 //
+				AbilityNames::Dash,										 //
 				FAbilityParam(Enemy->GetActorLocation())))
 		{
 			return;

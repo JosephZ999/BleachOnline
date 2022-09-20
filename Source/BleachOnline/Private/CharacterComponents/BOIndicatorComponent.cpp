@@ -2,6 +2,8 @@
 
 #include "BOIndicatorComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogInicator, All, All);
+
 UBOIndicatorComponent::UBOIndicatorComponent()
 {
 	SetIsReplicated(true);
@@ -17,7 +19,7 @@ void UBOIndicatorComponent::BeginPlay()
 
 void UBOIndicatorComponent::SetValue(float NewValue)
 {
-	Value = FMath::Clamp(Value + NewValue, 0.f, MaxValue);
+	Value = FMath::Clamp(NewValue, 0.f, MaxValue);
 	OnValueChanged(GetPercent());
 	CheckForEmpty();
 }
@@ -50,9 +52,11 @@ void UBOIndicatorComponent::CheckForEmpty()
 void UBOIndicatorComponent::ISetValue(float InValue)
 {
 	SetValue(InValue);
+	UE_LOG(LogInicator, Display, TEXT("New Power = %f"), GetValue());
 }
 float UBOIndicatorComponent::IGetValue() const
 {
+	UE_LOG(LogInicator, Display, TEXT("Current Power = %f"), GetValue());
 	return GetValue();
 }
 
