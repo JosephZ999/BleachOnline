@@ -98,6 +98,8 @@ inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 bool ABOAIControllerBase::SearchEnemy()
 {
 	if (Enemy && ! Enemy->IsDead()) return true;
+
+	UE_LOG(LogTemp, Warning, TEXT("Search Enemy, Options %f - %d"), FindEnemyRadius, FindEnemyChunks);
 	return Enemy = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() != Char->GetTeam(); });
 }
 

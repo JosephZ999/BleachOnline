@@ -19,12 +19,6 @@ class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent
 public:
 	FOnLandedSignature OnLanded;
 
-	UPROPERTY()
-	AActor* OwnerActor;
-
-	UPROPERTY()
-	UCapsuleComponent* OwnerCapsulaComp;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0"), Category = "Movement Settings")
 	float Gravity;
 
@@ -83,6 +77,10 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void UpdateOnClient(const FVector& Location);
+	void UpdateOnClient_Implementation(const FVector& Location);
+
 	UFUNCTION(BlueprintCallable)
 	uint8 GetMovementState() const { return State; }
 
@@ -97,7 +95,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetMoveVelocity() const { return MovementVelocity; }
-
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -172,7 +169,4 @@ private:
 private:
 	void SetRepTimer();
 	void RepTimerHandle();
-
-	UFUNCTION(NetMulticast, Unreliable)
-	void UpdateOnClient(const FVector& Location);
 };

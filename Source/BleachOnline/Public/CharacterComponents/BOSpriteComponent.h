@@ -26,7 +26,7 @@ public:
 private:
 	UBOCharacterMovementComponent* OwnerMoveComp;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TMap<FName, UPaperFlipbook*> Animations;
 
 	FTimerHandle AnimationUpdateTimer;

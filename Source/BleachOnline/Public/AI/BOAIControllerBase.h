@@ -34,7 +34,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
 	float LongDistance;
 	
+	UPROPERTY()
 	ABOCharacterBase* Enemy;
+
+	UPROPERTY()
 	ABOCharacterBase* Ally;
 
 

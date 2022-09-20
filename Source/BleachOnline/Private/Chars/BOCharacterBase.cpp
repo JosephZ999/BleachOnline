@@ -30,6 +30,7 @@ ABOCharacterBase::ABOCharacterBase()
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	CapsuleComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	SetRootComponent(CapsuleComp);
 

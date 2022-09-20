@@ -18,6 +18,8 @@ void ABOMeleeAI::AIBody()
 {
 	Super::AIBody();
 
+	UE_LOG(LogMeleeAI, Display, TEXT("AI Body"));
+
 	switch (Task)
 	{ // clang-format off
 	case EAITasks::GoToEnemy:   GoToEnemy();   return;
