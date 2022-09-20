@@ -71,5 +71,6 @@ struct FAbilityParam
 
 namespace AbilityNames
 {
-const FName DashName("Dash");
+const FName Dash("Dash");
+const FName Accel("Accel");
 }

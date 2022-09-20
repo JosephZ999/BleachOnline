@@ -14,4 +14,6 @@ class ABILITYSYSTEM_API UASAccel : public UAbilityBase
 {
 	GENERATED_BODY()
 	
+public:
+	UASAccel();
 };

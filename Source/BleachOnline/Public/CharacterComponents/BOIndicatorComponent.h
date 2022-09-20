@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "ASIndicatorInterface.h"
 #include "BOIndicatorComponent.generated.h"
 
 DECLARE_DELEGATE(FOnValueZeroSignature);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeSignature, UActorComponent*, float);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class BLEACHONLINE_API UBOIndicatorComponent : public UActorComponent
+class BLEACHONLINE_API UBOIndicatorComponent : public UActorComponent, public IASIndicatorInterface
 {
 	GENERATED_BODY()
 
@@ -18,7 +19,7 @@ public:
 	UBOIndicatorComponent();
 
 	FOnValueZeroSignature OnValueZero;
-	FOnChangeSignature OnChange;
+	FOnChangeSignature	  OnChange;
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
@@ -51,6 +52,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddValue(float AddValue);
 
+	// AbilitySystem Interface //--------------------------------------------------------//
+	
+	// clang-format off
+	virtual void			  ISetValue(float InValue)			override;
+	virtual float			  IGetValue()				const	override;
+	virtual float			  IGetPercent()				const	override;
+	virtual FOnChangeDelegate IGetDelegateOnChanged()	const	override;
+	// clang-format on
+	
+	//-----------------------------------------------------------------------------------//
 public:
 	UFUNCTION(Client, Unreliable)
 	void OnValueChanged(float Percent);

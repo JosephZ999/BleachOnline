@@ -4,6 +4,9 @@
 #include "GameFramework/Actor.h"
 #include "TimerManager.h"
 
+#include "ASCharacterInterface.h"
+#include "ASIndicatorInterface.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogAbility, All, All);
 
 void UAbilityBase::Initialize(		//
@@ -18,12 +21,19 @@ void UAbilityBase::Initialize(		//
 	Consumption	  = InConsumption;
 	Cooldown	  = InCooldown;
 	ChargesNum	  = InChargesNum;
-	bUseIndicator = IndicatorType != EIndicatorType::None;
-
+	
+	const bool bUseIndicator = IndicatorType != EIndicatorType::None;
 	if (bUseIndicator)
 	{
-		// CharacterIndicator = OwnerCharacter->GetIndicator(IndicatorType);
-		UE_LOG(LogAbility, Error, TEXT("Cannot find Character indicator"));
+		IASCharacterInterface* CHI = Cast<IASCharacterInterface>(Owner);
+		if (CHI)
+		{
+			Indicator = CHI->IGetIndicator(IndicatorType);
+		}
+		if (!Indicator)
+		{
+			UE_LOG(LogAbility, Error, TEXT("Cannot find Character indicator"));
+		}
 	}
 
 	checkf(Owner, TEXT("Character is null"));

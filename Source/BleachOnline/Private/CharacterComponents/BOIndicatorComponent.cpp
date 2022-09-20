@@ -31,7 +31,7 @@ void UBOIndicatorComponent::AddValue(float AddValue)
 
 void UBOIndicatorComponent::OnValueChanged_Implementation(float Percent)
 {
-	OnChange.Broadcast(this, Percent);	
+	OnChange.Broadcast(this, Percent);
 }
 
 void UBOIndicatorComponent::CheckForEmpty()
@@ -39,6 +39,30 @@ void UBOIndicatorComponent::CheckForEmpty()
 	if (bEnabled && FMath::IsNearlyZero(Value))
 	{
 		bEnabled = false;
-		if (OnValueZero.IsBound()) { OnValueZero.Execute(); }
+		if (OnValueZero.IsBound())
+		{
+			OnValueZero.Execute();
+		}
 	}
 }
+
+// AbilitySystem Interface //--------------------------------------------------------//
+void UBOIndicatorComponent::ISetValue(float InValue)
+{
+	SetValue(InValue);
+}
+float UBOIndicatorComponent::IGetValue() const
+{
+	return GetValue();
+}
+
+float UBOIndicatorComponent::IGetPercent() const
+{
+	return GetPercent();
+}
+
+FOnChangeDelegate UBOIndicatorComponent::IGetDelegateOnChanged() const
+{
+	return OnChange;
+}
+//-----------------------------------------------------------------------------------//

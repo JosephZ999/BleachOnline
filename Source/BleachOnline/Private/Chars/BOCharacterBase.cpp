@@ -41,7 +41,7 @@ ABOCharacterBase::ABOCharacterBase()
 	SpriteComp->SetupAttachment(GetRootComponent());
 
 	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
-	AbilityComp = CreateDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
+	AbilityComp		= CreateDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
 }
 
 void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)
@@ -337,3 +337,14 @@ void ABOCharacterBase::DestroyDamageActor()
 {
 	DamageActorComp->Destroy();
 }
+
+// AbilitySystem Interface //---------------------------------------------------------//
+UObject* ABOCharacterBase::IGetIndicator(EIndicatorType Type) const
+{
+	switch (Type)
+	{
+	case EIndicatorType::Health: return GetHealthComp();
+	}
+	return nullptr;
+}
+//------------------------------------------------------------------------------------//

@@ -12,7 +12,7 @@ class AActor;
 /**
  *
  */
-UCLASS()
+UCLASS(abstract)
 class ABILITYSYSTEM_API UAbilityBase : public UObject
 {
 	GENERATED_BODY()
@@ -32,7 +32,6 @@ private:
 	float		   Consumption;
 	float		   Cooldown;
 	uint8		   ChargesNum;
-	bool		   bUseIndicator;
 	bool		   bActive;
 
 public:
@@ -51,6 +50,7 @@ public:
 
 	FORCEINLINE FName GetName() const { return Name; }
 	FORCEINLINE AActor* GetOwner() const { return Owner; }
+	FORCEINLINE UObject* GetIndicator() const { return Indicator; }
 
 	bool IsActive() const { return bActive; }
 

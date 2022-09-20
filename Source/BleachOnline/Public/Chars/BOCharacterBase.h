@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "BOCoreTypes.h"
 #include "AbilityTypes.h"
+#include "ASCharacterInterface.h"
 #include "BOCharacterBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeathSignature, APawn*, KillerPawn, APawn*, VictimPawn);
@@ -19,7 +20,7 @@ class UBODamageActorComponent;
 class UAbilitySystemComponent;
 
 UCLASS(abstract)
-class BLEACHONLINE_API ABOCharacterBase : public APawn
+class BLEACHONLINE_API ABOCharacterBase : public APawn, public IASCharacterInterface
 {
 	GENERATED_BODY()
 
@@ -72,7 +73,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& NewTransform) override;
 
-	// clang=format off
+	// clang-format off
 	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp;		}
 	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp;		}
 	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp;		}
@@ -90,7 +91,7 @@ public:
 	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void AddVelocity(const FVector& Direction, float Length);
 
-	void	 SetRotation(float RotationYaw);
+	void SetRotation(float RotationYaw);
 
 	UFUNCTION(BlueprintCallable)
 	FRotator TurnCharacter();
@@ -147,6 +148,10 @@ public:
 	void SetCharacterVisibility(bool Visible);
 	void DestroyDamageActor();
 
+	// AbilitySystem Interface //---------------------------------------------------------//
+	virtual UObject* IGetIndicator(EIndicatorType Type) const override;
+	//------------------------------------------------------------------------------------//
+
 private:
 	void SetMovementRotation();
 
@@ -160,5 +165,4 @@ private:
 	UFUNCTION(NetMulticast, Unreliable)
 	void OnDeathClient();
 	void OnDeathClient_Implementation();
-
 };

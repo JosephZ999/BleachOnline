@@ -46,4 +46,13 @@ private:
 	void AttackFW();
 	void AttackBW();
 	void AttackAir();
+
+
+	// Delete this
+public:
+	UFUNCTION(BlueprintCallable)
+	void Accelerate();
+
+	UFUNCTION(BlueprintCallable)
+	void Dash(const FVector& Location);
 };
