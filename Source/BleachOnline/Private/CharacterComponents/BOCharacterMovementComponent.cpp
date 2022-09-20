@@ -47,7 +47,7 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-FORCEINLINE FVector UBOCharacterMovementComponent::GetVelocity() const
+FVector UBOCharacterMovementComponent::GetVelocity() const
 {
 	return FVector(Velocity + MovementVelocity).GetSafeNormal() * VelocityLength;
 }
