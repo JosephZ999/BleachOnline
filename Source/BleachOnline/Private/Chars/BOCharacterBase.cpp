@@ -342,10 +342,6 @@ void ABOCharacterBase::DestroyDamageActor()
 // AbilitySystem Interface //---------------------------------------------------------//
 UObject* ABOCharacterBase::IGetIndicator(EIndicatorType Type) const
 {
-	switch (Type)
-	{
-	case EIndicatorType::Health: return GetHealthComp();
-	}
-	return nullptr;
+	return HealthComp;
 }
 //------------------------------------------------------------------------------------//

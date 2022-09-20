@@ -81,8 +81,7 @@ public:
 	FORCEINLINE UAbilitySystemComponent*		GetAbilityComp()		const	{ return AbilityComp;		}
 	// clang-format on
 
-	virtual UBOIndicatorComponent* GetIndicator(const EIndicatorType Type) const { return nullptr; }
-	virtual FDamageInfo			   GetDamageInfo();
+	virtual FDamageInfo GetDamageInfo();
 
 	virtual void	AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 	virtual FVector GetVelocity() const override;

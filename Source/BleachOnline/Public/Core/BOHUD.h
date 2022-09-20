@@ -31,7 +31,7 @@ public:
 
 private:
 	void OnIndicatorChanged(UActorComponent* Component, float Percent);
-	void SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator);
+	void SubscribeToIndicatorChange(UObject* Indicator);
 
 	UBOGameUIWidget* GameUIWidget;
 	UBOInputWidget*	 InputWidget;
