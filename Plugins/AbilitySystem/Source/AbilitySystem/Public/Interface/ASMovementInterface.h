@@ -24,4 +24,5 @@ class ABILITYSYSTEM_API IASMovementInterface
 public:
 	virtual float IGetWalkSpeed() const { return 0.f; }
 	virtual void  IAddWalkSpeed(float AdditionalSpeed) {}
+	virtual void  ILaunch(const FVector& InDirection, bool bInOverrideXY, bool bInOverrideZ) {};
 };

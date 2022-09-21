@@ -167,5 +167,5 @@ void ABOIchigo::Accelerate()
 
 void ABOIchigo::Dash()
 {
-	GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, FAbilityParam(GetMoveVector() * 200.f));
+	GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, FAbilityParam(GetMoveVector() * 350.f));
 }

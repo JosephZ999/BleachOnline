@@ -16,9 +16,13 @@ class ABILITYSYSTEM_API UASDash : public UAbilityBase
 
 public:
 	UASDash();
+
+	float MaxLength = 800.f;
 	
 protected:
 	virtual void OnActivate() override;
 	virtual void OnActivateWithParam(const FAbilityParam& Param) override;
 
+private:
+	void DoSomething(FVector Direction);
 };

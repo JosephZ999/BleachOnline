@@ -263,4 +263,8 @@ void UBOCharacterMovementComponent::IAddWalkSpeed(float AdditionalSpeed)
 	WalkSpeed += AdditionalSpeed;
 	SetWalkSpeedClient(WalkSpeed);
 }
+void UBOCharacterMovementComponent::ILaunch(const FVector& InDirection, bool bInOverrideXY, bool bInOverrideZ)
+{
+	Launch(InDirection, bInOverrideXY, bInOverrideZ);
+}
 // -----------------------------------------------------------------------------------//

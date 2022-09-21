@@ -152,6 +152,7 @@ public:
 	// AbilitySystem Interface //---------------------------------------------------------//
 	virtual float IGetWalkSpeed() const override;
 	virtual void  IAddWalkSpeed(float AdditionalSpeed) override;
+	virtual void  ILaunch(const FVector& InDirection, bool bInOverrideXY, bool bInOverrideZ) override;
 	// -----------------------------------------------------------------------------------//
 
 private:

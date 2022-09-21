@@ -100,7 +100,6 @@ void UAbilityBase::OnActivate()
 	if (! IndicatorInterface) return;
 
 	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
-	UE_LOG(LogAbility, Warning, TEXT("--Power"));
 }
 
 void UAbilityBase::OnActivateWithParam(const FAbilityParam& Param)
@@ -109,5 +108,4 @@ void UAbilityBase::OnActivateWithParam(const FAbilityParam& Param)
 	if (! IndicatorInterface) return;
 
 	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
-	UE_LOG(LogAbility, Warning, TEXT("--Power"));
 }
