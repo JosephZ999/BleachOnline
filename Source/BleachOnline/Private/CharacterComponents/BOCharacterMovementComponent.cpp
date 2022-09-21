@@ -226,6 +226,12 @@ void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcib
 	}
 }
 
+void UBOCharacterMovementComponent::SetWalkSpeedClient_Implementation(float InWalkSpeed)
+{
+	if (GetOwner() && GetOwner()->HasAuthority()) return;
+	WalkSpeed = InWalkSpeed;
+}
+
 void UBOCharacterMovementComponent::SetRepTimer()
 {
 	if (! GetOwner()->HasAuthority()) return;
@@ -246,3 +252,15 @@ void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector&
 	const auto NewLocation = FMath::Lerp(Location, GetOwner()->GetActorLocation(), 0.5f);
 	GetOwner()->SetActorLocation(NewLocation);
 }
+
+// AbilitySystem Interface //---------------------------------------------------------//
+float UBOCharacterMovementComponent::IGetWalkSpeed() const
+{
+	return WalkSpeed;
+}
+void UBOCharacterMovementComponent::IAddWalkSpeed(float AdditionalSpeed)
+{
+	WalkSpeed += AdditionalSpeed;
+	SetWalkSpeedClient(WalkSpeed);
+}
+// -----------------------------------------------------------------------------------//

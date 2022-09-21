@@ -22,5 +22,6 @@ class ABILITYSYSTEM_API IASCharacterInterface
 	GENERATED_BODY()
 
 public:
-	virtual UObject* IGetIndicator(EIndicatorType Type) const { return nullptr; }
+	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const { return nullptr; }
+	virtual UObject* IGetMovementComponent() const { return nullptr; }
 };

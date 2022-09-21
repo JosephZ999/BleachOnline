@@ -32,8 +32,11 @@ private:
 	EIndicatorType IndicatorType;
 	float		   Consumption;
 	float		   Cooldown;
-	uint8		   ChargesNum;
+	uint8		   ChargeNum;
 	bool		   bActive;
+
+private:
+	uint8 CurrentCharges;
 
 public:
 	FORCEINLINE FName GetName() const { return Name; }

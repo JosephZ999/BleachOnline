@@ -3,7 +3,6 @@
 #include "AbilityBase.h"
 #include "GameFramework/Actor.h"
 #include "TimerManager.h"
-
 #include "ASCharacterInterface.h"
 #include "ASIndicatorInterface.h"
 
@@ -16,11 +15,12 @@ void UAbilityBase::Initialize(		//
 	float		   InCooldown,		//
 	uint8		   InChargesNum)
 {
-	Owner		  = InOwnerChar;
-	IndicatorType = InIndicatorType;
-	Consumption	  = InConsumption;
-	Cooldown	  = InCooldown;
-	ChargesNum	  = InChargesNum;
+	Owner		   = InOwnerChar;
+	IndicatorType  = InIndicatorType;
+	Consumption	   = InConsumption;
+	Cooldown	   = InCooldown;
+	ChargeNum	   = InChargesNum;
+	CurrentCharges = ChargeNum;
 
 	const bool bUseIndicator = IndicatorType != EIndicatorType::None;
 	if (bUseIndicator)
@@ -28,16 +28,18 @@ void UAbilityBase::Initialize(		//
 		IASCharacterInterface* CHI = Cast<IASCharacterInterface>(Owner);
 		if (CHI)
 		{
-			Indicator = CHI->IGetIndicator(IndicatorType);
-		}
-		if (! Indicator)
-		{
-			UE_LOG(LogAbility, Error, TEXT("Cannot find Character indicator"));
+			Indicator = CHI->IGetIndicatorComponent(IndicatorType);
+			if (Indicator)
+			{
+				checkf(Indicator && Cast<IASIndicatorInterface>(Indicator), TEXT("Indicator is not implements AbilitySystemIndicatorInterface"));
+			}
+			else
+			{
+				UE_LOG(LogAbility, Warning, TEXT("Indicator is null"));
+			}
 		}
 	}
-
-	checkf(Owner, TEXT("Character is null"));
-	UE_LOG(LogAbility, Display, TEXT("Ability created and initialized successfully"));
+	checkf(Cast<IASCharacterInterface>(Owner), TEXT("Character is not implements AbilitySystemCharacterInterface"));
 
 	bActive = true;
 }
@@ -47,8 +49,10 @@ void UAbilityBase::Activate()
 	if (bActive && IsEnoughtPower())
 	{
 		OnActivate();
-		bActive = false;
-		SetCooldownTimer();
+		if (--CurrentCharges == 0)
+		{
+			SetCooldownTimer();
+		}
 	}
 }
 
@@ -57,13 +61,16 @@ void UAbilityBase::ActivateWithParam(const FAbilityParam& Param)
 	if (bActive && IsEnoughtPower())
 	{
 		OnActivateWithParam(Param);
-		bActive = false;
-		SetCooldownTimer();
+		if (--CurrentCharges == 0)
+		{
+			SetCooldownTimer();
+		}
 	}
 }
 
 void UAbilityBase::SetCooldownTimer()
 {
+	bActive = false;
 	if (Cooldown > 0.f)
 	{
 		FTimerHandle CooldownTimer;
@@ -76,12 +83,13 @@ void UAbilityBase::SetCooldownTimer()
 void UAbilityBase::OnCooldown()
 {
 	bActive = true;
+	CurrentCharges = ChargeNum;
 }
 
 bool UAbilityBase::IsEnoughtPower()
 {
 	auto IndicatorInterface = Cast<IASIndicatorInterface>(Indicator);
-	if (!IndicatorInterface) return true;
+	if (! IndicatorInterface) return true;
 
 	return IndicatorInterface->IGetValue() >= Consumption;
 }
@@ -93,13 +101,12 @@ void UAbilityBase::OnActivate()
 
 	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
 	UE_LOG(LogAbility, Warning, TEXT("--Power"));
-
 }
 
-void UAbilityBase::OnActivateWithParam(const FAbilityParam& Param) 
+void UAbilityBase::OnActivateWithParam(const FAbilityParam& Param)
 {
 	auto IndicatorInterface = Cast<IASIndicatorInterface>(Indicator);
-	if (!IndicatorInterface) return;
+	if (! IndicatorInterface) return;
 
 	IndicatorInterface->ISetValue(IndicatorInterface->IGetValue() - Consumption);
 	UE_LOG(LogAbility, Warning, TEXT("--Power"));

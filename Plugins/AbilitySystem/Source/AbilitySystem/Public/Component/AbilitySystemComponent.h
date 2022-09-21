@@ -27,7 +27,7 @@ struct FAbilityType
 	float Cooldown;
 
 	UPROPERTY(EditAnywhere)
-	uint8 ChargesNum;
+	uint8 ChargesNum = 1;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

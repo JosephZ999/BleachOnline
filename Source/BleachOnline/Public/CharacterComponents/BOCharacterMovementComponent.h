@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BOCoreTypes.h"
+#include "ASMovementInterface.h"
 #include "BOCharacterMovementComponent.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnLandedSignature, FVector);
@@ -12,7 +13,7 @@ DECLARE_DELEGATE_OneParam(FOnLandedSignature, FVector);
 class UCapsuleComponent;
 
 UCLASS(ClassGroup = (Custom))
-class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent
+class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent, public IASMovementInterface
 {
 	GENERATED_BODY()
 
@@ -123,9 +124,14 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void LaunchClient(const FVector& NewVelocity);
+	void LaunchClient_Implementation(const FVector& NewVelocity);
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementState(uint8 NewState, bool Forcibly = false);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetWalkSpeedClient(float InWalkSpeed);
+	void SetWalkSpeedClient_Implementation(float InWalkSpeed);
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -142,6 +148,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDoingAnything() const { return State >= static_cast<uint8>(EMovementState::Custom); }
+
+	// AbilitySystem Interface //---------------------------------------------------------//
+	virtual float IGetWalkSpeed() const override;
+	virtual void  IAddWalkSpeed(float AdditionalSpeed) override;
+	// -----------------------------------------------------------------------------------//
 
 private:
 	void UpdateVelocity(const float Delta);

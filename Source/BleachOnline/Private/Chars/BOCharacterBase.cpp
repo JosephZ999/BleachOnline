@@ -340,8 +340,12 @@ void ABOCharacterBase::DestroyDamageActor()
 }
 
 // AbilitySystem Interface //---------------------------------------------------------//
-UObject* ABOCharacterBase::IGetIndicator(EIndicatorType Type) const
+UObject* ABOCharacterBase::IGetIndicatorComponent(EIndicatorType Type) const
 {
 	return HealthComp;
+}
+UObject* ABOCharacterBase::IGetMovementComponent() const
+{
+	return MovementComp;
 }
 //------------------------------------------------------------------------------------//

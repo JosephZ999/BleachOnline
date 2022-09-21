@@ -148,7 +148,8 @@ public:
 	void DestroyDamageActor();
 
 	// AbilitySystem Interface //---------------------------------------------------------//
-	virtual UObject* IGetIndicator(EIndicatorType Type) const override;
+	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const override;
+	virtual UObject* IGetMovementComponent() const override;
 	//------------------------------------------------------------------------------------//
 
 private:
