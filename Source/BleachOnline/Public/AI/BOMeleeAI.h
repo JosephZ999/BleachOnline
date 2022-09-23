@@ -11,6 +11,7 @@ class ABOCharacterBase;
 enum class EAITasks : uint8
 {
 	None,
+	GoToPoint,
 	GoToEnemy,
 	GoToAlly,
 	AttackEnemy,
@@ -29,17 +30,22 @@ public:
 	UPROPERTY()
 	float AttackVelocityScale = 3.f;
 
+	UFUNCTION(BlueprintCallable)
+	void MoveTo(const FVector& Location);
+
 private:
 	EAITasks Task;
 	bool	 bCanDash;
+	FVector	 TargetPoint;
 
 protected:
 	virtual void OnInit() override;
 	virtual void AIBody() override;
 
 private:
-	void GoToEnemy();
-	void GoToAlly();
-	void AttackEnemy();
-	void Dodge();
+	inline void GoToPoint();
+	inline void GoToEnemy();
+	inline void GoToAlly();
+	inline void AttackEnemy();
+	inline void Dodge();
 };

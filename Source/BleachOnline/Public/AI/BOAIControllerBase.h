@@ -57,8 +57,9 @@ protected:
 	bool IsEnemyFar();
 	bool IsAllyNear();
 	bool IsAllyFar();
+	bool IsPointNear(const FVector& TargetPoint);
 
-	void MoveToPoint(const FVector& NewLocation, float Distance);
+	void MoveToPoint(const FVector& NewLocation, float Distance = 0.f);
 	void StopMoving();
 
 	
@@ -79,5 +80,4 @@ private:
 	UFUNCTION()
 	void OnDeadHandle(APawn* Killer, APawn* Victim);
 
-	bool IsPointNear(const FVector& TargetPoint);
 };
