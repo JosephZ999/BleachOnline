@@ -44,8 +44,6 @@ public:
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-	virtual bool DoAction(const uint8 MovementState, const EActionType Action) override;
-	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action) override;
 
 public:
 	UFUNCTION(NetMulticast, Reliable)

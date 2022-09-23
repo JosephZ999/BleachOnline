@@ -70,6 +70,9 @@ private:
 	FTimerHandle RepTimer;
 	FTimerHandle LaunchTimer;
 
+	// Net
+	FVector LocationServer;
+
 protected:
 	virtual void BeginPlay() override;
 

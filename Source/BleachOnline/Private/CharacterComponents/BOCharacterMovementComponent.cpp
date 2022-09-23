@@ -34,6 +34,7 @@ void UBOCharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetRepTimer();
+	LocationServer = GetOwner()->GetActorLocation();
 }
 
 void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -42,6 +43,12 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	{
 		UpdateVelocity(DeltaTime);
 		UpdateState();
+
+		if (!GetOwner()->HasAuthority())
+		{
+			const FVector NewLocation = FMath::VInterpTo(GetOwner()->GetActorLocation(), LocationServer, DeltaTime, 2.f);
+			GetOwner()->SetActorLocation(NewLocation);
+		}
 	}
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -168,7 +175,8 @@ void UBOCharacterMovementComponent::SetFallingClient_Implementation()
 
 void UBOCharacterMovementComponent::Jump()
 {
-	Launch(FVector(MovementVector.X * WalkSpeed, MovementVector.Y * WalkSpeed, JumpHeight), true, true);
+	MovementVelocity = FVector(MovementVector.X * WalkSpeed, MovementVector.Y * WalkSpeed, JumpHeight);
+	Launch(MovementVelocity, true, true);
 }
 
 void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYOverride, bool bZOverride)
@@ -249,8 +257,7 @@ void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector&
 {
 	if (GetOwner() && GetOwner()->HasAuthority()) return;
 
-	const auto NewLocation = FMath::Lerp(Location, GetOwner()->GetActorLocation(), 0.5f);
-	GetOwner()->SetActorLocation(NewLocation);
+	LocationServer = Location;
 }
 
 // AbilitySystem Interface //---------------------------------------------------------//

@@ -87,36 +87,6 @@ void ABOHeroBase::DoComboActionClient_Implementation(uint8 InitialMovementState,
 	DoComboAction(InitialMovementState, NewAction);
 }
 
-bool ABOHeroBase::DoAction(const uint8 MovementState, const EActionType Action)
-{
-	bool Success = true;
-	if (HasAuthority())
-	{
-		if (GetMoveComp()->IsControlEnabled())
-		{
-			if (Action == EActionType::Jump && GetMoveComp()->IsOnGround())
-			{
-				Jump();
-				Success = true;
-			}
-		}
-		else
-		{
-			Success = false;
-		}
-	}
-	return Success;
-}
-
-bool ABOHeroBase::DoComboAction(const uint8 MovementState, const EActionType Action)
-{
-	if (HasAuthority())
-	{
-		if (Action == EActionType::None) return false;
-	}
-	return true;
-}
-
 void ABOHeroBase::FlashStep(const FVector& Direction, float Distance)
 {
 	const FVector NewDirection = Direction * Distance;

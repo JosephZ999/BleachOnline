@@ -71,6 +71,36 @@ FDamageInfo ABOCharacterBase::GetDamageInfo()
 	return FDamageInfo();
 }
 
+bool ABOCharacterBase::DoAction(const uint8 MovementState, const EActionType Action)
+{
+	bool Success = true;
+	if (HasAuthority())
+	{
+		if (GetMoveComp()->IsControlEnabled())
+		{
+			if (Action == EActionType::Jump && GetMoveComp()->IsOnGround())
+			{
+				Jump();
+				Success = true;
+			}
+		}
+		else
+		{
+			Success = false;
+		}
+	}
+	return Success;
+}
+
+bool ABOCharacterBase::DoComboAction(const uint8 MovementState, const EActionType Action)
+{
+	if (HasAuthority())
+	{
+		if (Action == EActionType::None) return false;
+	}
+	return true;
+}
+
 void ABOCharacterBase::OnLanded(FVector LastVelocity)
 {
 	if (GetMoveComp()->IsFalling())

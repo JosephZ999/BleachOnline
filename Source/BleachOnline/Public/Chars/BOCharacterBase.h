@@ -64,8 +64,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnLanded(FVector LastVelocity);
 
-	virtual bool DoAction(const uint8 MovementState, const EActionType Action) { return false; }
-	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action) { return false; }
+	virtual bool DoAction(const uint8 MovementState, const EActionType Action);
+	virtual bool DoComboAction(const uint8 MovementState, const EActionType Action);
 
 	// Wrapper Functions |=========================================================================
 
