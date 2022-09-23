@@ -26,6 +26,9 @@ void ABOAIControllerBase::OnPossess(APawn* InPawn)
 	{
 		SetTickTimer(1.f);
 		ControlledCharacter->OnDead.AddDynamic(this, &ABOAIControllerBase::OnDeadHandle);
+
+		FTimerHandle InitTimer;
+		GetWorldTimerManager().SetTimer(InitTimer, this, &ThisClass::OnInit, 1.f);
 	}
 }
 
@@ -36,7 +39,7 @@ void ABOAIControllerBase::OnUnPossess()
 
 void ABOAIControllerBase::SetTickTimer(float Delay)
 {
-	GetWorldTimerManager().SetTimer(TickTimer, this, &ABOAIControllerBase::AIBody, FMath::Max(TickFrequency, 0.05f), true, Delay);
+	GetWorldTimerManager().SetTimer(TickTimer, this, &ThisClass::AIBody, FMath::Max(TickFrequency, 0.05f), true, Delay);
 }
 
 void ABOAIControllerBase::Wait(float Delay)
@@ -95,6 +98,8 @@ inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 bool ABOAIControllerBase::SearchEnemy()
 {
 	if (Enemy && ! Enemy->IsDead()) return true;
+
+	UE_LOG(LogTemp, Warning, TEXT("Search Enemy, Options %f - %d"), FindEnemyRadius, FindEnemyChunks);
 	return Enemy = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() != Char->GetTeam(); });
 }
 

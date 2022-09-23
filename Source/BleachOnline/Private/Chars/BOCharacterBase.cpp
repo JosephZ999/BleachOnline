@@ -6,6 +6,8 @@
 #include "BOSpriteComponent.h"
 #include "BODamageActorComponent.h"
 #include "BODamageActor.h"
+#include "AbilitySystemComponent.h"
+
 #include "CharacterConsts.h"
 
 #include "GameFramework/Controller.h"
@@ -28,6 +30,7 @@ ABOCharacterBase::ABOCharacterBase()
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	CapsuleComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
 	CapsuleComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	SetRootComponent(CapsuleComp);
 
@@ -39,6 +42,7 @@ ABOCharacterBase::ABOCharacterBase()
 	SpriteComp->SetupAttachment(GetRootComponent());
 
 	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
+	AbilityComp		= CreateDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
 }
 
 void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)
@@ -162,7 +166,7 @@ void ABOCharacterBase::OnTakeAnyDamageHandle(
 	const bool CanFall = DamageActor->bFall || bDead;
 	if (! GetMoveComp()->SetFalling(CanFall)) //
 	{
-		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.2f, true);
+		NewAction(static_cast<uint8>(EMovementState::Hit) + FMath::RandRange(0, 2), "None", 0.4f, true);
 	}
 	if (HealthComp->GetValue() <= 0.f)
 	{
@@ -334,3 +338,14 @@ void ABOCharacterBase::DestroyDamageActor()
 {
 	DamageActorComp->Destroy();
 }
+
+// AbilitySystem Interface //---------------------------------------------------------//
+UObject* ABOCharacterBase::IGetIndicatorComponent(EIndicatorType Type) const
+{
+	return HealthComp;
+}
+UObject* ABOCharacterBase::IGetMovementComponent() const
+{
+	return MovementComp;
+}
+//------------------------------------------------------------------------------------//

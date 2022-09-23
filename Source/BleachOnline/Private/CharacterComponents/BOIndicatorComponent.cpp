@@ -2,6 +2,8 @@
 
 #include "BOIndicatorComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogInicator, All, All);
+
 UBOIndicatorComponent::UBOIndicatorComponent()
 {
 	SetIsReplicated(true);
@@ -17,7 +19,7 @@ void UBOIndicatorComponent::BeginPlay()
 
 void UBOIndicatorComponent::SetValue(float NewValue)
 {
-	Value = FMath::Clamp(Value + NewValue, 0.f, MaxValue);
+	Value = FMath::Clamp(NewValue, 0.f, MaxValue);
 	OnValueChanged(GetPercent());
 	CheckForEmpty();
 }
@@ -31,7 +33,7 @@ void UBOIndicatorComponent::AddValue(float AddValue)
 
 void UBOIndicatorComponent::OnValueChanged_Implementation(float Percent)
 {
-	OnChange.Broadcast(this, Percent);	
+	OnChange.Broadcast(this, Percent);
 }
 
 void UBOIndicatorComponent::CheckForEmpty()
@@ -39,6 +41,32 @@ void UBOIndicatorComponent::CheckForEmpty()
 	if (bEnabled && FMath::IsNearlyZero(Value))
 	{
 		bEnabled = false;
-		if (OnValueZero.IsBound()) { OnValueZero.Execute(); }
+		if (OnValueZero.IsBound())
+		{
+			OnValueZero.Execute();
+		}
 	}
 }
+
+// AbilitySystem Interface //--------------------------------------------------------//
+void UBOIndicatorComponent::ISetValue(float InValue)
+{
+	SetValue(InValue);
+	UE_LOG(LogInicator, Display, TEXT("New Power = %f"), GetValue());
+}
+float UBOIndicatorComponent::IGetValue() const
+{
+	UE_LOG(LogInicator, Display, TEXT("Current Power = %f"), GetValue());
+	return GetValue();
+}
+
+float UBOIndicatorComponent::IGetPercent() const
+{
+	return GetPercent();
+}
+
+FOnChangeDelegate UBOIndicatorComponent::IGetDelegateOnChanged() const
+{
+	return OnChange;
+}
+//-----------------------------------------------------------------------------------//

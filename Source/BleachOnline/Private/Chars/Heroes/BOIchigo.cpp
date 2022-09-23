@@ -6,6 +6,8 @@
 #include "GameFramework\Character.h"
 #include "BODamageActorComponent.h"
 
+#include "AbilitySystemComponent.h"
+
 ABOIchigo::ABOIchigo()
 {
 	GetSpriteComp()->InitAnimations(ShikaiAnimations, "/Game/BleachOnline/Texture/Chars/Ichigo/Anims");
@@ -154,4 +156,16 @@ void ABOIchigo::AttackAir()
 	NewAction(State, AnimationName);
 
 	LaunchCharacter(GetMoveVector() + NewRotation.Vector(), 250.f, true);
+}
+
+
+// Delete this
+void ABOIchigo::Accelerate()
+{
+	GetAbilityComp()->ActivateAbility(AbilityNames::Accel);
+}
+
+void ABOIchigo::Dash()
+{
+	GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, FAbilityParam(GetMoveVector() * 350.f));
 }

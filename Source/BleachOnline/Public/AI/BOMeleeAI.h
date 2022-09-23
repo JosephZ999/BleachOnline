@@ -31,8 +31,10 @@ public:
 
 private:
 	EAITasks Task;
+	bool	 bCanDash;
 
 protected:
+	virtual void OnInit() override;
 	virtual void AIBody() override;
 
 private:

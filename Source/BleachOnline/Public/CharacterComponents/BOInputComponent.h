@@ -17,6 +17,7 @@ UCLASS()
 class BLEACHONLINE_API UBOInputComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
 		
 private:
 	ABOHeroBase* OuterHero;
@@ -47,9 +48,11 @@ private:
 
 	UFUNCTION(Server, Unreliable)
 	void UpdateDataServer(const TArray<EActionType>& NewComboKeys);
+	void UpdateDataServer_Implementation(const TArray<EActionType>& NewComboKeys);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void UpdateDataClient(const TArray<EActionType>& NewComboKeys);
+	void UpdateDataClient_Implementation(const TArray<EActionType>& NewComboKeys);
 
 public:
 	UFUNCTION(BlueprintCallable)

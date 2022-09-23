@@ -26,24 +26,19 @@ UBOCharacterMovementComponent::UBOCharacterMovementComponent()
 	JumpHeight		= 450.f;
 	AirAcceleration = 200.f;
 	AirDeceleration = 750.f;
+
+	RepFrequency = 0.1f;
 }
 
 void UBOCharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	OwnerCapsulaComp = Cast<UCapsuleComponent>(GetOwner()->GetRootComponent());
-
-	// Check root component type
-	checkf(OwnerCapsulaComp, TEXT("Owner's RootComponent is not a valid type (CharacterMovementComponent)"));
-
-	OwnerActor = GetOwner();
 	SetRepTimer();
 }
 
 void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if (OwnerActor)
+	if (GetOwner())
 	{
 		UpdateVelocity(DeltaTime);
 		UpdateState();
@@ -52,7 +47,7 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-FORCEINLINE FVector UBOCharacterMovementComponent::GetVelocity() const
+FVector UBOCharacterMovementComponent::GetVelocity() const
 {
 	return FVector(Velocity + MovementVelocity).GetSafeNormal() * VelocityLength;
 }
@@ -60,11 +55,11 @@ FORCEINLINE FVector UBOCharacterMovementComponent::GetVelocity() const
 void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 {
 	/* Add Offset Z */ //
-	const auto PreLocation = OwnerActor->GetActorLocation();
+	const auto PreLocation = GetOwner()->GetActorLocation();
 
 	FHitResult Hit;
 	auto	   VelocityOffsetZ = (FMath::IsNearlyEqual(Velocity.Z, 0.f)) ? -100.f : Velocity.Z;
-	OwnerActor->AddActorWorldOffset(FVector(0.f, 0.f, VelocityOffsetZ * Delta), true, &Hit);
+	GetOwner()->AddActorWorldOffset(FVector(0.f, 0.f, VelocityOffsetZ * Delta), true, &Hit);
 
 	bool bLanded = bOnGround;
 	bOnGround	 = false;
@@ -98,10 +93,10 @@ void UBOCharacterMovementComponent::UpdateVelocity(const float Delta)
 		MovementVelocity = MovementVelocity.GetSafeNormal() * ((NewSize <= 0.f) ? 0.f : NewSize);
 	}
 
-	OwnerActor->AddActorWorldOffset(FVector((Velocity.X + MovementVelocity.X) * Delta, 0.f, 0.f), true);
-	OwnerActor->AddActorWorldOffset(FVector(0.f, (Velocity.Y + MovementVelocity.Y) * Delta, 0.f), true);
+	GetOwner()->AddActorWorldOffset(FVector((Velocity.X + MovementVelocity.X) * Delta, 0.f, 0.f), true);
+	GetOwner()->AddActorWorldOffset(FVector(0.f, (Velocity.Y + MovementVelocity.Y) * Delta, 0.f), true);
 
-	const auto PostLocation = OwnerActor->GetActorLocation();
+	const auto PostLocation = GetOwner()->GetActorLocation();
 	VelocityLength			= FVector::Dist2D(PreLocation, PostLocation) / Delta;
 
 	auto  Velocity2D = FVector(Velocity.X, Velocity.Y, 0.f);
@@ -145,7 +140,7 @@ void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVect
 {
 	MovementVector = ForwardVector;
 	MovementVector.Normalize();
-	bWalking = (bControl && MovementVector.Size2D() > 0.f) && !bFalling;
+	bWalking = (bControl && MovementVector.Size2D() > 0.f) && ! bFalling;
 }
 
 bool UBOCharacterMovementComponent::SetFalling(bool Value)
@@ -154,7 +149,7 @@ bool UBOCharacterMovementComponent::SetFalling(bool Value)
 	if (bFalling)
 	{
 		bControl = false;
-		if (OwnerActor->HasAuthority())
+		if (GetOwner()->HasAuthority())
 		{
 			Launch(FVector(0.f, 0.f, 100.f));
 			SetFallingClient();
@@ -165,7 +160,7 @@ bool UBOCharacterMovementComponent::SetFalling(bool Value)
 
 void UBOCharacterMovementComponent::SetFallingClient_Implementation()
 {
-	if (OwnerActor->HasAuthority()) return;
+	if (GetOwner()->HasAuthority()) return;
 
 	bControl = false;
 	bFalling = true;
@@ -178,7 +173,7 @@ void UBOCharacterMovementComponent::Jump()
 
 void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYOverride, bool bZOverride)
 {
-	if (! OwnerActor->HasAuthority()) return;
+	if (! GetOwner()->HasAuthority()) return;
 
 	FVector nVelocity = NewVelocity;
 	if (! bXYOverride)
@@ -196,7 +191,7 @@ void UBOCharacterMovementComponent::Launch(const FVector& NewVelocity, bool bXYO
 
 void UBOCharacterMovementComponent::LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride, bool bZOverride)
 {
-	if (! OwnerActor->HasAuthority()) return;
+	if (! GetOwner()->HasAuthority()) return;
 
 	LaunchStateCache	   = State;
 	LaunchVelocityCache	   = NewVelocity;
@@ -205,7 +200,7 @@ void UBOCharacterMovementComponent::LaunchDeferred(const FVector& NewVelocity, f
 
 	if (Delay > 0.f)
 	{
-		OwnerActor->GetWorldTimerManager().SetTimer(LaunchTimer, this, &UBOCharacterMovementComponent::LaunchDeferredHandle, Delay);
+		GetOwner()->GetWorldTimerManager().SetTimer(LaunchTimer, this, &UBOCharacterMovementComponent::LaunchDeferredHandle, Delay);
 		return;
 	}
 	LaunchDeferredHandle();
@@ -219,7 +214,7 @@ void UBOCharacterMovementComponent::LaunchDeferredHandle()
 
 void UBOCharacterMovementComponent::LaunchClient_Implementation(const FVector& NewVelocity)
 {
-	if (OwnerActor->HasAuthority()) return;
+	if (GetOwner()->HasAuthority()) return;
 	Velocity = NewVelocity;
 }
 
@@ -231,22 +226,45 @@ void UBOCharacterMovementComponent::SetMovementState(uint8 NewState, bool Forcib
 	}
 }
 
+void UBOCharacterMovementComponent::SetWalkSpeedClient_Implementation(float InWalkSpeed)
+{
+	if (GetOwner() && GetOwner()->HasAuthority()) return;
+	WalkSpeed = InWalkSpeed;
+}
+
 void UBOCharacterMovementComponent::SetRepTimer()
 {
-	if (! OwnerActor->HasAuthority()) return;
-	OwnerActor->GetWorldTimerManager().SetTimer(
+	if (! GetOwner()->HasAuthority()) return;
+
+	GetOwner()->GetWorldTimerManager().SetTimer(
 		RepTimer, this, &UBOCharacterMovementComponent::RepTimerHandle, FMath::Max(RepFrequency, 0.05f), true);
 }
 
 void UBOCharacterMovementComponent::RepTimerHandle()
 {
-	UpdateOnClient(OwnerActor->GetActorLocation());
+	UpdateOnClient(GetOwner()->GetActorLocation());
 }
 
 void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector& Location)
 {
-	if (OwnerActor->HasAuthority()) return;
+	if (GetOwner() && GetOwner()->HasAuthority()) return;
 
-	const auto NewLocation = FMath::Lerp(Location, OwnerActor->GetActorLocation(), 0.5f);
-	OwnerActor->SetActorLocation(NewLocation);
+	const auto NewLocation = FMath::Lerp(Location, GetOwner()->GetActorLocation(), 0.5f);
+	GetOwner()->SetActorLocation(NewLocation);
 }
+
+// AbilitySystem Interface //---------------------------------------------------------//
+float UBOCharacterMovementComponent::IGetWalkSpeed() const
+{
+	return WalkSpeed;
+}
+void UBOCharacterMovementComponent::IAddWalkSpeed(float AdditionalSpeed)
+{
+	WalkSpeed += AdditionalSpeed;
+	SetWalkSpeedClient(WalkSpeed);
+}
+void UBOCharacterMovementComponent::ILaunch(const FVector& InDirection, bool bInOverrideXY, bool bInOverrideZ)
+{
+	Launch(InDirection, bInOverrideXY, bInOverrideZ);
+}
+// -----------------------------------------------------------------------------------//

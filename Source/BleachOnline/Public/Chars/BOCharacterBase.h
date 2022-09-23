@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "BOCoreTypes.h"
+#include "AbilityTypes.h"
+#include "ASCharacterInterface.h"
 #include "BOCharacterBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeathSignature, APawn*, KillerPawn, APawn*, VictimPawn);
@@ -15,9 +17,10 @@ class UBOIndicatorComponent;
 class UBOSpriteComponent;
 class UPaperFlipbook;
 class UBODamageActorComponent;
+class UAbilitySystemComponent;
 
 UCLASS(abstract)
-class BLEACHONLINE_API ABOCharacterBase : public APawn
+class BLEACHONLINE_API ABOCharacterBase : public APawn, public IASCharacterInterface
 {
 	GENERATED_BODY()
 
@@ -46,6 +49,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBODamageActorComponent* DamageActorComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UAbilitySystemComponent* AbilityComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	uint8 Team;
 
@@ -67,13 +73,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& NewTransform) override;
 
-	FORCEINLINE UBOSpriteComponent* GetSpriteComp() const { return SpriteComp; }
-	FORCEINLINE UBOCharacterMovementComponent* GetMoveComp() const { return MovementComp; }
-	FORCEINLINE UBOIndicatorComponent* GetHealthComp() const { return HealthComp; }
-	FORCEINLINE UBODamageActorComponent* GetDamageActorComp() const { return DamageActorComp; }
-
-	virtual UBOIndicatorComponent* GetPowerComp() const { return nullptr; }
-	virtual UBOIndicatorComponent* GetStaminaComp() const { return nullptr; }
+	// clang-format off
+	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp;		}
+	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp;		}
+	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp;		}
+	FORCEINLINE UBODamageActorComponent*		GetDamageActorComp()	const	{ return DamageActorComp;	}
+	FORCEINLINE UAbilitySystemComponent*		GetAbilityComp()		const	{ return AbilityComp;		}
+	// clang-format on
 
 	virtual FDamageInfo GetDamageInfo();
 
@@ -84,7 +90,9 @@ public:
 	void LaunchCharacterDeferred(const FVector& Direction, float Impulse, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void AddVelocity(const FVector& Direction, float Length);
 
-	void	 SetRotation(float RotationYaw);
+	void SetRotation(float RotationYaw);
+
+	UFUNCTION(BlueprintCallable)
 	FRotator TurnCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -108,6 +116,7 @@ public:
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void NewActionClient(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
+	void NewActionClient_Implementation(uint8 NewState, const FName& Animation, float Length, bool LoopAnim);
 
 	void		 EndActionDeferred(float WaitTime);
 	virtual void EndAction();
@@ -138,6 +147,11 @@ public:
 	void SetCharacterVisibility(bool Visible);
 	void DestroyDamageActor();
 
+	// AbilitySystem Interface //---------------------------------------------------------//
+	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const override;
+	virtual UObject* IGetMovementComponent() const override;
+	//------------------------------------------------------------------------------------//
+
 private:
 	void SetMovementRotation();
 
@@ -150,4 +164,5 @@ private:
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void OnDeathClient();
+	void OnDeathClient_Implementation();
 };

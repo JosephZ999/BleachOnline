@@ -16,9 +16,9 @@ void ABOHUD::Initialize()
 	const auto OwningCharacter = Cast<ABOHeroBase>(GetOwningPawn());
 	if (! OwningCharacter) return;
 
-	SubscribeToIndicatorChange(OwningCharacter->GetHealthComp());
-	SubscribeToIndicatorChange(OwningCharacter->GetPowerComp());
-	SubscribeToIndicatorChange(OwningCharacter->GetStaminaComp());
+	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Health));
+	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Power));
+	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Stamina));
 
 	if (! GameUIWidget)
 	{
@@ -58,15 +58,11 @@ void ABOHUD::OnIndicatorChanged(UActorComponent* Component, float Percent)
 	}
 }
 
-void ABOHUD::SubscribeToIndicatorChange(UBOIndicatorComponent* Indicator)
+void ABOHUD::SubscribeToIndicatorChange(UObject* Indicator)
 {
-	if (Indicator)
+	auto I = Cast<UBOIndicatorComponent>(Indicator);
+	if (I)
 	{
-		Indicator->OnChange.AddUObject(this, &ABOHUD::OnIndicatorChanged);
-
-		if (!HasAuthority())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("AAAAAAAAAAAAAA"));
-		}
+		I->OnChange.AddUObject(this, &ABOHUD::OnIndicatorChanged);
 	}
 }

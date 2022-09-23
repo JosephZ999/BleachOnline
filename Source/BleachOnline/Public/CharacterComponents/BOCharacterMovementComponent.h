@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BOCoreTypes.h"
+#include "ASMovementInterface.h"
 #include "BOCharacterMovementComponent.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnLandedSignature, FVector);
@@ -12,18 +13,12 @@ DECLARE_DELEGATE_OneParam(FOnLandedSignature, FVector);
 class UCapsuleComponent;
 
 UCLASS(ClassGroup = (Custom))
-class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent
+class BLEACHONLINE_API UBOCharacterMovementComponent : public UActorComponent, public IASMovementInterface
 {
 	GENERATED_BODY()
 
 public:
 	FOnLandedSignature OnLanded;
-
-	UPROPERTY()
-	AActor* OwnerActor;
-
-	UPROPERTY()
-	UCapsuleComponent* OwnerCapsulaComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0"), Category = "Movement Settings")
 	float Gravity;
@@ -83,6 +78,11 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void UpdateOnClient(const FVector& Location);
+	void UpdateOnClient_Implementation(const FVector& Location);
+
+	UFUNCTION(BlueprintCallable)
 	uint8 GetMovementState() const { return State; }
 
 	UFUNCTION(BlueprintCallable)
@@ -96,9 +96,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetMoveVelocity() const { return MovementVelocity; }
-
-	UFUNCTION(BlueprintCallable)
-	uint8 GetMovementState() { return State; }
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -120,15 +117,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Jump();
 
+	UFUNCTION(BlueprintCallable)
 	void Launch(const FVector& NewVelocity, bool bXYOverride = false, bool bZOverride = false);
 	void LaunchDeferred(const FVector& NewVelocity, float Delay, bool bXYOverride = false, bool bZOverride = false);
 	void LaunchDeferredHandle();
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void LaunchClient(const FVector& NewVelocity);
+	void LaunchClient_Implementation(const FVector& NewVelocity);
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementState(uint8 NewState, bool Forcibly = false);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetWalkSpeedClient(float InWalkSpeed);
+	void SetWalkSpeedClient_Implementation(float InWalkSpeed);
 
 	//
 	UFUNCTION(BlueprintCallable)
@@ -145,6 +148,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDoingAnything() const { return State >= static_cast<uint8>(EMovementState::Custom); }
+
+	// AbilitySystem Interface //---------------------------------------------------------//
+	virtual float IGetWalkSpeed() const override;
+	virtual void  IAddWalkSpeed(float AdditionalSpeed) override;
+	virtual void  ILaunch(const FVector& InDirection, bool bInOverrideXY, bool bInOverrideZ) override;
+	// -----------------------------------------------------------------------------------//
 
 private:
 	void UpdateVelocity(const float Delta);
@@ -172,7 +181,4 @@ private:
 private:
 	void SetRepTimer();
 	void RepTimerHandle();
-
-	UFUNCTION(NetMulticast, Unreliable)
-	void UpdateOnClient(const FVector& Location);
 };

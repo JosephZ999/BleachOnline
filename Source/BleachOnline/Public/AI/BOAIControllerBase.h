@@ -34,7 +34,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
 	float LongDistance;
 	
+	UPROPERTY()
 	ABOCharacterBase* Enemy;
+
+	UPROPERTY()
 	ABOCharacterBase* Ally;
 
 
@@ -46,6 +49,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 	virtual void AIBody() {}
+	virtual void OnInit() {}
 
 	bool SearchEnemy();
 	bool SearchAlly();
