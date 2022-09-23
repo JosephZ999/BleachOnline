@@ -78,29 +78,30 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 {
 	if (OwnerMoveComp->GetMovementState() >= static_cast<uint8>(EMovementState::Custom)) return;
 
-	UPaperFlipbook*		 NewAnim			  = nullptr;
 	const EMovementState CurrentMovementState = static_cast<EMovementState>(OwnerMoveComp->GetMovementState());
 
-	// clang-format off
+	FName NewAnimName;
 	switch (CurrentMovementState)
-	{
-	case EMovementState::Stand:		NewAnim = Animations.FindRef(AN_STAND);		break;
-	case EMovementState::Walk:		NewAnim = Animations.FindRef(AN_WALK);		break;
-	case EMovementState::JumpUp:	NewAnim = Animations.FindRef(AN_JUMP_UP);	break;
-	case EMovementState::JumpHold:	NewAnim = Animations.FindRef(AN_JUMP_HOLD);	break;
-	case EMovementState::JumpDown:	NewAnim = Animations.FindRef(AN_JUMP_DOWN);	break;
-	case EMovementState::Hit:		NewAnim = GetHitAnim(AN_HIT1);				break;
-	case EMovementState::Hit2:		NewAnim = GetHitAnim(AN_HIT2);				break;
-	case EMovementState::Hit3:		NewAnim = GetHitAnim(AN_HIT3);				break;
-	case EMovementState::Fall:		NewAnim = Animations.FindRef(AN_FALL_HOLD);	break;
-	case EMovementState::FallUp:	NewAnim = Animations.FindRef(AN_FALL_UP);	break;
-	case EMovementState::FallDown:	NewAnim = Animations.FindRef(AN_FALL_DOWN);	break;
-	}
-	// clang-format on
+	{ // clang-format off
+	case EMovementState::Stand:		NewAnimName = AN_STAND;			break;
+	case EMovementState::Walk:		NewAnimName = AN_WALK;			break;
+	case EMovementState::JumpUp:	NewAnimName = AN_JUMP_UP;		break;
+	case EMovementState::JumpHold:	NewAnimName = AN_JUMP_HOLD;		break;
+	case EMovementState::JumpDown:	NewAnimName = AN_JUMP_DOWN;		break;
+	case EMovementState::Hit:		NewAnimName = AN_HIT1;			break;
+	case EMovementState::Hit2:		NewAnimName = Animations.Contains(AN_HIT2) ? AN_HIT2 : AN_HIT1;	break;
+	case EMovementState::Hit3:		NewAnimName = Animations.Contains(AN_HIT3) ? AN_HIT3 : AN_HIT1;	break;
+	case EMovementState::Fall:		NewAnimName = AN_FALL_HOLD;		break;
+	case EMovementState::FallUp:	NewAnimName = AN_FALL_UP;		break;
+	case EMovementState::FallDown:	NewAnimName = AN_FALL_DOWN;		break;
+	} // clang-format on
 
-	if (NewAnim) //
+	if (! NewAnimName.IsNone())
 	{
-		SetFlipbook(NewAnim);
+		if (SetFlipbook(Animations.FindRef(NewAnimName)))
+		{
+			LastAnimName = NewAnimName;
+		}
 	}
 }
 
@@ -109,7 +110,10 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 	UPaperFlipbook* NewAnim = Animations.FindRef(AnimationName);
 	if (NewAnim)
 	{
-		SetFlipbook(NewAnim);
+		if (SetFlipbook(NewAnim))
+		{
+			LastAnimName = AnimationName;
+		}
 		SetLooping(Looping);
 		if (! Looping)
 		{
@@ -117,18 +121,18 @@ void UBOSpriteComponent::SetAnimation(const FName& AnimationName, bool Looping)
 		}
 		return;
 	}
-	SetFlipbook(Animations.FindRef(AN_STAND));
+	LastAnimName = AN_STAND;
+	SetFlipbook(Animations.FindRef(LastAnimName));
 	SetLooping(true);
 	Play();
+}
+
+bool UBOSpriteComponent::CheckLastAnim(const FName& AnimName) const
+{
+	return LastAnimName == AnimName;
 }
 
 bool UBOSpriteComponent::ContainsAnim(const FName& AnimName)
 {
 	return Animations.Contains(AnimName);
-}
-
-UPaperFlipbook* UBOSpriteComponent::GetHitAnim(const FName& AnimName)
-{
-	UPaperFlipbook* NewAnim = Animations.FindRef(AnimName);
-	return (NewAnim) ? NewAnim : Animations.FindRef(AN_HIT1);
 }

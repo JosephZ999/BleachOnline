@@ -30,6 +30,7 @@ private:
 	TMap<FName, UPaperFlipbook*> Animations;
 
 	FTimerHandle AnimationUpdateTimer;
+	FName		 LastAnimName;
 
 protected:
 	void BeginPlay() override;
@@ -38,19 +39,13 @@ public:
 	void Construction();
 	void SetBaseAnimations(TMap<FName, UPaperFlipbook*>& NewAnimations);
 	void InitAnimations(TMap<FName, UPaperFlipbook*>& OutAnimations, const FString& AnimsFolder);
-
-	UFUNCTION(BlueprintCallable)
 	void InitAnimations(const FString& AnimsFolder);
-
-	UFUNCTION(BlueprintCallable)
 	void SetAnimation(const FName& AnimationName, bool Looping);
 
-	UFUNCTION(BlueprintCallable)
 	bool ContainsAnim(const FName& AnimName);
-
 	bool IsAnimsEmpty() const { return Animations.Num() == 0; }
+	bool CheckLastAnim(const FName& AnimName) const;
 
 private:
-	void			AnimationUpdateHandle();
-	UPaperFlipbook* GetHitAnim(const FName& AnimName);
+	void AnimationUpdateHandle();
 };
