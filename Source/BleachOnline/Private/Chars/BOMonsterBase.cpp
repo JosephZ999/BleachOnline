@@ -1,4 +1,4 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOMonsterBase.h"
 #include "BOSpriteComponent.h"

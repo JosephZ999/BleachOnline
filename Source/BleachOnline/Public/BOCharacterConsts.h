@@ -1,6 +1,7 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #pragma once
+
 #include "CoreMinimal.h"
 
 namespace CharConsts
@@ -9,4 +10,4 @@ namespace CharConsts
 	const FName PowerCompName("PowerComp");
 	const FName StaminaCompName("StaminaComp");
 	const FName PickupTag("PickupChar");
-} // namespace CharacterConsts
+}

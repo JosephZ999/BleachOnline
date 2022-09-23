@@ -1,4 +1,4 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOCharacterBase.h"
 #include "BOCharacterMovementComponent.h"
@@ -6,9 +6,9 @@
 #include "BOSpriteComponent.h"
 #include "BODamageActorComponent.h"
 #include "BODamageActor.h"
+#include "BOCharacterConsts.h"
 #include "AbilitySystemComponent.h"
 
-#include "CharacterConsts.h"
 
 #include "GameFramework/Controller.h"
 #include "Components/CapsuleComponent.h"

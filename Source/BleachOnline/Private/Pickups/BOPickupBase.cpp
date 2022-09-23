@@ -1,8 +1,8 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOPickupBase.h"
 #include "Components/SphereComponent.h"
-#include "CharacterConsts.h"
+#include "BOCharacterConsts.h"
 #include "TimerManager.h"
 
 ABOPickupBase::ABOPickupBase()

@@ -1,4 +1,4 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOHUD.h"
 #include "BOHeroBase.h"
@@ -6,8 +6,7 @@
 #include "BOGameUIWidget.h"
 #include "BOInputWidget.h"
 #include "BOInputComponent.h"
-
-#include "CharacterConsts.h"
+#include "BOCharacterConsts.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBOHUD, All, All);
 

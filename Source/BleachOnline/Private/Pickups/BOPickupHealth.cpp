@@ -1,8 +1,8 @@
-// Authors MoonDi & JosephZzz for Bleach Online fan game
+// Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOPickupHealth.h"
 #include "BOIndicatorComponent.h"
-#include "CharacterConsts.h"
+#include "BOCharacterConsts.h"
 
 void ABOPickupHealth::Pickup(AActor* PickupChar)
 {
