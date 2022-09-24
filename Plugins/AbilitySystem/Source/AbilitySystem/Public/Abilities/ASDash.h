@@ -25,4 +25,5 @@ protected:
 
 private:
 	void DoSomething(FVector Direction);
+	void EndAnim();
 };

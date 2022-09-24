@@ -98,6 +98,11 @@ void UBOSpriteComponent::AnimationUpdateHandle()
 
 	if (! NewAnimName.IsNone())
 	{
+		if (!Animations.Contains(NewAnimName))
+		{
+			NewAnimName = AN_STAND;
+		}
+		
 		if (SetFlipbook(Animations.FindRef(NewAnimName)))
 		{
 			LastAnimName = NewAnimName;

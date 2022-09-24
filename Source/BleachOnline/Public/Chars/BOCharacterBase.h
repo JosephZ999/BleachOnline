@@ -150,6 +150,7 @@ public:
 	// AbilitySystem Interface //---------------------------------------------------------//
 	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const override;
 	virtual UObject* IGetMovementComponent() const override;
+	virtual void	 SetAnimation(const FName& AnimationName, bool bLoop) override;
 	//------------------------------------------------------------------------------------//
 
 private:

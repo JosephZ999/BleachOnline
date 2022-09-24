@@ -68,6 +68,7 @@ enum class EMovementState : uint8
 	StandUp,
 	Teleport,
 	Custom,
+	Max,
 };
 
 UENUM(BlueprintType)

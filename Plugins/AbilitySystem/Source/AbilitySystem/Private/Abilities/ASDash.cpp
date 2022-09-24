@@ -4,6 +4,8 @@
 #include "AbilityTypes.h"
 #include "ASMovementInterface.h"
 #include "ASCharacterInterface.h"
+#include "TimerManager.h"
+#include "Engine\World.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDash, All, All);
 
@@ -37,5 +39,19 @@ void UASDash::DoSomething(FVector Direction)
 
 	Direction.Z = 100.f;
 	MoveComp->ILaunch(Direction.GetClampedToMaxSize(MaxLength), true, true);
-	UE_LOG(LogDash, Display, TEXT("Dash Dash Dash - %f, %f, %f"), Direction.X, Direction.Y, Direction.Z);
+	Char->SetAnimation("Dash", true);
+
+	UE_LOG(LogDash, Warning, TEXT("Dash dash"));
+
+	// Åemporary solution
+	FTimerHandle EndAnimHandle;
+	GetOuter()->GetWorld()->GetTimerManager().SetTimer(EndAnimHandle, this, &ThisClass::EndAnim, 0.2f);
+}
+
+void UASDash::EndAnim()
+{
+	auto Char = Cast<IASCharacterInterface>(GetOwner());
+	if (!Char) return;
+
+	Char->SetAnimation(FName(), false);
 }

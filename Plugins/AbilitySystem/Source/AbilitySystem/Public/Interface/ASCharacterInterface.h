@@ -24,4 +24,5 @@ class ABILITYSYSTEM_API IASCharacterInterface
 public:
 	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const { return nullptr; }
 	virtual UObject* IGetMovementComponent() const { return nullptr; }
+	virtual void	 SetAnimation(const FName& AnimationName, bool bLoop) {}
 };

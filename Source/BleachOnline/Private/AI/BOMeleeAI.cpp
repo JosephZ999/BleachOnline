@@ -70,13 +70,14 @@ void ABOMeleeAI::GoToEnemy()
 		return;
 	}
 	
-	if (GetEnemy() && IsPointFar(GetEnemyLocation()))
+	if (IsPointFar(GetEnemyLocation()))
 	{
 		if (bCanDash)
 		{
-			const FVector Direction = MakeForwardVector(GetEnemyLocation()) * GetDist(GetEnemyLocation());
+			const FVector Direction = MakeForwardVector(GetEnemyLocation()) * ((GetDist(GetTargetPoint())* 1.5f));
 			const FAbilityParam Param(Direction);
 			const auto P = Cast<ABOCharacterBase>(GetPawn());
+			P->SetMovementVectorServer(Direction);
 			P->GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, Param);
 			return;
 		}

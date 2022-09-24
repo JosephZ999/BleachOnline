@@ -9,7 +9,6 @@
 #include "BOCharacterConsts.h"
 #include "AbilitySystemComponent.h"
 
-
 #include "GameFramework/Controller.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbook.h"
@@ -377,5 +376,18 @@ UObject* ABOCharacterBase::IGetIndicatorComponent(EIndicatorType Type) const
 UObject* ABOCharacterBase::IGetMovementComponent() const
 {
 	return MovementComp;
+}
+void ABOCharacterBase::SetAnimation(const FName& AnimationName, bool bLoop) 
+{
+	if (AnimationName.IsNone())
+	{
+		if (GetMoveComp()->GetMovementState() == static_cast<uint8>(EMovementState::Custom))
+		{
+			GetMoveComp()->SetMovementState(0, true);
+		}
+		return;
+	}
+	GetMoveComp()->SetMovementState(static_cast<uint8>(EMovementState::Custom), true);
+	GetSpriteComp()->SetAnimation(AnimationName, bLoop);
 }
 //------------------------------------------------------------------------------------//

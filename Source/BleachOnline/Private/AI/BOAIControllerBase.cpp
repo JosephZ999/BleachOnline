@@ -65,7 +65,7 @@ FORCEINLINE bool ABOAIControllerBase::IsPointNear(const FVector& InTargetPoint)
 
 FORCEINLINE bool ABOAIControllerBase::IsPointFar(const FVector& InTargetPoint)
 {
-	return FVector::Dist2D(GetPawn()->GetActorLocation(), InTargetPoint) > LongDistance;
+	return FVector::Dist2D(GetPawnLocation(), InTargetPoint) > LongDistance;
 }
 
 template <typename Predicate> //

@@ -9,7 +9,7 @@
 UENUM()
 enum class EIchigoState : uint8
 {
-	Intro = static_cast<uint8>(EMovementState::Custom),
+	Intro = static_cast<uint8>(EMovementState::Max),
 
 	AttackL,  // Light  Attack
 	AttackM,  // Medium Attack
