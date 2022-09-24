@@ -21,11 +21,12 @@ ABOAIControllerBase::ABOAIControllerBase()
 
 void ABOAIControllerBase::OnPossess(APawn* InPawn)
 {
-	ControlledCharacter = Cast<ABOCharacterBase>(InPawn);
-	if (ControlledCharacter)
+	Super::OnPossess(InPawn);
+	auto P = Cast<ABOCharacterBase>(InPawn);
+	if (P)
 	{
 		SetTickTimer(1.f);
-		ControlledCharacter->OnDead.AddDynamic(this, &ABOAIControllerBase::OnDeadHandle);
+		P->OnDead.AddDynamic(this, &ABOAIControllerBase::OnDeadHandle);
 
 		FTimerHandle InitTimer;
 		GetWorldTimerManager().SetTimer(InitTimer, this, &ThisClass::OnInit, 1.f);
@@ -34,6 +35,7 @@ void ABOAIControllerBase::OnPossess(APawn* InPawn)
 
 void ABOAIControllerBase::OnUnPossess()
 {
+	Super::OnUnPossess();
 	GetWorldTimerManager().ClearTimer(TickTimer);
 }
 
@@ -52,13 +54,18 @@ void ABOAIControllerBase::OnDeadHandle(APawn* Killer, APawn* Victim)
 	GetWorldTimerManager().ClearTimer(TickTimer);
 }
 
-FORCEINLINE bool ABOAIControllerBase::IsPointNear(const FVector& TargetPoint)
+FORCEINLINE bool ABOAIControllerBase::IsPointNear(const FVector& InTargetPoint)
 {
-	const auto Location	 = ControlledCharacter->GetActorLocation();
-	const auto DistanceX = FMath::Sqrt(FMath::Square(Location.X - TargetPoint.X));
-	const auto DistanceY = FMath::Sqrt(FMath::Square(Location.Y - TargetPoint.Y));
+	const auto Location	 = GetPawn()->GetActorLocation();
+	const auto DistanceX = FMath::Sqrt(FMath::Square(Location.X - InTargetPoint.X));
+	const auto DistanceY = FMath::Sqrt(FMath::Square(Location.Y - InTargetPoint.Y));
 
 	return DistanceX < CloseDistance * 0.8f && DistanceY < CloseDistance * 0.2f;
+}
+
+FORCEINLINE bool ABOAIControllerBase::IsPointFar(const FVector& InTargetPoint)
+{
+	return FVector::Dist2D(GetPawn()->GetActorLocation(), InTargetPoint) > LongDistance;
 }
 
 template <typename Predicate> //
@@ -66,12 +73,12 @@ inline ABOCharacterBase* ABOAIControllerBase::FindCharacter(Predicate Pred)
 {
 	if (! GetWorld()) return nullptr;
 
-	if (! ControlledCharacter) return nullptr;
+	if (! GetPawn()) return nullptr;
 
-	const FVector Pos = ControlledCharacter->GetActorLocation();
+	const FVector Pos = GetPawnLocation();
 
 	FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
-	Params.AddIgnoredActor(ControlledCharacter);
+	Params.AddIgnoredActor(GetPawn());
 
 	for (uint8 i = 1; i <= FindEnemyChunks; ++i)
 	{
@@ -99,54 +106,65 @@ bool ABOAIControllerBase::SearchEnemy()
 {
 	if (Enemy && ! Enemy->IsDead()) return true;
 
-	UE_LOG(LogTemp, Warning, TEXT("Search Enemy, Options %f - %d"), FindEnemyRadius, FindEnemyChunks);
-	return Enemy = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() != Char->GetTeam(); });
+	auto P		 = Cast<ABOCharacterBase>(GetPawn());
+	return Enemy = FindCharacter([&](ABOCharacterBase* Char) { return P->GetTeam() != Char->GetTeam(); });
 }
 
 bool ABOAIControllerBase::SearchAlly()
 {
 	if (Ally && ! Ally->IsDead()) return true;
-	return Ally = FindCharacter([&](ABOCharacterBase* Char) { return ControlledCharacter->GetTeam() == Char->GetTeam(); });
+
+	auto P		= Cast<ABOCharacterBase>(GetPawn());
+	return Ally = FindCharacter([&](ABOCharacterBase* Char) { return P->GetTeam() == Char->GetTeam(); });
 }
 
-bool ABOAIControllerBase::IsEnemyNear()
+void ABOAIControllerBase::MoveToLocation(const FVector& InLocation, float Distance)
 {
-	return IsPointNear(Enemy->GetActorLocation());
-}
+	const FVector Location = GetPawn()->GetActorLocation();
+	TargetPoint			   = FVector((Location.X > InLocation.X) ? InLocation.X + Distance : InLocation.X - Distance, //
+		InLocation.Y, InLocation.Z);
 
-bool ABOAIControllerBase::IsEnemyFar()
-{
-	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Enemy->GetActorLocation()) > LongDistance;
-}
+	const FVector ForwardVector = FRotationMatrix::MakeFromX(TargetPoint - Location).Rotator().Vector();
+	const auto	  P				= Cast<ABOCharacterBase>(GetPawn());
 
-bool ABOAIControllerBase::IsAllyNear()
-{
-	return IsPointNear(Ally->GetActorLocation());
-}
+	P->SetMovementVectorServer(ForwardVector);
 
-bool ABOAIControllerBase::IsAllyFar()
-{
-	return FVector::Dist2D(ControlledCharacter->GetActorLocation(), Ally->GetActorLocation()) > LongDistance;
-}
-
-void ABOAIControllerBase::MoveToPoint(const FVector& NewLocation, float Distance)
-{
-	const FVector Location		 = ControlledCharacter->GetActorLocation();
-	const FVector TargetLocation = FVector((Location.X > NewLocation.X) ? NewLocation.X + Distance : NewLocation.X - Distance, //
-		NewLocation.Y, NewLocation.Z);
-
-	const FVector ForwardVector = FRotationMatrix::MakeFromX(TargetLocation - Location).Rotator().Vector();
-	ControlledCharacter->SetMovementVectorServer(ForwardVector);
-	DrawDebugLine(GetWorld(), Location, TargetLocation, FColor::Cyan, false, TickFrequency, 0, 2.f);
-	DrawDebugCapsule(GetWorld(), TargetLocation, 15.f, 7.f, FQuat(FRotator::ZeroRotator), FColor::Cyan, false, TickFrequency, 1, 2.f);
+	DrawDebugLine(GetWorld(), Location, TargetPoint, FColor::Cyan, false, TickFrequency, 0, 2.f);
+	DrawDebugCapsule(GetWorld(), TargetPoint, 15.f, 7.f, FQuat(FRotator::ZeroRotator), FColor::Cyan, false, TickFrequency, 1, 2.f);
 }
 
 void ABOAIControllerBase::StopMoving()
 {
-	ControlledCharacter->SetMovementVectorServer(FVector::ZeroVector);
+	auto P = Cast<ABOCharacterBase>(GetPawn());
+	P->SetMovementVector(FVector::ZeroVector);
+}
+
+FVector ABOAIControllerBase::GetEnemyLocation() const
+{
+	return Enemy->GetActorLocation();
+}
+
+FVector ABOAIControllerBase::GetPawnLocation() const
+{
+	return GetPawn()->GetActorLocation();
+}
+
+FVector ABOAIControllerBase::GetAllyLocation() const
+{
+	return Ally->GetActorLocation();
 }
 
 FVector ABOAIControllerBase::MakeForwardVector(const FVector& TargetLocation)
 {
-	return FRotationMatrix::MakeFromX(TargetLocation - GetControlledChar()->GetActorLocation()).Rotator().Vector();
+	return FRotationMatrix::MakeFromX(TargetLocation - GetPawn()->GetActorLocation()).Rotator().Vector();
+}
+
+float ABOAIControllerBase::GetDist(const FVector& TargetLocation)
+{
+	return FVector::Dist(GetPawnLocation(), TargetLocation);
+}
+
+float ABOAIControllerBase::GetDist2D(const FVector& TargetLocation)
+{
+	return FVector::Dist2D(GetPawnLocation(), TargetLocation);
 }

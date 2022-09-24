@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
+#include "GameFramework\Controller.h"
 #include "BOAIControllerBase.generated.h"
 
 class ABOCharacterBase;
@@ -12,7 +12,7 @@ class ABOCharacterBase;
  *
  */
 UCLASS(abstract)
-class BLEACHONLINE_API ABOAIControllerBase : public AAIController
+class BLEACHONLINE_API ABOAIControllerBase : public AController
 {
 	GENERATED_BODY()
 
@@ -33,17 +33,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
 	float LongDistance;
-	
+
+private:
 	UPROPERTY()
 	ABOCharacterBase* Enemy;
 
 	UPROPERTY()
 	ABOCharacterBase* Ally;
 
-
-private:
-	ABOCharacterBase* ControlledCharacter;
-	FTimerHandle	  TickTimer;
+	FTimerHandle TickTimer;
+	FVector		 TargetPoint;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
@@ -53,31 +52,33 @@ protected:
 
 	bool SearchEnemy();
 	bool SearchAlly();
-	bool IsEnemyNear();
-	bool IsEnemyFar();
-	bool IsAllyNear();
-	bool IsAllyFar();
-	bool IsPointNear(const FVector& TargetPoint);
+	bool IsPointNear(const FVector& InTargetPoint);
+	bool IsPointFar(const FVector& InTargetPoint);
 
-	void MoveToPoint(const FVector& NewLocation, float Distance = 0.f);
+	void MoveToLocation(const FVector& InLocation, float Distance = 0.f);
 	void StopMoving();
 
-	
-	FVector MakeForwardVector(const FVector& TargetLocation);
+	FORCEINLINE ABOCharacterBase* GetEnemy() { return Enemy; }
+	FORCEINLINE ABOCharacterBase* GetAlly() { return Ally; }
 
-	FORCEINLINE ABOCharacterBase* GetControlledChar() { return ControlledCharacter; }
+	FORCEINLINE FVector GetEnemyLocation() const;
+	FORCEINLINE FVector GetPawnLocation() const;
+	FORCEINLINE FVector GetAllyLocation() const;
+
+	FORCEINLINE FVector MakeForwardVector(const FVector& TargetLocation);
+	FORCEINLINE float	GetDist(const FVector& TargetLocation);
+	FORCEINLINE float	GetDist2D(const FVector& TargetLocation);
+	FORCEINLINE FVector GetTargetPoint() { return TargetPoint; }
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void Wait(float Delay);
 
-	template <typename Predicate>
-	ABOCharacterBase* FindCharacter(Predicate Pred);
+	template <typename Predicate> ABOCharacterBase* FindCharacter(Predicate Pred);
 
 private:
 	void SetTickTimer(float Delay);
 
 	UFUNCTION()
 	void OnDeadHandle(APawn* Killer, APawn* Victim);
-
 };

@@ -30,9 +30,6 @@ public:
 	UPROPERTY()
 	float AttackVelocityScale = 3.f;
 
-	UFUNCTION(BlueprintCallable)
-	void MoveTo(const FVector& Location);
-
 private:
 	EAITasks Task;
 	bool	 bCanDash;

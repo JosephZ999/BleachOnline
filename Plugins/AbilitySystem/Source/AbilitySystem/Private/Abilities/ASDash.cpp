@@ -37,4 +37,5 @@ void UASDash::DoSomething(FVector Direction)
 
 	Direction.Z = 100.f;
 	MoveComp->ILaunch(Direction.GetClampedToMaxSize(MaxLength), true, true);
+	UE_LOG(LogDash, Display, TEXT("Dash Dash Dash - %f, %f, %f"), Direction.X, Direction.Y, Direction.Z);
 }

@@ -3,14 +3,15 @@
 #include "BOMeleeAI.h"
 #include "BOCharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMeleeAI, All, All);
 
 void ABOMeleeAI::OnInit()
 {
-	if (GetControlledChar())
+	if (const auto P = Cast<ABOCharacterBase>(GetPawn()))
 	{
-		bCanDash = GetControlledChar()->GetAbilityComp()->HasAbility(AbilityNames::Dash);
+		bCanDash = P->GetAbilityComp()->HasAbility(AbilityNames::Dash);
 	}
 }
 
@@ -46,9 +47,10 @@ void ABOMeleeAI::AIBody()
 
 void ABOMeleeAI::GoToPoint()
 {
-	if (FVector::PointsAreNear(GetControlledChar()->GetActorLocation(), TargetPoint, CloseDistance))
+	if (FVector::PointsAreNear(GetPawnLocation(), TargetPoint, CloseDistance * 0.5f))
 	{
 		Task = EAITasks::None;
+		StopMoving();
 		return;
 	}
 }
@@ -58,21 +60,24 @@ void ABOMeleeAI::GoToEnemy()
 	if (! SearchEnemy())
 	{
 		Task = EAITasks::GoToAlly;
+		Wait(1.f);
 		return;
 	}
 
-	if (IsEnemyNear())
+	if (IsPointNear(GetEnemyLocation()))
 	{
 		Task = EAITasks::AttackEnemy;
 		return;
 	}
-
-	if (Enemy && IsEnemyFar())
+	
+	if (GetEnemy() && IsPointFar(GetEnemyLocation()))
 	{
-		if (GetControlledChar()->GetAbilityComp()->ActivateAbilityWithParam( //
-				AbilityNames::Dash,											 //
-				FAbilityParam(Enemy->GetActorLocation())))
+		if (bCanDash)
 		{
+			const FVector Direction = MakeForwardVector(GetEnemyLocation()) * GetDist(GetEnemyLocation());
+			const FAbilityParam Param(Direction);
+			const auto P = Cast<ABOCharacterBase>(GetPawn());
+			P->GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, Param);
 			return;
 		}
 
@@ -81,9 +86,9 @@ void ABOMeleeAI::GoToEnemy()
 			Task = EAITasks::GoToAlly;
 			return;
 		}
-	}
+	}	
 
-	MoveToPoint(Enemy->GetActorLocation(), CloseDistance / 2.f);
+	MoveToLocation(GetEnemyLocation(), CloseDistance * 0.25f);
 	Wait(0.2f);
 }
 void ABOMeleeAI::GoToAlly()
@@ -91,31 +96,38 @@ void ABOMeleeAI::GoToAlly()
 	if (! SearchAlly())
 	{
 		Task = EAITasks::None;
-		GetControlledChar()->SetMovementVector(FVector::ZeroVector);
+		StopMoving();
+		Wait(1.f);
 		return;
 	}
-	MoveToPoint(Ally->GetActorLocation(), CloseDistance / 2.f);
+
+	if (IsPointNear(GetAllyLocation()))
+	{
+		Task = EAITasks::None;
+		StopMoving();
+		Wait(1.f);
+		return;
+	}
+
+	MoveToLocation(GetAllyLocation(), CloseDistance * 0.25f);
 }
+
 void ABOMeleeAI::AttackEnemy()
 {
-	if (GetControlledChar()->GetMovementState() <= 1 && IsEnemyNear())
-	{
-		const FVector MoveVector = MakeForwardVector(Enemy->GetActorLocation());
-		const float	  Distance	 = FVector::Dist2D(GetControlledChar()->GetActorLocation(), Enemy->GetActorLocation());
+	const auto P = Cast<ABOCharacterBase>(GetPawn());
 
-		GetControlledChar()->SetMovementVector(MoveVector);
-		GetControlledChar()->LaunchCharacter(MoveVector, Distance * AttackVelocityScale, true, true);
-		GetControlledChar()->DoActionServer(EActionType::Attack);
+	if (P->GetMovementState() <= 1 && IsPointNear(GetEnemyLocation()))
+	{
+		const FVector MoveVector = MakeForwardVector(GetEnemyLocation());
+		const float	  Distance = GetDist2D(GetEnemyLocation());
+
+		P->SetMovementVector(MoveVector);
+		P->LaunchCharacter(MoveVector, Distance * AttackVelocityScale, true, true);
+		P->DoActionServer(EActionType::Attack);
+
 		Wait(1.f);
 	}
 	Task = EAITasks::GoToEnemy;
 }
 
 void ABOMeleeAI::Dodge() {}
-
-void ABOMeleeAI::MoveTo(const FVector& Location)
-{
-	Task		= EAITasks::GoToPoint;
-	TargetPoint = Location;
-	MoveToPoint(Location);
-}
