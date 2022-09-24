@@ -136,7 +136,7 @@ void ABOAIControllerBase::MoveToLocation(const FVector& InLocation, float Distan
 void ABOAIControllerBase::StopMoving()
 {
 	auto P = Cast<ABOCharacterBase>(GetPawn());
-	P->SetMovementVector(FVector::ZeroVector);
+	P->SetMovementVectorServer(FVector::ZeroVector);
 }
 
 FVector ABOAIControllerBase::GetEnemyLocation() const

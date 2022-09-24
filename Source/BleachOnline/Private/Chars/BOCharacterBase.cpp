@@ -236,7 +236,7 @@ void ABOCharacterBase::SetMovementRotation()
 void ABOCharacterBase::SetRotation(float RotationYaw)
 {
 	const FRotator NewRotation = FRotator(0.f, RotationYaw, 0.f);
-	if (IsLocallyControlled())
+	if (IsLocallyControlled() && IsPlayerControlled())
 	{
 		GetController()->SetControlRotation(NewRotation);
 		return;
