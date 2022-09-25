@@ -18,6 +18,10 @@ public:
 	ABOMonsterBase();
 	virtual void PostInitProperties() override;
 
+public:
+	FAIOptions GetAIOptions();
+	FAIOptions GetAIOptions_Implementation() { return FAIOptions(); }
+
 protected:
 	virtual bool DoAction(const uint8 MovementState, const EActionType Action) override;
 

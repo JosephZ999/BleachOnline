@@ -2,6 +2,7 @@
 
 #include "BOAIControllerBase.h"
 #include "BOCharacterBase.h"
+#include "BOCoreTypes.h"
 
 #include "TimerManager.h"
 #include "Engine/World.h"
@@ -27,6 +28,13 @@ void ABOAIControllerBase::OnPossess(APawn* InPawn)
 	{
 		SetTickTimer(1.f);
 		P->OnDead.AddDynamic(this, &ABOAIControllerBase::OnDeadHandle);
+		FAIOptions Options = P->GetAIOptions();
+
+		TickFrequency	= Options.TickFrequency;
+		FindEnemyRadius = Options.FindEnemyRadius;
+		FindEnemyChunks = Options.FindEnemyChunks;
+		CloseDistance	= Options.CloseDistance;
+		LongDistance	= Options.LongDistance;
 
 		FTimerHandle InitTimer;
 		GetWorldTimerManager().SetTimer(InitTimer, this, &ThisClass::OnInit, 1.f);

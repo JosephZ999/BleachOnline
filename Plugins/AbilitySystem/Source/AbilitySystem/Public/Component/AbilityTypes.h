@@ -73,4 +73,5 @@ namespace AbilityNames
 {
 const FName Dash("Dash");
 const FName Accel("Accel");
+const FName Shoot("Shoot");
 }

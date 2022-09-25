@@ -33,6 +33,7 @@ public:
 private:
 	EAITasks Task;
 	bool	 bCanDash;
+	bool	 bCanShoot;
 	FVector	 TargetPoint;
 
 protected:

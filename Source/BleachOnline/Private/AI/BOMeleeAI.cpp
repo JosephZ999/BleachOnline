@@ -11,7 +11,8 @@ void ABOMeleeAI::OnInit()
 {
 	if (const auto P = Cast<ABOCharacterBase>(GetPawn()))
 	{
-		bCanDash = P->GetAbilityComp()->HasAbility(AbilityNames::Dash);
+		bCanDash  = P->GetAbilityComp()->HasAbility(AbilityNames::Dash);
+		bCanShoot = P->GetAbilityComp()->HasAbility(AbilityNames::Shoot);
 	}
 }
 
@@ -69,14 +70,14 @@ void ABOMeleeAI::GoToEnemy()
 		Task = EAITasks::AttackEnemy;
 		return;
 	}
-	
+
 	if (IsPointFar(GetEnemyLocation()))
 	{
 		if (bCanDash)
 		{
-			const FVector Direction = MakeForwardVector(GetEnemyLocation()) * ((GetDist(GetTargetPoint())* 1.5f));
+			const FVector		Direction = MakeForwardVector(GetEnemyLocation()) * ((GetDist(GetTargetPoint()) * 1.5f));
 			const FAbilityParam Param(Direction);
-			const auto P = Cast<ABOCharacterBase>(GetPawn());
+			const auto			P = Cast<ABOCharacterBase>(GetPawn());
 			P->SetMovementVectorServer(Direction);
 			P->GetAbilityComp()->ActivateAbilityWithParam(AbilityNames::Dash, Param);
 			return;
@@ -87,7 +88,17 @@ void ABOMeleeAI::GoToEnemy()
 			Task = EAITasks::GoToAlly;
 			return;
 		}
-	}	
+	}
+
+	if (bCanShoot)
+	{
+		const auto P = Cast<ABOCharacterBase>(GetPawn());
+		if (P->GetAbilityComp()->ActivateAbility(AbilityNames::Dash))
+		{
+			StopMoving();
+			return;
+		}
+	}
 
 	MoveToLocation(GetEnemyLocation(), CloseDistance * 0.25f);
 	Wait(0.2f);
@@ -120,7 +131,7 @@ void ABOMeleeAI::AttackEnemy()
 	if (P->GetMovementState() <= 1 && IsPointNear(GetEnemyLocation()))
 	{
 		const FVector MoveVector = MakeForwardVector(GetEnemyLocation());
-		const float	  Distance = GetDist2D(GetEnemyLocation());
+		const float	  Distance	 = GetDist2D(GetEnemyLocation());
 
 		/* Set Rotation */
 

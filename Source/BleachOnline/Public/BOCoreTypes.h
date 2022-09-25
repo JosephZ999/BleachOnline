@@ -109,3 +109,26 @@ struct FReceivedActionInfo
 	TArray<EActionType> Keys;
 	FVector				MovementVector;
 };
+
+// AI //-----------------------------------------------------------------------------------------//
+
+USTRUCT(BlueprintType)
+struct FAIOptions
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings", Meta = (ClampMin = "0", ClampMax = "10"))
+	float TickFrequency;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	float FindEnemyRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	uint8 FindEnemyChunks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	float CloseDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
+	float LongDistance;
+};

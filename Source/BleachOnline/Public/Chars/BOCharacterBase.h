@@ -148,9 +148,17 @@ public:
 	void DestroyDamageActor();
 
 	// AbilitySystem Interface //---------------------------------------------------------//
+public:
 	virtual UObject* IGetIndicatorComponent(EIndicatorType Type) const override;
 	virtual UObject* IGetMovementComponent() const override;
 	virtual void	 SetAnimation(const FName& AnimationName, bool bLoop) override;
+	//------------------------------------------------------------------------------------//
+
+	// AI Interface //--------------------------------------------------------------------//
+public:
+	UFUNCTION(BlueprintNativeEvent)
+	FAIOptions GetAIOptions();
+	FAIOptions GetAIOptions_Implementation() { return FAIOptions(); }
 	//------------------------------------------------------------------------------------//
 
 private:
