@@ -82,8 +82,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(NetMulticast, Unreliable)
-	void UpdateOnClient(const FVector& Location);
-	void UpdateOnClient_Implementation(const FVector& Location);
+	void UpdateOnClient(const FVector& InLocation);
+	void UpdateOnClient_Implementation(const FVector& InLocation);
 
 	UFUNCTION(BlueprintCallable)
 	uint8 GetMovementState() const { return State; }

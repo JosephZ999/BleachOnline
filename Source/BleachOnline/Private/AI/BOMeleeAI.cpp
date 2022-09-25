@@ -122,7 +122,9 @@ void ABOMeleeAI::AttackEnemy()
 		const FVector MoveVector = MakeForwardVector(GetEnemyLocation());
 		const float	  Distance = GetDist2D(GetEnemyLocation());
 
-		P->SetMovementVectorServer(MoveVector);
+		/* Set Rotation */
+
+		StopMoving();
 		P->LaunchCharacter(MoveVector, Distance * AttackVelocityScale, true, true);
 		P->DoActionServer(EActionType::Attack);
 

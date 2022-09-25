@@ -46,8 +46,8 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 		if (!GetOwner()->HasAuthority())
 		{
-			const FVector NewLocation = FMath::VInterpTo(GetOwner()->GetActorLocation(), LocationServer, DeltaTime, 2.f);
-			GetOwner()->SetActorLocation(NewLocation);
+			// const FVector NewLocation = FMath::VInterpTo(GetOwner()->GetActorLocation(), LocationServer, DeltaTime, 2.f);
+			// GetOwner()->SetActorLocation(NewLocation);
 		}
 	}
 
@@ -253,11 +253,12 @@ void UBOCharacterMovementComponent::RepTimerHandle()
 	UpdateOnClient(GetOwner()->GetActorLocation());
 }
 
-void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector& Location)
+void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector& InLocation)
 {
 	if (GetOwner() && GetOwner()->HasAuthority()) return;
 
-	LocationServer = Location;
+	//LocationServer = Location;
+	GetOwner()->SetActorLocation(FMath::Lerp(GetOwner()->GetActorLocation(), InLocation, 0.5f));
 }
 
 // AbilitySystem Interface //---------------------------------------------------------//
