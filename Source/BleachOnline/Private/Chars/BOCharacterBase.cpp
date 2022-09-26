@@ -14,6 +14,7 @@
 #include "PaperFlipbook.h"
 #include "EngineUtils.h"
 #include "TimerManager.h"
+#include "Box.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 

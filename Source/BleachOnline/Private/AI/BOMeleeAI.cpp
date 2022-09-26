@@ -4,6 +4,7 @@
 #include "BOCharacterBase.h"
 #include "AbilitySystemComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Engine\World.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMeleeAI, All, All);
 
@@ -13,14 +14,14 @@ void ABOMeleeAI::OnInit()
 	{
 		bCanDash  = P->GetAbilityComp()->HasAbility(AbilityNames::Dash);
 		bCanShoot = P->GetAbilityComp()->HasAbility(AbilityNames::Shoot);
+
+		P->OnAttacked.AddDynamic(this, &ABOMeleeAI::OnPawnAttacked);
 	}
 }
 
 void ABOMeleeAI::AIBody()
 {
 	Super::AIBody();
-
-	UE_LOG(LogMeleeAI, Display, TEXT("AI Body"));
 
 	switch (Task)
 	{ // clang-format off
@@ -61,7 +62,7 @@ void ABOMeleeAI::GoToEnemy()
 	if (! SearchEnemy())
 	{
 		Task = EAITasks::GoToAlly;
-		Wait(1.f);
+		Wait(0.5f);
 		return;
 	}
 
@@ -75,7 +76,7 @@ void ABOMeleeAI::GoToEnemy()
 	{
 		if (bCanDash)
 		{
-			const FVector		Direction = MakeForwardVector(GetEnemyLocation()) * ((GetDist(GetTargetPoint()) * 1.5f));
+			const FVector		Direction = MakeForwardVector(GetEnemyLocation()) * ((GetDist(GetTargetPoint()) * 1.2f));
 			const FAbilityParam Param(Direction);
 			const auto			P = Cast<ABOCharacterBase>(GetPawn());
 			P->SetMovementVectorServer(Direction);
@@ -109,15 +110,15 @@ void ABOMeleeAI::GoToAlly()
 	{
 		Task = EAITasks::None;
 		StopMoving();
-		Wait(1.f);
+		Wait(0.5f);
 		return;
 	}
 
-	if (IsPointNear(GetAllyLocation()))
+	if (GetDist2D(GetAllyLocation()) < CloseDistance)
 	{
 		Task = EAITasks::None;
 		StopMoving();
-		Wait(1.f);
+		Wait(0.5f);
 		return;
 	}
 
@@ -144,4 +145,66 @@ void ABOMeleeAI::AttackEnemy()
 	Task = EAITasks::GoToEnemy;
 }
 
-void ABOMeleeAI::Dodge() {}
+void ABOMeleeAI::Dodge()
+{
+	ClearEnemy();
+
+	const FVector BoxCenter		  = DangetInfo.DamageBox.GetCenter();
+	const FVector FW			  = MakeForwardVector(FVector(BoxCenter.X, BoxCenter.Y, GetPawnLocation().Z)) * -1.f;
+	const float	  Radius		  = DangetInfo.DamageBox.GetSize().Size2D();
+
+	FVector SafeLocation;
+
+	FHitResult Hit;
+	{
+		const FVector TraceStart = GetPawnLocation();
+		const FVector TraceEnd	 = GetPawnLocation() + FW * Radius;
+		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECollisionChannel::ECC_Vehicle);
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 2.f);
+	}
+	if (Hit.bBlockingHit)
+	{
+		if (Hit.Distance > Radius * 0.5f)
+		{
+			FHitResult	  Hit2;
+			const FVector TraceStart = Hit.ImpactPoint;
+			const FVector TraceEnd	 = Hit.ImpactPoint + FMath::GetReflectionVector(Hit.TraceEnd - Hit.TraceStart, Hit.ImpactNormal);
+			GetWorld()->LineTraceSingleByChannel(Hit2, TraceStart, TraceEnd, ECollisionChannel::ECC_Vehicle);
+			SafeLocation = Hit2.bBlockingHit ? Hit2.ImpactPoint : Hit2.TraceEnd;
+			DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 5.f, 0, 2.f);
+		}
+		else
+		{
+			SafeLocation = Hit.ImpactPoint;
+		}
+	}
+	else
+	{
+		SafeLocation = Hit.TraceEnd;
+	}
+
+	MoveToLocation(SafeLocation);
+	Task		= EAITasks::GoToPoint;
+	TargetPoint = SafeLocation;
+
+	if (bCanDash)
+	{
+		const auto P = Cast<ABOCharacterBase>(GetPawn());
+		P->SetMovementVectorServer(FW);
+		if (P->GetAbilityComp()->ActivateAbilityWithParam(
+				AbilityNames::Dash, FAbilityParam(MakeForwardVector(SafeLocation) * (Radius * 5.f))))
+		{
+			Task = EAITasks::None;
+		}
+	}
+}
+
+void ABOMeleeAI::OnPawnAttacked(AActor* DamageCauser, FAttackInfo Info)
+{
+	Task = EAITasks::Dodge;
+	if (Info.Type > DangetInfo.Type)
+	{
+		DangetInfo = Info;
+	}
+	Wait(0.1f);
+}

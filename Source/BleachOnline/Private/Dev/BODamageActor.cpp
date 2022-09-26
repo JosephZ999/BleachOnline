@@ -1,6 +1,7 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BODamageActor.h"
+#include "BOCharacterBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDamageActor, All, All);
 
@@ -22,14 +23,20 @@ void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
 	Damage.ArmorPiercing += DamageOptions.ArmorPiercing;
 }
 
-void ABODamageActor::NotifyActorBeginOverlap(AActor * OtherActor)
+void ABODamageActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	if (HasAuthority())
 	{
-		float FinalDamage = Damage.Damage;
-		OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+		//float FinalDamage = Damage.Damage;
+		//OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+
+		auto Actor = Cast<ABOCharacterBase>(OtherActor);
+		if (Actor)
+		{
+			Actor->OnAttacked.Broadcast(GetInstigator(), FAttackInfo(EAttackType::Radial, GetDamageBox()));
+		}
 	}
 }
 

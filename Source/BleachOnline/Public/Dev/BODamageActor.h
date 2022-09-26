@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	FBox GetDamageBox();
+
 	uint8	GetTeam() const { return Team; }
 	FVector GetImpulseVector(const AActor* TargetActor) const;
 

@@ -37,11 +37,9 @@ void UASDash::DoSomething(FVector Direction)
 	auto MoveComp = Cast<IASMovementInterface>(Char->IGetMovementComponent());
 	if (!MoveComp) return;
 
-	Direction.Z = 100.f;
+	Direction.Z = 50.f;
 	MoveComp->ILaunch(Direction.GetClampedToMaxSize(MaxLength), true, true);
 	Char->SetAnimation("Dash", true);
-
-	UE_LOG(LogDash, Warning, TEXT("Dash dash"));
 
 	// Åemporary solution
 	FTimerHandle EndAnimHandle;

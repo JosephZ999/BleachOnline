@@ -118,17 +118,49 @@ struct FAIOptions
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings", Meta = (ClampMin = "0", ClampMax = "10"))
-	float TickFrequency;
+	float TickFrequency = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
-	float FindEnemyRadius;
+	float FindEnemyRadius = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
-	uint8 FindEnemyChunks;
+	uint8 FindEnemyChunks = 5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
-	float CloseDistance;
+	float CloseDistance = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Settings")
-	float LongDistance;
+	float LongDistance = 300.f;
+};
+
+UENUM(BlueprintType)
+enum class EAttackType : uint8
+{
+	Hidden,
+	Base,
+	Distance,
+	Radial,
+	Explosion,
+};
+
+USTRUCT(BlueprintType)
+struct FAttackInfo
+{
+	GENERATED_BODY()
+
+	FAttackInfo() {}
+
+	FAttackInfo(const EAttackType InType, const FBox& InBox)
+		: Type(InType)
+		, DamageBox(InBox)
+	{
+	}
+
+	UPROPERTY(BlueprintReadWrite)
+	EAttackType Type;
+
+	UPROPERTY(BlueprintReadWrite)
+	FBox DamageBox;
+
+	FVector FindSafeLocation(const FVector& CurrentLocation);
 };

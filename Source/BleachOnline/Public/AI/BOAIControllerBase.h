@@ -47,6 +47,8 @@ protected:
 	bool IsPointNear(const FVector& InTargetPoint);
 	bool IsPointFar(const FVector& InTargetPoint);
 
+	void ClearEnemy() { Enemy = nullptr; }
+	void ClearAlly() { Ally = nullptr; }
 	void MoveToLocation(const FVector& InLocation, float Distance = 0.f);
 	void StopMoving();
 

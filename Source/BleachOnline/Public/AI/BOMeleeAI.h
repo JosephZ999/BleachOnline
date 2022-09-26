@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AI/BOAIControllerBase.h"
+#include "BOCoreTypes.h"
 #include "BOMeleeAI.generated.h"
 
 class ABOCharacterBase;
@@ -31,10 +32,11 @@ public:
 	float AttackVelocityScale = 3.f;
 
 private:
-	EAITasks Task;
-	bool	 bCanDash;
-	bool	 bCanShoot;
-	FVector	 TargetPoint;
+	EAITasks	Task;
+	bool		bCanDash;
+	bool		bCanShoot;
+	FVector		TargetPoint;
+	FAttackInfo DangetInfo;
 
 protected:
 	virtual void OnInit() override;
@@ -46,4 +48,7 @@ private:
 	inline void GoToAlly();
 	inline void AttackEnemy();
 	inline void Dodge();
+
+	UFUNCTION()
+	void OnPawnAttacked(AActor* DamageCauser, FAttackInfo Info);
 };

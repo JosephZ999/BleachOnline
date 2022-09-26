@@ -10,6 +10,7 @@
 #include "BOCharacterBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeathSignature, APawn*, KillerPawn, APawn*, VictimPawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttackedSignature, AActor*, Causer, FAttackInfo, AttackInfo);
 
 class UCapsuleComponent;
 class UBOCharacterMovementComponent;
@@ -29,6 +30,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDead;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttackedSignature OnAttacked;
 
 	UPROPERTY(EditDefaultsOnly)
 	float StandUpDelay = 2.f;
