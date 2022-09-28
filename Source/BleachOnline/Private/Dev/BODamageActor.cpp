@@ -57,7 +57,5 @@ FVector ABODamageActor::GetImpulseVector(const AActor* TargetActor) const
 		auto ImpulseVector = FVector(Impulse.X, 0.f, Impulse.Y);
 		return LookRotation.RotateVector(ImpulseVector);
 	}
-	return (TargetLoc.X > ThisLoc.X)				//
-			   ? FVector(Impulse.X, 0.f, Impulse.Y) //
-			   : FVector(Impulse.X * -1.f, 0.f, Impulse.Y);
+	return FVector(Impulse.X * FMath::Sign(GetActorForwardVector().X), 0.f, Impulse.Y);
 }
