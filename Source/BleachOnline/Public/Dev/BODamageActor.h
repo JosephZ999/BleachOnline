@@ -33,8 +33,14 @@ public:
 	UPROPERTY(Category = "Damage Options", EditAnywhere, BlueprintReadOnly)
 	bool bFall = false;
 
+	UPROPERTY(Category = "Damage Options", EditAnywhere, BlueprintReadOnly)
+	uint8 MaxHit;
+
 private:
 	uint8 Team;
+
+	UPROPERTY()
+	TArray<AActor*> IgnoreList;
 
 public:
 	UFUNCTION(BlueprintCallable)

@@ -11,6 +11,7 @@ ABODamageActor::ABODamageActor()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComp");
 	SetRootComponent(SceneComponent);
+	IgnoreList.Empty(3);
 }
 
 void ABODamageActor::Init(uint8 CharacterTeam, const FDamageInfo& DamageOptions)
@@ -29,8 +30,11 @@ void ABODamageActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	if (HasAuthority())
 	{
+		if (IgnoreList.Contains(OtherActor)) return;
+
 		float FinalDamage = Damage.Damage;
 		OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+		IgnoreList.Add(OtherActor);
 
 		/*auto Actor = Cast<ABOCharacterBase>(OtherActor);
 		if (Actor)
