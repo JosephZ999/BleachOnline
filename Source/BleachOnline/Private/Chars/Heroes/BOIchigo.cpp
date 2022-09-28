@@ -106,7 +106,7 @@ void ABOIchigo::AttackLight()
 	NewAction(State, AnimationName);
 
 	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 200.f, GetAnimTime(3.f), true);
-	GetDamageActorComp()->SpawnDamageActor("Attack_1", FVector(14.f, 0.f, 0.f), GetAnimTime(4.5f));
+	GetDamageActorComp()->SpawnDamageActor("Attack_1", FVector(14.f, 0.f, 0.f), FVector::OneVector, GetAnimTime(4.5f));
 	SetComboTimer(GetAnimTime(9.f));
 }
 
@@ -119,7 +119,7 @@ void ABOIchigo::AttackMedium()
 	NewAction(State, AnimationName);
 
 	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 200.f, GetAnimTime(1.f), true);
-	GetDamageActorComp()->SpawnDamageActor("Attack_2", FVector(14.f, 0.f, 0.f), GetAnimTime(3));
+	GetDamageActorComp()->SpawnDamageActor("Attack_2", FVector(14.f, 0.f, 0.f), FVector::OneVector, GetAnimTime(3));
 	SetComboTimer(GetAnimTime(8.f));
 }
 
@@ -132,7 +132,7 @@ void ABOIchigo::AttackFW()
 	NewAction(State, AnimationName);
 
 	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 300.f, GetAnimTime(1.f), true);
-	GetDamageActorComp()->SpawnDamageActor("Attack_FW", FVector(14.f, 0.f, 0.f), GetAnimTime(6));
+	GetDamageActorComp()->SpawnDamageActor("Attack_FW", FVector(14.f, 0.f, 0.f), FVector::OneVector, GetAnimTime(6));
 }
 
 void ABOIchigo::AttackBW()
@@ -144,7 +144,7 @@ void ABOIchigo::AttackBW()
 	NewAction(State, AnimationName);
 
 	LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 250.f, GetAnimTime(4.f), true);
-	GetDamageActorComp()->SpawnDamageActor("Attack_BW", FVector(12.f, 0.f, 18.f), GetAnimTime(5.5f));
+	GetDamageActorComp()->SpawnDamageActor("Attack_BW", FVector(12.f, 0.f, 18.f), FVector::OneVector, GetAnimTime(5.5f));
 }
 
 void ABOIchigo::AttackAir()
@@ -157,7 +157,6 @@ void ABOIchigo::AttackAir()
 
 	LaunchCharacter(GetMoveVector() + NewRotation.Vector(), 250.f, true);
 }
-
 
 // Delete this
 void ABOIchigo::Accelerate()

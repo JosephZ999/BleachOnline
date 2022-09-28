@@ -29,14 +29,14 @@ void ABODamageActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	if (HasAuthority())
 	{
-		//float FinalDamage = Damage.Damage;
-		//OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
+		float FinalDamage = Damage.Damage;
+		OtherActor->TakeDamage(FinalDamage, FDamageEvent(), nullptr, this);
 
-		auto Actor = Cast<ABOCharacterBase>(OtherActor);
+		/*auto Actor = Cast<ABOCharacterBase>(OtherActor);
 		if (Actor)
 		{
 			Actor->OnAttacked.Broadcast(GetInstigator(), FAttackInfo(EAttackType::Radial, GetDamageBox()));
-		}
+		}*/
 	}
 }
 

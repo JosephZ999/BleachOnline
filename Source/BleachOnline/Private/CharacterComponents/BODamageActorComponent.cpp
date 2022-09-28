@@ -50,7 +50,8 @@ void UBODamageActorComponent::SetDamageActors(const TMap<FName, TSubclassOf<ABOD
 	DamageActors = DmgActors;
 }
 
-void UBODamageActorComponent::SpawnDamageActor(const FName& AssetName, const FVector& LocalOffset, float Delay, bool bAttachToOwner)
+void UBODamageActorComponent::SpawnDamageActor(
+	const FName& AssetName, const FVector& LocalOffset, const FVector& Scale, float Delay, bool bAttachToOwner)
 {
 	if (OwnerCharacter)
 	{
@@ -59,6 +60,7 @@ void UBODamageActorComponent::SpawnDamageActor(const FName& AssetName, const FVe
 
 	DamageAssetName	  = AssetName;
 	DamageActorOffset = LocalOffset;
+	DamageActorScale  = Scale;
 	bAttach			  = bAttachToOwner;
 
 	if (Delay > 0.f)
@@ -82,7 +84,7 @@ void UBODamageActorComponent::Spawning()
 	const FVector  Location = GetOwner()->GetActorLocation();
 	DamageActorOffset.X *= GetOwner()->GetActorForwardVector().X;
 	DamageActorOffset.Y += 1.f;
-	const FTransform Transform(Rotation, Location + DamageActorOffset, FVector::OneVector);
+	const FTransform Transform(Rotation, Location + DamageActorOffset, DamageActorScale);
 
 	if (OwnerCharacter)
 	{

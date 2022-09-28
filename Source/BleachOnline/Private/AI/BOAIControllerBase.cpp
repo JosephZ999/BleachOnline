@@ -137,8 +137,8 @@ void ABOAIControllerBase::MoveToLocation(const FVector& InLocation, float Distan
 
 	P->SetMovementVectorServer(ForwardVector);
 
-	DrawDebugLine(GetWorld(), Location, TargetPoint, FColor::Cyan, false, TickFrequency, 0, 2.f);
-	DrawDebugCapsule(GetWorld(), TargetPoint, 15.f, 7.f, FQuat(FRotator::ZeroRotator), FColor::Cyan, false, TickFrequency, 1, 2.f);
+	// DrawDebugLine(GetWorld(), Location, TargetPoint, FColor::Cyan, false, TickFrequency, 0, 2.f);
+	// DrawDebugCapsule(GetWorld(), TargetPoint, 15.f, 7.f, FQuat(FRotator::ZeroRotator), FColor::Cyan, false, TickFrequency, 1, 2.f);
 }
 
 void ABOAIControllerBase::StopMoving()

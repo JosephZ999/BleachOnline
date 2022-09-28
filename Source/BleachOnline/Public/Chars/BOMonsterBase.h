@@ -35,4 +35,17 @@ protected:
 
 private:
 	void Attack();
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Attack")
+	FName GetDamageActorName() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Attack")
+	FVector GetDamageActorOffset() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Attack")
+	float GetDamageActorScale();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Attack")
+	float GetDamageActorDelay() const;
 };

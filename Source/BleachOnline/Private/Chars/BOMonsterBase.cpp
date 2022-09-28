@@ -3,11 +3,13 @@
 #include "BOMonsterBase.h"
 #include "BOSpriteComponent.h"
 #include "BOCharacterMovementComponent.h"
+#include "BODamageActorComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMonsterBase, All, All);
 
 ABOMonsterBase::ABOMonsterBase()
 {
+	GetDamageActorComp()->InitDamageActors("/Game/BleachOnline/Blueprints/Monsters/DamageActors");
 	StandUpDelay = 1.f;
 }
 
@@ -44,5 +46,7 @@ void ABOMonsterBase::Attack()
 	NewAction(NewState, AnimName);
 
 	const FRotator NewRotation = TurnCharacter();
+	GetDamageActorComp()->SpawnDamageActor(GetDamageActorName(), GetDamageActorOffset(), FVector(GetDamageActorScale()), GetDamageActorDelay(), true);
+	
 	// LaunchCharacterDeferred(GetMoveVector() + NewRotation.Vector(), 100.f, 0.f, true);
 }

@@ -160,7 +160,7 @@ void ABOMeleeAI::Dodge()
 		const FVector TraceStart = GetPawnLocation();
 		const FVector TraceEnd	 = GetPawnLocation() + FW * Radius;
 		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECollisionChannel::ECC_Vehicle);
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 2.f);
+		// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 2.f);
 	}
 	if (Hit.bBlockingHit)
 	{
@@ -171,7 +171,7 @@ void ABOMeleeAI::Dodge()
 			const FVector TraceEnd	 = Hit.ImpactPoint + FMath::GetReflectionVector(Hit.TraceEnd - Hit.TraceStart, Hit.ImpactNormal);
 			GetWorld()->LineTraceSingleByChannel(Hit2, TraceStart, TraceEnd, ECollisionChannel::ECC_Vehicle);
 			SafeLocation = Hit2.bBlockingHit ? Hit2.ImpactPoint : Hit2.TraceEnd;
-			DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 5.f, 0, 2.f);
+			// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Yellow, false, 5.f, 0, 2.f);
 		}
 		else
 		{

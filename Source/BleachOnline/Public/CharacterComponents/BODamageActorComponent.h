@@ -30,12 +30,13 @@ private:
 	ABOCharacterBase*						 OwnerCharacter;
 
 	UPROPERTY()
-	ABODamageActor*							 LastDamageActor;
+	ABODamageActor* LastDamageActor;
 
 	// Spawning Settings
 	uint8		 OwnerStateCache;
 	FName		 DamageAssetName;
 	FVector		 DamageActorOffset;
+	FVector		 DamageActorScale;
 	bool		 bAttach;
 	FTimerHandle SpawnTimer;
 
@@ -45,7 +46,13 @@ public:
 	void InitDamageActors(TMap<FName, TSubclassOf<ABODamageActor>>& DmgActors, const FString& FolderPath);
 	void InitDamageActors(const FString& Path);
 	void SetDamageActors(const TMap<FName, TSubclassOf<ABODamageActor>>& DmgActors);
-	void SpawnDamageActor(const FName& AssetName, const FVector& LocalOffset, float Delay = -1.f, bool bAttachToOwner = true);
+	void SpawnDamageActor(									//
+		const FName&   AssetName,							//
+		const FVector& LocalOffset,							//
+		const FVector& Scale		  = FVector::OneVector, //
+		const float	   Delay		  = -1.f,				//
+		const bool	   bAttachToOwner = true);
+
 	void Destroy();
 
 private:
