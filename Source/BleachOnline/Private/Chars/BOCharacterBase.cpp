@@ -183,6 +183,8 @@ bool ABOCharacterBase::IsOnGround() const
 void ABOCharacterBase::OnTakeAnyDamageHandle(
 	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	if (IsInvulnerable()) return;
+
 	auto DamageActor = Cast<ABODamageActor>(DamageCauser);
 	if (! DamageActor) return;
 
@@ -268,6 +270,11 @@ void ABOCharacterBase::TurnCharacterClient_Implementation(float RotationYaw)
 bool ABOCharacterBase::IsDoingAnything() const
 {
 	return GetMoveComp()->IsDoingAnything();
+}
+
+bool ABOCharacterBase::IsInvulnerable() const
+{
+	return GetMoveComp()->GetMovementState() == static_cast<uint8>(EMovementState::Fall);
 }
 
 void ABOCharacterBase::NewAction(uint8 NewState, const FName& Animation, float Length, bool LoopAnim)
@@ -378,7 +385,7 @@ UObject* ABOCharacterBase::IGetMovementComponent() const
 {
 	return MovementComp;
 }
-void ABOCharacterBase::SetAnimation(const FName& AnimationName, bool bLoop) 
+void ABOCharacterBase::SetAnimation(const FName& AnimationName, bool bLoop)
 {
 	if (AnimationName.IsNone())
 	{

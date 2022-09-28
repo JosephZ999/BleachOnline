@@ -115,6 +115,7 @@ public:
 	bool IsDoingAnything() const;
 	bool IsLookRight() const { return GetActorForwardVector().X > 0.f; }
 	bool IsDead() { return bDead; }
+	bool IsInvulnerable() const;
 
 	void NewAction(uint8 State, const FName& Animation, float Length = 0.f, bool LoopAnim = false);
 
