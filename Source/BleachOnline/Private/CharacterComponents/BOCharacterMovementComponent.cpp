@@ -44,7 +44,7 @@ void UBOCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		UpdateVelocity(DeltaTime);
 		UpdateState();
 
-		if (!GetOwner()->HasAuthority())
+		if (! GetOwner()->HasAuthority())
 		{
 			// const FVector NewLocation = FMath::VInterpTo(GetOwner()->GetActorLocation(), LocationServer, DeltaTime, 2.f);
 			// GetOwner()->SetActorLocation(NewLocation);
@@ -152,6 +152,8 @@ void UBOCharacterMovementComponent::SetMovementVector(const FVector& ForwardVect
 
 bool UBOCharacterMovementComponent::SetFalling(bool Value)
 {
+	if (! bCanFall) return false;
+
 	bFalling = Value;
 	if (bFalling)
 	{
@@ -257,7 +259,7 @@ void UBOCharacterMovementComponent::UpdateOnClient_Implementation(const FVector&
 {
 	if (GetOwner() && GetOwner()->HasAuthority()) return;
 
-	//LocationServer = Location;
+	// LocationServer = Location;
 	GetOwner()->SetActorLocation(FMath::Lerp(GetOwner()->GetActorLocation(), InLocation, 0.5f));
 }
 

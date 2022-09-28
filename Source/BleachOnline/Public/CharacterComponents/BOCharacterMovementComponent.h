@@ -47,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0"), Category = "Movement Settings")
 	float JumpHeight;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = "0"), Category = "Movement Settings")
+	bool bCanFall;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Replication")
 	float RepFrequency = 0.1f;
 
