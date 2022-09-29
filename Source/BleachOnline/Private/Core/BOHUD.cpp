@@ -1,7 +1,7 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOHUD.h"
-#include "BOHeroBase.h"
+#include "BOCharacterBase.h"
 #include "BOIndicatorComponent.h"
 #include "BOGameUIWidget.h"
 #include "BOInputWidget.h"
@@ -12,14 +12,14 @@ DEFINE_LOG_CATEGORY_STATIC(LogBOHUD, All, All);
 
 void ABOHUD::Initialize()
 {
-	const auto OwningCharacter = Cast<ABOHeroBase>(GetOwningPawn());
+	const auto OwningCharacter = Cast<ABOCharacterBase>(GetOwningPawn());
 	if (! OwningCharacter) return;
 
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Health));
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Power));
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Stamina));
 
-	if (! GameUIWidget)
+	if (! GameUIWidget && OwningCharacter->GetHealthComp())
 	{
 		GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIClass);
 		GameUIWidget->OnHealthChanged(OwningCharacter->GetHealthComp()->GetPercent());
@@ -32,7 +32,7 @@ void ABOHUD::Initialize()
 		InputWidget->AddToViewport();
 	}
 
-	auto HeroInputComp = OwningCharacter->GetInputComponent();
+	auto HeroInputComp = Cast<UBOInputComponent>(OwningCharacter->GetComponentByClass(UBOInputComponent::StaticClass()));
 	if (HeroInputComp && InputWidget)
 	{
 		InputWidget->DoAction.AddUObject(HeroInputComp, &UBOInputComponent::DoActionHandle);

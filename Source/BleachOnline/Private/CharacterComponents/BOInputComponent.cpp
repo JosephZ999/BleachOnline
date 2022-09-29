@@ -1,7 +1,7 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOInputComponent.h"
-#include "BOHeroBase.h"
+#include "BOCharacterBase.h"
 
 #include "Components/InputComponent.h"
 #include "TimerManager.h"
@@ -28,11 +28,11 @@ void UBOInputComponent::SetupInputs(UInputComponent* Input)
 	ComboIndex = 0;
 }
 
-ABOHeroBase* UBOInputComponent::GetOuterHero()
+ABOCharacterBase* UBOInputComponent::GetOuterHero()
 {
 	if (! OuterHero)
 	{
-		return OuterHero = Cast<ABOHeroBase>(GetOwner());
+		return OuterHero = Cast<ABOCharacterBase>(GetOwner());
 	}
 	return OuterHero;
 }

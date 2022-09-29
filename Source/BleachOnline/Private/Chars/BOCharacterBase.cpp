@@ -18,7 +18,7 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacterBase, All, All);
 
-ABOCharacterBase::ABOCharacterBase()
+ABOCharacterBase::ABOCharacterBase(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw	  = true;
@@ -36,26 +36,35 @@ ABOCharacterBase::ABOCharacterBase()
 
 	MovementComp = CreateDefaultSubobject<UBOCharacterMovementComponent>("MoveComp");
 
-	HealthComp = CreateDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
+	HealthComp = CreateOptionalDefaultSubobject<UBOIndicatorComponent>(CharConsts::HealthCompName);
 
-	SpriteComp = CreateDefaultSubobject<UBOSpriteComponent>("SpriteComp");
-	SpriteComp->SetupAttachment(GetRootComponent());
-
-	DamageActorComp = CreateDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
-	AbilityComp		= CreateDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
+	SpriteComp = CreateOptionalDefaultSubobject<UBOSpriteComponent>("SpriteComp");
+	if (SpriteComp)
+	{
+		SpriteComp->SetupAttachment(GetRootComponent());
+	}
+	
+	DamageActorComp = CreateOptionalDefaultSubobject<UBODamageActorComponent>("DamageActorComp");
+	AbilityComp		= CreateOptionalDefaultSubobject<UAbilitySystemComponent>("AbilityComp");
 }
 
 void ABOCharacterBase::OnConstruction(const FTransform& NewTransform)
 {
-	SpriteComp->Construction();
+	if (SpriteComp)
+	{
+		SpriteComp->Construction();
+	}
 }
 
 void ABOCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnTakeAnyDamage.AddDynamic(this, &ABOCharacterBase::OnTakeAnyDamageHandle);
-	HealthComp->OnValueZero.BindUObject(this, &ABOCharacterBase::OnDeath);
+	if (HealthComp)
+	{
+		OnTakeAnyDamage.AddDynamic(this, &ABOCharacterBase::OnTakeAnyDamageHandle);
+		HealthComp->OnValueZero.BindUObject(this, &ABOCharacterBase::OnDeath);
+	}
 	MovementComp->OnLanded.BindUObject(this, &ABOCharacterBase::OnLanded);
 }
 
@@ -368,7 +377,10 @@ void ABOCharacterBase::SetCharacterCollision(bool Enabled)
 
 void ABOCharacterBase::SetCharacterVisibility(bool Visible)
 {
-	SpriteComp->SetVisibility(Visible);
+	if (SpriteComp)
+	{
+		SpriteComp->SetVisibility(Visible);
+	}
 }
 
 void ABOCharacterBase::DestroyDamageActor()

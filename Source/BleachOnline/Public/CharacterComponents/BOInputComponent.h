@@ -7,7 +7,8 @@
 #include "BOCoreTypes.h"
 #include "BOInputComponent.generated.h"
 
-class ABOHeroBase;
+class ABOCharacterBase;
+class ABOSpectatorCharacter;
 class UInputComponent;
 
 /**
@@ -18,21 +19,17 @@ class BLEACHONLINE_API UBOInputComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-		
 private:
-	ABOHeroBase* OuterHero;
-	bool		 bMoveFWDown;
-	bool		 bMoveBWDown;
-	bool		 bMoveUWDown;
-	bool		 bMoveDWDown;
+	ABOCharacterBase* OuterHero;
+	bool			  bMoveFWDown;
+	bool			  bMoveBWDown;
+	bool			  bMoveUWDown;
+	bool			  bMoveDWDown;
 
 	TArray<Action> ComboKeys;
 	uint8		   ComboIndex;
 
 	FTimerHandle ComboRepTimer;
-
-protected:
-	void SetupInputs(UInputComponent* Input);
 
 private:
 	template <bool> void MoveFW();
@@ -40,11 +37,10 @@ private:
 	template <bool> void MoveUW();
 	template <bool> void MoveDW();
 	FVector				 CalculateMovementVector();
-	ABOHeroBase*		 GetOuterHero();
+	ABOCharacterBase*	 GetOuterHero();
 
 	void SetComboRepTimer(); // Will not call on server
 	void ComboRepTimerHandle();
-
 
 	UFUNCTION(Server, Unreliable)
 	void UpdateDataServer(const TArray<EActionType>& NewComboKeys);
@@ -55,6 +51,8 @@ private:
 	void UpdateDataClient_Implementation(const TArray<EActionType>& NewComboKeys);
 
 public:
+	void SetupInputs(UInputComponent* Input);
+
 	UFUNCTION(BlueprintCallable)
 	TArray<EActionType> GetComboKeys() const { return ComboKeys; }
 
@@ -89,7 +87,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "InputActions")
 	void ActionSpellBW();
-
-public:
-	friend ABOHeroBase;
 };

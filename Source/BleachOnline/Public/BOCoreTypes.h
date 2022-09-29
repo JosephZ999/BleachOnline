@@ -164,3 +164,11 @@ struct FAttackInfo
 
 	FVector FindSafeLocation(const FVector& CurrentLocation);
 };
+
+USTRUCT()
+struct FGameOptions	
+{
+	GENERATED_BODY()
+
+
+};

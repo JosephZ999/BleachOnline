@@ -26,7 +26,7 @@ class BLEACHONLINE_API ABOCharacterBase : public APawn, public IASCharacterInter
 	GENERATED_BODY()
 
 public:
-	ABOCharacterBase();
+	ABOCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDead;
@@ -63,6 +63,9 @@ private:
 	FTimerHandle StandUpTimer;
 	bool		 bDead = false;
 	FVector		 MovementVector;
+
+protected:
+	bool bHidden = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -114,7 +117,7 @@ public:
 	bool IsOnGround() const;
 	bool IsDoingAnything() const;
 	bool IsLookRight() const { return GetActorForwardVector().X > 0.f; }
-	bool IsDead() { return bDead; }
+	bool IsDead() { return bDead || bHidden; }
 	bool IsInvulnerable() const;
 
 	void NewAction(uint8 State, const FName& Animation, float Length = 0.f, bool LoopAnim = false);
