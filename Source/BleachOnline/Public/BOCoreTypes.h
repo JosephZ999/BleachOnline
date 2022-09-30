@@ -166,7 +166,7 @@ struct FAttackInfo
 };
 
 USTRUCT()
-struct FGameOptions	
+struct FGameSettings	
 {
 	GENERATED_BODY()
 

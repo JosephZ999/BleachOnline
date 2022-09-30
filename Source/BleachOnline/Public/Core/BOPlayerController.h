@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "BOPlayerControllerBase.generated.h"
+#include "BOPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BLEACHONLINE_API ABOPlayerControllerBase : public APlayerController
+class BLEACHONLINE_API ABOPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+
+public:
+	virtual void Reset() override;
 };
