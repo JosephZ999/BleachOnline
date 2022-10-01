@@ -7,10 +7,11 @@
 #include "BOInputWidget.h"
 #include "BOInputComponent.h"
 #include "BOCharacterConsts.h"
+#include "BOGameSettingsWidget.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBOHUD, All, All);
 
-void ABOHUD::Initialize()
+void ABOHUD::ShowGameUI()
 {
 	const auto OwningCharacter = Cast<ABOCharacterBase>(GetOwningPawn());
 	if (! OwningCharacter) return;
@@ -21,7 +22,7 @@ void ABOHUD::Initialize()
 
 	if (! GameUIWidget && OwningCharacter->GetHealthComp())
 	{
-		GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIClass);
+		GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIWidgetClass);
 		GameUIWidget->OnHealthChanged(OwningCharacter->GetHealthComp()->GetPercent());
 		GameUIWidget->AddToViewport();
 	}
@@ -38,6 +39,37 @@ void ABOHUD::Initialize()
 		InputWidget->DoAction.AddUObject(HeroInputComp, &UBOInputComponent::DoActionHandle);
 		InputWidget->DoGuard.AddUObject(HeroInputComp, &UBOInputComponent::DoGuardHandle);
 		InputWidget->Move.AddUObject(HeroInputComp, &UBOInputComponent::DoMoveHandle);
+	}
+}
+
+void ABOHUD::ShowGameSettings() 
+{
+	if (GameSettingsWidget)
+	{
+		if (!GameSettingsWidget->IsInViewport())
+		{
+			GameSettingsWidget->AddToViewport();
+		}
+	}
+	else
+	{
+		GameSettingsWidget = CreateWidget<UBOGameSettingsWidget>(PlayerOwner, GameSettingsWidgetClass);
+		GameSettingsWidget->AddToViewport();
+	}
+}
+
+void ABOHUD::HideAllWidgets() 
+{
+	RemoveWidget(GameUIWidget);
+	RemoveWidget(InputWidget);
+	RemoveWidget(GameSettingsWidget);
+}
+
+void ABOHUD::RemoveWidget(UUserWidget* Widget) 
+{
+	if (Widget && Widget->IsInViewport())
+	{
+		Widget->RemoveFromViewport();
 	}
 }
 

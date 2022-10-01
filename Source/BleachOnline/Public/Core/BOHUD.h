@@ -8,6 +8,7 @@
 
 class UBOGameUIWidget;
 class UBOInputWidget;
+class UBOGameSettingsWidget;
 class UBOIndicatorComponent;
 
 /**
@@ -20,19 +21,37 @@ class BLEACHONLINE_API ABOHUD : public AHUD
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UBOGameUIWidget> GameUIClass;
+	TSubclassOf<UBOGameUIWidget> GameUIWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UBOInputWidget> InputWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UBOGameSettingsWidget> GameSettingsWidgetClass;
+
 public:
 	UFUNCTION(BlueprintCallable)
-	void Initialize();
+	void ShowGameUI();
+
+	UFUNCTION(BlueprintCallable)
+	void ShowGameSettings();
+
+	UFUNCTION(BlueprintCallable)
+	void HideAllWidgets();
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveWidget(UUserWidget* Widget);
 
 private:
 	void OnIndicatorChanged(UActorComponent* Component, float Percent);
 	void SubscribeToIndicatorChange(UObject* Indicator);
 
+	UPROPERTY()
 	UBOGameUIWidget* GameUIWidget;
-	UBOInputWidget*	 InputWidget;
+
+	UPROPERTY()
+	UBOInputWidget* InputWidget;
+
+	UPROPERTY()
+	UBOGameSettingsWidget* GameSettingsWidget;
 };
