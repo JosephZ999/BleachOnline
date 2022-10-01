@@ -27,6 +27,7 @@ void ABOGameMode::InitGameState()
 	Super::InitGameState();
 	for (auto PS : GetState()->PlayerArray)
 	{
+		Cast<AController>(PS->GetOwner())->StartSpot = nullptr;
 		RestartPlayer(Cast<AController>(PS->GetOwner()));
 	}
 }

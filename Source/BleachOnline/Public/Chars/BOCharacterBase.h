@@ -81,6 +81,7 @@ public:
 	virtual void OnConstruction(const FTransform& NewTransform) override;
 
 	// clang-format off
+	FORCEINLINE UCapsuleComponent*				GetCapsuleComp()		const	{ return CapsuleComp;		}
 	FORCEINLINE UBOSpriteComponent*				GetSpriteComp()			const	{ return SpriteComp;		}
 	FORCEINLINE UBOCharacterMovementComponent*	GetMoveComp()			const	{ return MovementComp;		}
 	FORCEINLINE UBOIndicatorComponent*			GetHealthComp()			const	{ return HealthComp;		}
