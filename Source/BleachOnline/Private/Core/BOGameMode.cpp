@@ -4,6 +4,7 @@
 #include "BOGameState.h"
 #include "BOPlayerController.h"
 #include "BOPlayerState.h"
+#include "TimerManager.h"
 
 void ABOGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -25,10 +26,27 @@ void ABOGameMode::Logout(AController* Exiting)
 void ABOGameMode::InitGameState()
 {
 	Super::InitGameState();
+	
+	if (! GetState()) return;
+
 	for (auto PS : GetState()->PlayerArray)
 	{
-		Cast<AController>(PS->GetOwner())->StartSpot = nullptr;
-		RestartPlayer(Cast<AController>(PS->GetOwner()));
+		auto PC = Cast<APlayerController>(PS->GetOwner());
+		PC->StartSpot = nullptr;
+
+		RestartPlayer(PC);
+
+		auto BOPlayerState = Cast<ABOPlayerState>(PS);
+		if (BOPlayerState)
+		{
+			BOPlayerState->ShowPlayerGameUI();
+		}
+
+		if (PC->IsLocalPlayerController())
+		{
+			
+		}
+	
 	}
 }
 
@@ -39,4 +57,18 @@ ABOGameState* ABOGameMode::GetState()
 		return State;
 	}
 	return State = Cast<ABOGameState>(GameState);
+}
+
+void ABOGameMode::SetStartMatchTimer(bool ForceStart)
+{
+	if (! GetWorld()) return;
+	GetWorldTimerManager().SetTimer(StartMatchTimer, this, &ThisClass::StartMatchHandle, 1.f, true);
+}
+
+void ABOGameMode::StartMatchHandle()
+{
+	if (GetState() && GetState()->CanStartMatch())
+	{
+		// Start
+	}
 }

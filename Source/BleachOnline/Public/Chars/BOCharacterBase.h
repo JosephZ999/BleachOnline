@@ -148,6 +148,8 @@ public:
 	void DoActionClient(uint8 InitialState, EActionType Action);
 	void DoActionClient_Implementation(uint8 InitialState, EActionType Action);
 
+
+
 	/* On Server */
 	void Jump();
 	void StandUp();

@@ -29,6 +29,7 @@ void ABOHUD::ShowGameUI()
 
 	if (! InputWidget)
 	{
+		UE_LOG(LogBOHUD, Display, TEXT("Show Game UI - 1"));
 		InputWidget = CreateWidget<UBOInputWidget>(PlayerOwner, InputWidgetClass);
 		InputWidget->AddToViewport();
 	}
@@ -36,6 +37,7 @@ void ABOHUD::ShowGameUI()
 	auto HeroInputComp = Cast<UBOInputComponent>(OwningCharacter->GetComponentByClass(UBOInputComponent::StaticClass()));
 	if (HeroInputComp && InputWidget)
 	{
+		UE_LOG(LogBOHUD, Display, TEXT("Show Game UI - 2"));
 		InputWidget->DoAction.AddUObject(HeroInputComp, &UBOInputComponent::DoActionHandle);
 		InputWidget->DoGuard.AddUObject(HeroInputComp, &UBOInputComponent::DoGuardHandle);
 		InputWidget->Move.AddUObject(HeroInputComp, &UBOInputComponent::DoMoveHandle);
@@ -71,6 +73,11 @@ void ABOHUD::RemoveWidget(UUserWidget* Widget)
 	{
 		Widget->RemoveFromViewport();
 	}
+}
+
+bool ABOHUD::IsGameUIOnScreen()
+{
+	return (GameUIWidget && GameUIWidget->IsInViewport()) || (InputWidget && InputWidget->IsInViewport());
 }
 
 void ABOHUD::OnIndicatorChanged(UActorComponent* Component, float Percent)

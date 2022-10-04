@@ -42,6 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveWidget(UUserWidget* Widget);
 
+	bool IsGameUIOnScreen();
+
 private:
 	void OnIndicatorChanged(UActorComponent* Component, float Percent);
 	void SubscribeToIndicatorChange(UObject* Indicator);

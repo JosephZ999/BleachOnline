@@ -14,6 +14,8 @@ class BLEACHONLINE_API ABOPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	ABOPlayerController();
 
 public:
 	virtual void Reset() override;

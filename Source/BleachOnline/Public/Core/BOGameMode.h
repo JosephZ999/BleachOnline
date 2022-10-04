@@ -25,6 +25,8 @@ public:
 private:
 	ABOGameState* State;
 
+	FTimerHandle StartMatchTimer;
+
 public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
@@ -33,4 +35,8 @@ public:
 
 public:
 	ABOGameState* GetState();
+
+private:
+	void SetStartMatchTimer(bool ForceStart);
+	void StartMatchHandle();
 };

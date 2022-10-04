@@ -2,10 +2,12 @@
 
 #include "BOPlayerController.h"
 
+ABOPlayerController::ABOPlayerController()
+{
+	bShowMouseCursor = true;
+}
+
 void ABOPlayerController::Reset()
 {
-	if (HasAuthority())
-	UE_LOG(LogTemp, Warning, TEXT("Controller reset"));
-
 	ChangeState(NAME_Playing);
 }

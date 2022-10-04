@@ -2,6 +2,8 @@
 
 #include "BOPlayerState.h"
 #include "BOPlayerController.h"
+#include "BOHUD.h"
+#include "TimerManager.h"
 
 ABOPlayerState::ABOPlayerState()
 {
@@ -15,9 +17,37 @@ void ABOPlayerState::ChangePlayerState_Implementation(const FName& StateName)
 	{
 		PC->ChangeState(StateName);
 	}
-	else
-	{
+}
 
-		UE_LOG(LogTemp, Warning, TEXT("AAAAAAAAAAAAAAAAAAA"));
+void ABOPlayerState::ShowGameSettings_Implementation()
+{
+	auto HUD = GetHUD();
+	if (! HUD) return;
+
+	HUD->ShowGameSettings();
+}
+
+void ABOPlayerState::ShowPlayerGameUI_Implementation()
+{
+	GetWorldTimerManager().SetTimer(ShowGameUI, this, &ThisClass::ShowGameUIHandle, 1.f, true);
+}
+
+ABOHUD* ABOPlayerState::GetHUD()
+{
+	auto Controller = Cast<ABOPlayerController>(GetOwner());
+	if (! Controller) return nullptr;
+
+	return Cast<ABOHUD>(Controller->GetHUD());
+}
+
+void ABOPlayerState::ShowGameUIHandle()
+{
+	auto HUD = GetHUD();
+	if (! HUD) return;
+
+	HUD->ShowGameUI();
+	if (HUD->IsGameUIOnScreen())
+	{
+		GetWorldTimerManager().ClearTimer(ShowGameUI);
 	}
 }
