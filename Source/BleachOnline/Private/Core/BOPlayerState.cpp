@@ -19,17 +19,30 @@ void ABOPlayerState::ChangePlayerState_Implementation(const FName& StateName)
 	}
 }
 
-void ABOPlayerState::ShowGameSettings_Implementation()
+void ABOPlayerState::ShowPlayerGameSettings_Implementation()
 {
-	auto HUD = GetHUD();
-	if (! HUD) return;
-
-	HUD->ShowGameSettings();
+	if (HasAuthority())
+	{
+		GetWorldTimerManager().ClearTimer(ShowGameSettings);
+		ShowGameSettingsHandle();
+		return;
+	}
+	GetWorldTimerManager().SetTimer(ShowGameSettings, this, &ThisClass::ShowGameSettingsHandle, 0.5f, true);
 }
 
 void ABOPlayerState::ShowPlayerGameUI_Implementation()
 {
-	GetWorldTimerManager().SetTimer(ShowGameUI, this, &ThisClass::ShowGameUIHandle, 1.f, true);
+	GetWorldTimerManager().SetTimer(ShowGameUI, this, &ThisClass::ShowGameUIHandle, 0.5f, true);
+}
+
+void ABOPlayerState::HideAllWidgets_Implementation()
+{
+	auto HUD = GetHUD();
+	if (!HUD) return;
+
+	GetWorldTimerManager().ClearTimer(ShowGameUI);
+	GetWorldTimerManager().ClearTimer(ShowGameSettings);
+	HUD->HideAllWidgets();
 }
 
 ABOHUD* ABOPlayerState::GetHUD()
@@ -49,5 +62,17 @@ void ABOPlayerState::ShowGameUIHandle()
 	if (HUD->IsGameUIOnScreen())
 	{
 		GetWorldTimerManager().ClearTimer(ShowGameUI);
+	}
+}
+
+void ABOPlayerState::ShowGameSettingsHandle()
+{
+	auto HUD = GetHUD();
+	if (!HUD) return;
+
+	HUD->ShowGameSettings();
+	if (HUD->isGameSettingsOnScreen())
+	{
+		GetWorldTimerManager().ClearTimer(ShowGameSettings);
 	}
 }

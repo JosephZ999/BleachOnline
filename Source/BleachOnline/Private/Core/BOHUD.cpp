@@ -20,17 +20,28 @@ void ABOHUD::ShowGameUI()
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Power));
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Stamina));
 
-	if (! GameUIWidget && OwningCharacter->GetHealthComp())
+	if (OwningCharacter->GetHealthComp())
 	{
-		GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIWidgetClass);
+		if (! GameUIWidget)
+		{
+			GameUIWidget = CreateWidget<UBOGameUIWidget>(PlayerOwner, GameUIWidgetClass);
+			GameUIWidget->AddToViewport();
+		}
+		else if (! GameUIWidget->IsInViewport())
+		{
+			GameUIWidget->AddToViewport();
+		}
 		GameUIWidget->OnHealthChanged(OwningCharacter->GetHealthComp()->GetPercent());
-		GameUIWidget->AddToViewport();
 	}
 
 	if (! InputWidget)
 	{
 		UE_LOG(LogBOHUD, Display, TEXT("Show Game UI - 1"));
 		InputWidget = CreateWidget<UBOInputWidget>(PlayerOwner, InputWidgetClass);
+		InputWidget->AddToViewport();
+	}
+	else if (! InputWidget->IsInViewport())
+	{
 		InputWidget->AddToViewport();
 	}
 
@@ -44,11 +55,11 @@ void ABOHUD::ShowGameUI()
 	}
 }
 
-void ABOHUD::ShowGameSettings() 
+void ABOHUD::ShowGameSettings()
 {
 	if (GameSettingsWidget)
 	{
-		if (!GameSettingsWidget->IsInViewport())
+		if (! GameSettingsWidget->IsInViewport())
 		{
 			GameSettingsWidget->AddToViewport();
 		}
@@ -60,24 +71,30 @@ void ABOHUD::ShowGameSettings()
 	}
 }
 
-void ABOHUD::HideAllWidgets() 
+void ABOHUD::HideAllWidgets()
 {
 	RemoveWidget(GameUIWidget);
 	RemoveWidget(InputWidget);
 	RemoveWidget(GameSettingsWidget);
 }
 
-void ABOHUD::RemoveWidget(UUserWidget* Widget) 
+void ABOHUD::RemoveWidget(UUserWidget* Widget)
 {
 	if (Widget && Widget->IsInViewport())
 	{
-		Widget->RemoveFromViewport();
+		Widget->RemoveFromParent();
+		// Widget->RemoveFromViewport();
 	}
 }
 
 bool ABOHUD::IsGameUIOnScreen()
 {
 	return (GameUIWidget && GameUIWidget->IsInViewport()) || (InputWidget && InputWidget->IsInViewport());
+}
+
+bool ABOHUD::isGameSettingsOnScreen()
+{
+	return GameSettingsWidget && GameSettingsWidget->IsInViewport();
 }
 
 void ABOHUD::OnIndicatorChanged(UActorComponent* Component, float Percent)

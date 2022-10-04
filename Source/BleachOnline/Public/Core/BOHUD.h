@@ -43,6 +43,7 @@ public:
 	void RemoveWidget(UUserWidget* Widget);
 
 	bool IsGameUIOnScreen();
+	bool isGameSettingsOnScreen();
 
 private:
 	void OnIndicatorChanged(UActorComponent* Component, float Percent);

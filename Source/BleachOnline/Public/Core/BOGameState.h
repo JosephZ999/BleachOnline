@@ -8,6 +8,7 @@
 
 class APlayerController;
 class ABOHUD;
+class ABOPlayerState;
 
 /**
  *
@@ -20,5 +21,14 @@ class BLEACHONLINE_API ABOGameState : public AGameStateBase
 public:
 	ABOGameState();
 
-	bool CanStartMatch();
+private:
+	UPROPERTY()
+	ABOPlayerState* AdminPlayer;
+
+public:
+	bool			CanStartMatch();
+	ABOPlayerState* GetAdminPlayer();
+	void			SetAdminPlayer(ABOPlayerState* inPlayer);
+
+	bool IsAdmin(ABOPlayerState* InPlayer);
 };

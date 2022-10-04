@@ -9,7 +9,7 @@
 class ABOHUD;
 
 /**
- * 
+ *
  */
 UCLASS()
 class BLEACHONLINE_API ABOPlayerState : public APlayerState
@@ -20,22 +20,27 @@ public:
 	ABOPlayerState();
 
 	FTimerHandle ShowGameUI;
-	
+	FTimerHandle ShowGameSettings;
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangePlayerState(const FName& StateName);
 	void ChangePlayerState_Implementation(const FName& StateName);
 
 	UFUNCTION(Client, Reliable)
-	void ShowGameSettings();
-	void ShowGameSettings_Implementation();
+	void ShowPlayerGameSettings();
+	void ShowPlayerGameSettings_Implementation();
 
 	UFUNCTION(Client, Reliable)
 	void ShowPlayerGameUI();
 	void ShowPlayerGameUI_Implementation();
 
+	UFUNCTION(Client, Reliable)
+	void HideAllWidgets();
+	void HideAllWidgets_Implementation();
+
 private:
 	ABOHUD* GetHUD();
-	void ShowGameUIHandle();
-
+	void	ShowGameUIHandle();
+	void	ShowGameSettingsHandle();
 };

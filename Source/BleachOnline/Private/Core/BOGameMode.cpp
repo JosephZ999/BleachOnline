@@ -9,44 +9,55 @@
 void ABOGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
-	UE_LOG(LogGameMode, Warning, TEXT("Init Game"));
 }
 
 void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	UE_LOG(LogGameMode, Warning, TEXT("PostLogin"));
+	if (GetState() && ! GetState()->GetAdminPlayer())
+	{
+		GetState()->SetAdminPlayer(NewPlayer->GetPlayerState<ABOPlayerState>());
+	}
 }
 
 void ABOGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
+
+	if (!GetState()) return;
+
+	auto PlayerState = Exiting->GetPlayerState<ABOPlayerState>();
+	if (PlayerState && GetState()->IsAdmin(PlayerState))
+	{
+		UE_LOG(LogGameMode, Warning, TEXT("Admin has left the game"));
+	}
 }
 
 void ABOGameMode::InitGameState()
 {
 	Super::InitGameState();
-	
+
 	if (! GetState()) return;
 
-	for (auto PS : GetState()->PlayerArray)
+	for (auto PlayerState : GetState()->PlayerArray)
 	{
-		auto PC = Cast<APlayerController>(PS->GetOwner());
-		PC->StartSpot = nullptr;
+		auto PC = Cast<AController>(PlayerState->GetOwner());
+		if (! PC) continue;
 
+		auto PS = Cast<ABOPlayerState>(PlayerState);
+		if (! PS) continue;
+
+		// Respawn
+		PC->StartSpot = nullptr;
 		RestartPlayer(PC);
 
-		auto BOPlayerState = Cast<ABOPlayerState>(PS);
-		if (BOPlayerState)
-		{
-			BOPlayerState->ShowPlayerGameUI();
-		}
+		PS->HideAllWidgets();
+		PS->ShowPlayerGameUI();
 
-		if (PC->IsLocalPlayerController())
+		if (GetState()->IsAdmin(PS))
 		{
-			
+			PS->ShowPlayerGameSettings();
 		}
-	
 	}
 }
 
