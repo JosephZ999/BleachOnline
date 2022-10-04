@@ -24,7 +24,7 @@ void ABOGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
 
-	if (!GetState()) return;
+	if (! GetState()) return;
 
 	auto PlayerState = Exiting->GetPlayerState<ABOPlayerState>();
 	if (PlayerState && GetState()->IsAdmin(PlayerState))
@@ -68,6 +68,14 @@ ABOGameState* ABOGameMode::GetState()
 		return State;
 	}
 	return State = Cast<ABOGameState>(GameState);
+}
+
+void ABOGameMode::SetGameSetting(ABOPlayerState* Player, const FGameSettings& NewGameSetting)
+{
+	if (GetState() && GetState()->IsAdmin(Player))
+	{
+		Settings = NewGameSetting;
+	}
 }
 
 void ABOGameMode::SetStartMatchTimer(bool ForceStart)

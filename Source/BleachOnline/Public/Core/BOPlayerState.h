@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "BOCoreTypes.h"
 #include "BOPlayerState.generated.h"
 
 class ABOHUD;
@@ -38,6 +39,10 @@ public:
 	UFUNCTION(Client, Reliable)
 	void HideAllWidgets();
 	void HideAllWidgets_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void ChangeGameSetting(const FGameSettings& NewGameSettings);
+	void ChangeGameSetting_Implementation(const FGameSettings& NewGameSettings);
 
 private:
 	ABOHUD* GetHUD();

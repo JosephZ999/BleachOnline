@@ -8,6 +8,7 @@
 #include "BOGameMode.generated.h"
 
 class ABOGameState;
+class ABOPlayerState;
 
 /**
  *
@@ -35,6 +36,7 @@ public:
 
 public:
 	ABOGameState* GetState();
+	void SetGameSetting(ABOPlayerState* Player, const FGameSettings& NewGameSetting);
 
 private:
 	void SetStartMatchTimer(bool ForceStart);

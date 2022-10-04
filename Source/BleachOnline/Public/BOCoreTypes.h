@@ -165,10 +165,10 @@ struct FAttackInfo
 	FVector FindSafeLocation(const FVector& CurrentLocation);
 };
 
-USTRUCT()
-struct FGameSettings	
+USTRUCT(BlueprintType)
+struct FGameSettings
 {
 	GENERATED_BODY()
 
-
+	FGameSettings() {}
 };

@@ -4,6 +4,10 @@
 #include "BOPlayerController.h"
 #include "BOHUD.h"
 #include "TimerManager.h"
+#include "Engine/World.h"
+#include "BOGameMode.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogPlayerState, All, All);
 
 ABOPlayerState::ABOPlayerState()
 {
@@ -38,11 +42,25 @@ void ABOPlayerState::ShowPlayerGameUI_Implementation()
 void ABOPlayerState::HideAllWidgets_Implementation()
 {
 	auto HUD = GetHUD();
-	if (!HUD) return;
+	if (! HUD) return;
 
 	GetWorldTimerManager().ClearTimer(ShowGameUI);
 	GetWorldTimerManager().ClearTimer(ShowGameSettings);
 	HUD->HideAllWidgets();
+}
+
+void ABOPlayerState::ChangeGameSetting_Implementation(const FGameSettings& NewGameSettings)
+{
+	if (! GetWorld()) return;
+
+	auto GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	if (! GameMode) return;
+
+	if (HasAuthority())
+	{
+		UE_LOG(LogPlayerState, Display, TEXT("Change game settings"));
+		GameMode->SetGameSetting(this, NewGameSettings);
+	}
 }
 
 ABOHUD* ABOPlayerState::GetHUD()
@@ -68,7 +86,7 @@ void ABOPlayerState::ShowGameUIHandle()
 void ABOPlayerState::ShowGameSettingsHandle()
 {
 	auto HUD = GetHUD();
-	if (!HUD) return;
+	if (! HUD) return;
 
 	HUD->ShowGameSettings();
 	if (HUD->isGameSettingsOnScreen())
