@@ -7,6 +7,7 @@
 #include "BOCoreTypes.h"
 #include "BOGameMode.generated.h"
 
+class AController;
 class ABOGameState;
 class ABOPlayerState;
 
@@ -33,12 +34,16 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 	virtual void InitGameState() override;
+	virtual void ResetLevel() override;
 
 public:
 	ABOGameState* GetState();
-	void SetGameSetting(ABOPlayerState* Player, const FGameSettings& NewGameSetting);
+	void SetGameSetting(AController* Player, const FGameSettings& NewGameSetting);
 
 private:
 	void SetStartMatchTimer(bool ForceStart);
 	void StartMatchHandle();
+	void ResetPlayerUI(AController* Player);
+	void ResetAllPlayersUI();
+
 };

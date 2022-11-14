@@ -14,10 +14,13 @@ void ABOGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
+
 	if (GetState() && ! GetState()->GetAdminPlayer())
 	{
 		GetState()->SetAdminPlayer(NewPlayer->GetPlayerState<ABOPlayerState>());
 	}
+
+	ResetPlayerUI(NewPlayer);
 }
 
 void ABOGameMode::Logout(AController* Exiting)
@@ -44,21 +47,17 @@ void ABOGameMode::InitGameState()
 		auto PC = Cast<AController>(PlayerState->GetOwner());
 		if (! PC) continue;
 
-		auto PS = Cast<ABOPlayerState>(PlayerState);
-		if (! PS) continue;
-
 		// Respawn
 		PC->StartSpot = nullptr;
 		RestartPlayer(PC);
-
-		PS->HideAllWidgets();
-		PS->ShowPlayerGameUI();
-
-		if (GetState()->IsAdmin(PS))
-		{
-			PS->ShowPlayerGameSettings();
-		}
 	}
+}
+
+void ABOGameMode::ResetLevel()
+{
+	Super::ResetLevel();
+
+	ResetAllPlayersUI();
 }
 
 ABOGameState* ABOGameMode::GetState()
@@ -70,9 +69,10 @@ ABOGameState* ABOGameMode::GetState()
 	return State = Cast<ABOGameState>(GameState);
 }
 
-void ABOGameMode::SetGameSetting(ABOPlayerState* Player, const FGameSettings& NewGameSetting)
+void ABOGameMode::SetGameSetting(AController* Player, const FGameSettings& NewGameSetting)
 {
-	if (GetState() && GetState()->IsAdmin(Player))
+	auto PS = Player->GetPlayerState<ABOPlayerState>();
+	if (GetState() && GetState()->IsAdmin(PS))
 	{
 		Settings = NewGameSetting;
 	}
@@ -89,5 +89,33 @@ void ABOGameMode::StartMatchHandle()
 	if (GetState() && GetState()->CanStartMatch())
 	{
 		// Start
+	}
+}
+
+void ABOGameMode::ResetPlayerUI(AController* Player) 
+{
+	if (auto PS = Player->GetPlayerState<ABOPlayerState>())
+	{
+		PS->HideAllWidgets();
+
+		if (GetState()->IsAdmin(PS))
+		{
+			PS->ShowPlayerGameSettings();
+		}
+		else
+		{
+			PS->ShowPlayerGameUI();
+		}
+	}
+}
+
+void ABOGameMode::ResetAllPlayersUI()
+{
+	for (auto PlayerState : GetState()->PlayerArray)
+	{
+		auto PC = Cast<AController>(PlayerState->GetOwner());
+		if (!PC) continue;
+
+		ResetPlayerUI(PC);
 	}
 }

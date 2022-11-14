@@ -40,10 +40,6 @@ public:
 	void HideAllWidgets();
 	void HideAllWidgets_Implementation();
 
-	UFUNCTION(Server, Reliable)
-	void ChangeGameSetting(const FGameSettings& NewGameSettings);
-	void ChangeGameSetting_Implementation(const FGameSettings& NewGameSettings);
-
 private:
 	ABOHUD* GetHUD();
 	void	ShowGameUIHandle();

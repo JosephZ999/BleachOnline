@@ -49,20 +49,6 @@ void ABOPlayerState::HideAllWidgets_Implementation()
 	HUD->HideAllWidgets();
 }
 
-void ABOPlayerState::ChangeGameSetting_Implementation(const FGameSettings& NewGameSettings)
-{
-	if (! GetWorld()) return;
-
-	auto GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	if (! GameMode) return;
-
-	if (HasAuthority())
-	{
-		UE_LOG(LogPlayerState, Display, TEXT("Change game settings"));
-		GameMode->SetGameSetting(this, NewGameSettings);
-	}
-}
-
 ABOHUD* ABOPlayerState::GetHUD()
 {
 	auto Controller = Cast<ABOPlayerController>(GetOwner());
