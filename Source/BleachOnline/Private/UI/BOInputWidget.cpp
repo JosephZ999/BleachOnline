@@ -2,6 +2,14 @@
 
 #include "BOInputWidget.h"
 #include "BoFunctionLibrary.h"
+#include "BOCharacterBase.h"
+#include "BOInputComponent.h"
+
+#include "GameFramework\Controller.h"
+#include "TimerManager.h"
+#include "Engine\World.h"
+
+#define REBIND_TIME 0.2f
 
 DEFINE_LOG_CATEGORY_STATIC(LogInputWidget, All, All);
 
@@ -11,6 +19,46 @@ constexpr uint8 AttackBWIndex = 4;
 constexpr uint8 JumpIndex	  = 1;
 constexpr uint8 GuardIndex	  = 3;
 constexpr float MinMoveRadius = 50.f;
+
+void UBOInputWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (!GetWorld()) return;
+
+	GetWorld()->GetTimerManager().SetTimer(BindActionsTimer, this, &ThisClass::BindActionsHandle, REBIND_TIME, true);
+}
+
+void UBOInputWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (!GetWorld()) return;
+
+	GetWorld()->GetTimerManager().ClearTimer(BindActionsTimer);
+}
+
+void UBOInputWidget::BindActionsHandle()
+{
+	if (!GetWorld()) return;
+	
+	if (auto PlayerPawn = Cast<ABOCharacterBase>(GetOwningPlayerPawn()))
+	{
+		auto PawnInputComp = Cast<UBOInputComponent>(PlayerPawn->GetComponentByClass(UBOInputComponent::StaticClass()));
+		if (!PawnInputComp) return;
+
+		DoAction.AddUObject(PawnInputComp, &UBOInputComponent::DoActionHandle);
+		DoGuard.AddUObject(PawnInputComp, &UBOInputComponent::DoGuardHandle);
+		Move.AddUObject(PawnInputComp, &UBOInputComponent::DoMoveHandle);
+
+		GetWorld()->GetTimerManager().ClearTimer(BindActionsTimer);
+	}
+	else
+	{
+		UE_LOG(LogInputWidget, Error, TEXT("Widget can't find the player pawn"));
+		RemoveFromParent();
+	}
+}
 
 FReply UBOInputWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
@@ -113,8 +161,7 @@ void UBOInputWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	Super::NativeOnMouseLeave(InMouseEvent);
 }
 
-
-void UBOInputWidget::TouchEnded(const FGeometry & InGeometry, const FPointerEvent & InGestureEvent)
+void UBOInputWidget::TouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	if (InGestureEvent.GetPointerIndex() == ActionPointerIndex)
 	{

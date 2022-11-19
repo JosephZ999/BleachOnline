@@ -13,9 +13,23 @@ DEFINE_LOG_CATEGORY_STATIC(LogBOHUD, All, All);
 
 void ABOHUD::ShowGameUI()
 {
-	const auto OwningCharacter = Cast<ABOCharacterBase>(GetOwningPawn());
-	if (! OwningCharacter) return;
+	if (!InputWidget)
+	{
+		InputWidget = CreateWidget<UBOInputWidget>(PlayerOwner, InputWidgetClass);
+		InputWidget->AddToViewport();
+	}
+	else if (!InputWidget->IsInViewport())
+	{
+		InputWidget->AddToViewport();
+	}
 
+	const auto OwningCharacter = Cast<ABOCharacterBase>(GetOwningPawn());
+	if (!OwningCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Pawn isn't valid"));
+		return;
+	}
+	
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Health));
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Power));
 	SubscribeToIndicatorChange(OwningCharacter->IGetIndicatorComponent(EIndicatorType::Stamina));
@@ -34,25 +48,7 @@ void ABOHUD::ShowGameUI()
 		GameUIWidget->OnHealthChanged(OwningCharacter->GetHealthComp()->GetPercent());
 	}
 
-	if (! InputWidget)
-	{
-		UE_LOG(LogBOHUD, Display, TEXT("Show Game UI - 1"));
-		InputWidget = CreateWidget<UBOInputWidget>(PlayerOwner, InputWidgetClass);
-		InputWidget->AddToViewport();
-	}
-	else if (! InputWidget->IsInViewport())
-	{
-		InputWidget->AddToViewport();
-	}
 
-	auto HeroInputComp = Cast<UBOInputComponent>(OwningCharacter->GetComponentByClass(UBOInputComponent::StaticClass()));
-	if (HeroInputComp && InputWidget)
-	{
-		UE_LOG(LogBOHUD, Display, TEXT("Show Game UI - 2"));
-		InputWidget->DoAction.AddUObject(HeroInputComp, &UBOInputComponent::DoActionHandle);
-		InputWidget->DoGuard.AddUObject(HeroInputComp, &UBOInputComponent::DoGuardHandle);
-		InputWidget->Move.AddUObject(HeroInputComp, &UBOInputComponent::DoMoveHandle);
-	}
 }
 
 void ABOHUD::ShowGameSettings()
