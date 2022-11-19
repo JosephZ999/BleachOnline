@@ -24,4 +24,16 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetGameSettings(const FGameSettings NewSettings);
 	void SetGameSettings_Implementation(const FGameSettings NewSettings);
+
+	UFUNCTION(Client, Reliable)
+	void HideAllWidgets();
+	void HideAllWidgets_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void ShowPlayerGameSettings();
+	void ShowPlayerGameSettings_Implementation();
+	
+	UFUNCTION(Client, Reliable)
+	void ShowPlayerGameUI();
+	void ShowPlayerGameUI_Implementation();
 };

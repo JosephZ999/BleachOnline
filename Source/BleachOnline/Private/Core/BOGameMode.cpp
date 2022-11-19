@@ -20,7 +20,8 @@ void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 		GetState()->SetAdminPlayer(NewPlayer->GetPlayerState<ABOPlayerState>());
 	}
 
-	ResetPlayerUI(NewPlayer);
+	// ResetPlayerUI(NewPlayer);
+
 }
 
 void ABOGameMode::Logout(AController* Exiting)
@@ -53,11 +54,10 @@ void ABOGameMode::InitGameState()
 	}
 }
 
-void ABOGameMode::ResetLevel()
+void ABOGameMode::RestartPlayer(AController * NewPlayer)
 {
-	Super::ResetLevel();
-
-	ResetAllPlayersUI();
+	Super::RestartPlayer(NewPlayer);
+	ResetPlayerUI(NewPlayer);
 }
 
 ABOGameState* ABOGameMode::GetState()
@@ -92,30 +92,19 @@ void ABOGameMode::StartMatchHandle()
 	}
 }
 
-void ABOGameMode::ResetPlayerUI(AController* Player) 
+void ABOGameMode::ResetPlayerUI(AController* Player)
 {
-	if (auto PS = Player->GetPlayerState<ABOPlayerState>())
+	if (auto PC = Cast<ABOPlayerController>(Player))
 	{
-		PS->HideAllWidgets();
+		PC->HideAllWidgets();
 
-		if (GetState()->IsAdmin(PS))
+		if (GetState()->IsAdmin(PC->GetPlayerState<ABOPlayerState>()))
 		{
-			PS->ShowPlayerGameSettings();
+			PC->ShowPlayerGameSettings();
 		}
 		else
 		{
-			PS->ShowPlayerGameUI();
+			PC->ShowPlayerGameUI();
 		}
-	}
-}
-
-void ABOGameMode::ResetAllPlayersUI()
-{
-	for (auto PlayerState : GetState()->PlayerArray)
-	{
-		auto PC = Cast<AController>(PlayerState->GetOwner());
-		if (!PC) continue;
-
-		ResetPlayerUI(PC);
 	}
 }
