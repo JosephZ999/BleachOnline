@@ -46,9 +46,6 @@ public:
 	bool isGameSettingsOnScreen();
 
 private:
-	void OnIndicatorChanged(UActorComponent* Component, float Percent);
-	void SubscribeToIndicatorChange(UObject* Indicator);
-
 	UPROPERTY()
 	UBOGameUIWidget* GameUIWidget;
 

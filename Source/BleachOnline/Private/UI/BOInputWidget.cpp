@@ -7,7 +7,6 @@
 
 #include "GameFramework\Controller.h"
 #include "TimerManager.h"
-#include "Engine\World.h"
 
 #define REBIND_TIME 0.2f
 
@@ -24,7 +23,7 @@ void UBOInputWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (!GetWorld()) return;
+	if (! GetWorld()) return;
 
 	GetWorld()->GetTimerManager().SetTimer(BindActionsTimer, this, &ThisClass::BindActionsHandle, REBIND_TIME, true);
 }
@@ -33,30 +32,29 @@ void UBOInputWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	if (!GetWorld()) return;
+	if (! GetWorld()) return;
 
 	GetWorld()->GetTimerManager().ClearTimer(BindActionsTimer);
 }
 
 void UBOInputWidget::BindActionsHandle()
 {
-	if (!GetWorld()) return;
-	
+	if (! GetWorld()) return;
+
 	if (auto PlayerPawn = Cast<ABOCharacterBase>(GetOwningPlayerPawn()))
 	{
 		auto PawnInputComp = Cast<UBOInputComponent>(PlayerPawn->GetComponentByClass(UBOInputComponent::StaticClass()));
-		if (!PawnInputComp) return;
+		if (! PawnInputComp) return;
+
+		DoAction.Clear();
+		DoGuard.Clear();
+		Move.Clear();
 
 		DoAction.AddUObject(PawnInputComp, &UBOInputComponent::DoActionHandle);
 		DoGuard.AddUObject(PawnInputComp, &UBOInputComponent::DoGuardHandle);
 		Move.AddUObject(PawnInputComp, &UBOInputComponent::DoMoveHandle);
 
 		GetWorld()->GetTimerManager().ClearTimer(BindActionsTimer);
-	}
-	else
-	{
-		UE_LOG(LogInputWidget, Error, TEXT("Widget can't find the player pawn"));
-		RemoveFromParent();
 	}
 }
 

@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "BOGameUIWidget.generated.h"
 
+class UActorComponent;
+
 /**
  *
  */
@@ -16,11 +18,21 @@ class BLEACHONLINE_API UBOGameUIWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
-	void OnHealthChanged(float NewValue);
+	void OnHealthChanged(UActorComponent* Component, float NewPercent);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
-	void OnPowerChanged(float NewValue);
+	void OnPowerChanged(UActorComponent* Component, float NewPercent);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Indicator")
-	void OnStaminaChanged(float NewValue);
+	void OnStaminaChanged(UActorComponent* Component, float NewPercent);
+
+private:
+	FTimerHandle BindActionsTimer;
+
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+private:
+	void BindActionsHandle();
 };
