@@ -172,3 +172,43 @@ struct FGameSettings
 
 	FGameSettings() {}
 };
+
+UENUM(BlueprintType)
+enum class EGameSettingsIndex : uint8
+{
+	GameTime_I, // I - Value Type - Integer
+	FrendlyFire_B,
+	Max,
+};
+
+UENUM(BlueprintType)
+enum class EValueType : uint8
+{
+	Bool,
+	Float,
+	Integer,
+	Max,
+};
+
+USTRUCT(BlueprintType)
+struct FGameSettingsParam
+{
+	GENERATED_BODY()
+
+	FGameSettingsParam() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGameSettingsIndex Index;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EValueType Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bBoolValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FloatValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 IntegerValue;
+};

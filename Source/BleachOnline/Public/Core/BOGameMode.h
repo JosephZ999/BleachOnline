@@ -20,11 +20,13 @@ class BLEACHONLINE_API ABOGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(EditDefaultsOnly)
 	FGameSettings Settings;
 
 private:
+	UPROPERTY(Category = "Custom Options", EditAnywhere, Meta = (AllowPrivateAccess = "true"))
+	TArray<FGameSettingsParam> GameSettings;
+
 	ABOGameState* State;
 
 	FTimerHandle StartMatchTimer;
@@ -38,7 +40,10 @@ public:
 
 public:
 	ABOGameState* GetState();
-	void SetGameSetting(AController* Player, const FGameSettings& NewGameSetting);
+	void SetGameSetting(AController* Player, const FGameSettingsParam& NewGameSetting);
+
+protected:
+	// virtual void ApplyGameSettings();
 
 private:
 	void SetStartMatchTimer(bool ForceStart);

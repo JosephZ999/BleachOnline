@@ -21,7 +21,6 @@ void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 
 	// ResetPlayerUI(NewPlayer);
-
 }
 
 void ABOGameMode::Logout(AController* Exiting)
@@ -54,7 +53,7 @@ void ABOGameMode::InitGameState()
 	}
 }
 
-void ABOGameMode::RestartPlayer(AController * NewPlayer)
+void ABOGameMode::RestartPlayer(AController* NewPlayer)
 {
 	Super::RestartPlayer(NewPlayer);
 	ResetPlayerUI(NewPlayer);
@@ -69,12 +68,23 @@ ABOGameState* ABOGameMode::GetState()
 	return State = Cast<ABOGameState>(GameState);
 }
 
-void ABOGameMode::SetGameSetting(AController* Player, const FGameSettings& NewGameSetting)
+void ABOGameMode::SetGameSetting(AController* Player, const FGameSettingsParam& NewGameSetting)
 {
-	auto PS = Player->GetPlayerState<ABOPlayerState>();
-	if (GetState() && GetState()->IsAdmin(PS))
+	if (! GetState()) return;
+
+	if (! GetState()->IsAdmin(Player->GetPlayerState<ABOPlayerState>())) return;
+
+	for (auto& Param : GameSettings)
 	{
-		Settings = NewGameSetting;
+		if (Param.Index != NewGameSetting.Index) continue;
+
+		if (Param.Type != NewGameSetting.Type)
+		{
+			UE_LOG(LogGameMode, Warning, TEXT("Incorrect Param Type"));
+			continue;
+		}
+
+		Param = NewGameSetting;
 	}
 }
 

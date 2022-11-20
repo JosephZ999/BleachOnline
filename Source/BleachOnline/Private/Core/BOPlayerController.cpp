@@ -15,7 +15,7 @@ void ABOPlayerController::Reset()
 	ChangeState(NAME_Playing);
 }
 
-void ABOPlayerController::SetGameSettings_Implementation(const FGameSettings NewSettings)
+void ABOPlayerController::SetGameSettings_Implementation(const FGameSettingsParam NewSettings)
 {
 	if (! GetWorld()) return;
 

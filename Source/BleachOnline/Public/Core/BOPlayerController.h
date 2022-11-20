@@ -22,8 +22,8 @@ public:
 	virtual void Reset() override;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void SetGameSettings(const FGameSettings NewSettings);
-	void SetGameSettings_Implementation(const FGameSettings NewSettings);
+	void SetGameSettings(const FGameSettingsParam NewSettings);
+	void SetGameSettings_Implementation(const FGameSettingsParam NewSettings);
 
 	UFUNCTION(Client, Reliable)
 	void HideAllWidgets();
