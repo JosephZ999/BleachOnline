@@ -181,27 +181,21 @@ enum class EGameSettingsIndex : uint8
 	Max,
 };
 
-UENUM(BlueprintType)
-enum class EValueType : uint8
-{
-	Bool,
-	Float,
-	Integer,
-	Max,
-};
-
 USTRUCT(BlueprintType)
 struct FGameSettingsParam
 {
 	GENERATED_BODY()
 
-	FGameSettingsParam() {}
+	FGameSettingsParam()
+		: Index(EGameSettingsIndex::Max)
+		, bBoolValue(false)
+		, FloatValue(0.f)
+		, IntegerValue(0)
+	{
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EGameSettingsIndex Index;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EValueType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bBoolValue;

@@ -19,12 +19,8 @@ class BLEACHONLINE_API ABOGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditDefaultsOnly)
-	FGameSettings Settings;
-
 private:
-	UPROPERTY(Category = "Custom Options", EditAnywhere, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "Custom Options", EditAnywhere, Meta = (AllowPrivateAccess = "true", Tooltip = "You can see the correct value type in Index's postfix, incorrect values will ignore"))
 	TArray<FGameSettingsParam> GameSettings;
 
 	ABOGameState* State;
@@ -43,7 +39,7 @@ public:
 	void SetGameSetting(AController* Player, const FGameSettingsParam& NewGameSetting);
 
 protected:
-	// virtual void ApplyGameSettings();
+	virtual void ApplyGameSettings();
 
 private:
 	void SetStartMatchTimer(bool ForceStart);

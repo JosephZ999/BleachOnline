@@ -78,14 +78,21 @@ void ABOGameMode::SetGameSetting(AController* Player, const FGameSettingsParam& 
 	{
 		if (Param.Index != NewGameSetting.Index) continue;
 
-		if (Param.Type != NewGameSetting.Type)
-		{
-			UE_LOG(LogGameMode, Warning, TEXT("Incorrect Param Type"));
-			continue;
-		}
-
 		Param = NewGameSetting;
 	}
+}
+
+void ABOGameMode::ApplyGameSettings()
+{
+	for (auto& Param : GameSettings)
+	{
+		switch (Param.Index)
+		{	// clang-format off
+		case EGameSettingsIndex::GameTime_I:    break;
+		case EGameSettingsIndex::FrendlyFire_B: break;
+			// clang-format on
+		}	// switch end
+	}		// loop end
 }
 
 void ABOGameMode::SetStartMatchTimer(bool ForceStart)
