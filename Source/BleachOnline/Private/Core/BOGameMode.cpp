@@ -20,7 +20,7 @@ void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 		GetState()->SetAdminPlayer(NewPlayer->GetPlayerState<ABOPlayerState>());
 	}
 
-	// ResetPlayerUI(NewPlayer);
+	ResetPlayerUI(NewPlayer);
 }
 
 void ABOGameMode::Logout(AController* Exiting)
@@ -74,7 +74,7 @@ void ABOGameMode::SetGameSetting(AController* Player, const FGameSettingsParam& 
 
 	if (! GetState()->IsAdmin(Player->GetPlayerState<ABOPlayerState>())) return;
 
-	for (auto& Param : GameSettings)
+	for (auto& Param : GameSettings.Params)
 	{
 		if (Param.Index != NewGameSetting.Index) continue;
 
@@ -84,7 +84,7 @@ void ABOGameMode::SetGameSetting(AController* Player, const FGameSettingsParam& 
 
 void ABOGameMode::ApplyGameSettings()
 {
-	for (auto& Param : GameSettings)
+	for (auto& Param : GameSettings.Params)
 	{
 		switch (Param.Index)
 		{	// clang-format off
@@ -114,10 +114,11 @@ void ABOGameMode::ResetPlayerUI(AController* Player)
 	if (auto PC = Cast<ABOPlayerController>(Player))
 	{
 		PC->HideAllWidgets();
-
+	
 		if (GetState()->IsAdmin(PC->GetPlayerState<ABOPlayerState>()))
 		{
 			PC->ShowPlayerGameSettings();
+
 		}
 		else
 		{

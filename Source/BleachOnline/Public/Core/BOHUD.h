@@ -54,4 +54,7 @@ private:
 
 	UPROPERTY()
 	UBOGameSettingsWidget* GameSettingsWidget;
+
+public:
+	UBOGameSettingsWidget* GetGameSettingsWidget() { return GameSettingsWidget; }
 };

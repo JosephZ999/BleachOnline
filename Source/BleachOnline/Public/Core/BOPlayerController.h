@@ -25,6 +25,14 @@ public:
 	void SetGameSettings(const FGameSettingsParam NewSettings);
 	void SetGameSettings_Implementation(const FGameSettingsParam NewSettings);
 
+	UFUNCTION(Server, Reliable)
+	void GetServerGameSettings();
+	void GetServerGameSettings_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void GetClientGameSettings(FGameSettings CurrentSettings);
+	void GetClientGameSettings_Implementation(FGameSettings CurrentSettings);
+
 	UFUNCTION(Client, Reliable)
 	void HideAllWidgets();
 	void HideAllWidgets_Implementation();
@@ -32,7 +40,7 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowPlayerGameSettings();
 	void ShowPlayerGameSettings_Implementation();
-	
+
 	UFUNCTION(Client, Reliable)
 	void ShowPlayerGameUI();
 	void ShowPlayerGameUI_Implementation();

@@ -165,14 +165,6 @@ struct FAttackInfo
 	FVector FindSafeLocation(const FVector& CurrentLocation);
 };
 
-USTRUCT(BlueprintType)
-struct FGameSettings
-{
-	GENERATED_BODY()
-
-	FGameSettings() {}
-};
-
 UENUM(BlueprintType)
 enum class EGameSettingsIndex : uint8
 {
@@ -205,4 +197,18 @@ struct FGameSettingsParam
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 IntegerValue;
+};
+
+USTRUCT(BlueprintType)
+struct FGameSettings
+{
+	GENERATED_BODY()
+
+	FGameSettings()
+		: Params({})
+	{
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FGameSettingsParam> Params;
 };
