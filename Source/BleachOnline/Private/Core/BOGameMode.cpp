@@ -13,14 +13,12 @@ void ABOGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 
 void ABOGameMode::PostLogin(APlayerController* NewPlayer)
 {
-	Super::PostLogin(NewPlayer);
-
 	if (GetState() && ! GetState()->GetAdminPlayer())
 	{
 		GetState()->SetAdminPlayer(NewPlayer->GetPlayerState<ABOPlayerState>());
 	}
 
-	ResetPlayerUI(NewPlayer);
+	Super::PostLogin(NewPlayer);
 }
 
 void ABOGameMode::Logout(AController* Exiting)
@@ -39,6 +37,11 @@ void ABOGameMode::Logout(AController* Exiting)
 void ABOGameMode::InitGameState()
 {
 	Super::InitGameState();
+}
+
+void ABOGameMode::ResetLevel()
+{
+	Super::ResetLevel();
 
 	if (! GetState()) return;
 
@@ -114,11 +117,10 @@ void ABOGameMode::ResetPlayerUI(AController* Player)
 	if (auto PC = Cast<ABOPlayerController>(Player))
 	{
 		PC->HideAllWidgets();
-	
+
 		if (GetState()->IsAdmin(PC->GetPlayerState<ABOPlayerState>()))
 		{
 			PC->ShowPlayerGameSettings();
-
 		}
 		else
 		{

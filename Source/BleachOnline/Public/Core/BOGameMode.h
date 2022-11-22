@@ -32,6 +32,8 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 	virtual void InitGameState() override;
+	virtual void ResetLevel() override;
+
 	virtual void RestartPlayer(AController* NewPlayer) override;
 
 public:
