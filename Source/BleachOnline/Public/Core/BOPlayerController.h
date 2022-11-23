@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "BOCoreTypes.h"
+#include "BOGameModeTypes.h"
 #include "BOPlayerController.generated.h"
 
 /**
@@ -22,8 +22,8 @@ public:
 	virtual void Reset() override;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void SetGameSettings(const FGameSettingsParam NewSettings);
-	void SetGameSettings_Implementation(const FGameSettingsParam NewSettings);
+	void SetGameSettings(const FGameParam NewSettings);
+	void SetGameSettings_Implementation(const FGameParam NewSettings);
 
 	UFUNCTION(Server, Reliable)
 	void GetServerGameSettings();

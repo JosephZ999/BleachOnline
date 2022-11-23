@@ -16,10 +16,10 @@ void ABOPlayerController::Reset()
 	ChangeState(NAME_Playing);
 }
 
-void ABOPlayerController::SetGameSettings_Implementation(const FGameSettingsParam NewSettings)
+void ABOPlayerController::SetGameSettings_Implementation(const FGameParam NewSettings)
 {
 	if (! GetWorld()) return;
-
+	
 	auto GM = GetWorld()->GetAuthGameMode<ABOGameMode>();
 	if (! GM) return;
 

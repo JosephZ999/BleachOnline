@@ -71,7 +71,7 @@ ABOGameState* ABOGameMode::GetState()
 	return State = Cast<ABOGameState>(GameState);
 }
 
-void ABOGameMode::SetGameSetting(AController* Player, const FGameSettingsParam& NewGameSetting)
+void ABOGameMode::SetGameSetting(AController* Player, const FGameParam& NewGameSetting)
 {
 	if (! GetState()) return;
 
@@ -91,8 +91,8 @@ void ABOGameMode::ApplyGameSettings()
 	{
 		switch (Param.Index)
 		{	// clang-format off
-		case EGameSettingsIndex::GameTime_I:    break;
-		case EGameSettingsIndex::FrendlyFire_B: break;
+		case EGameParamIndex::GameTime_I:    break;
+		case EGameParamIndex::FrendlyFire_B: break;
 			// clang-format on
 		}	// switch end
 	}		// loop end

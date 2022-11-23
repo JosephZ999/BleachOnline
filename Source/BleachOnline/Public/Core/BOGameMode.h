@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "BOCoreTypes.h"
+#include "BOGameModeTypes.h"
 #include "BOGameMode.generated.h"
 
 class AController;
@@ -38,7 +38,7 @@ public:
 
 public:
 	ABOGameState* GetState();
-	void		  SetGameSetting(AController* Player, const FGameSettingsParam& NewGameSetting);
+	void		  SetGameSetting(AController* Player, const FGameParam& NewGameSetting);
 
 	FGameSettings& GetGameSettings() { return GameSettings; }
 
