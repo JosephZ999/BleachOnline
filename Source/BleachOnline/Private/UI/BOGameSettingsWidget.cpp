@@ -18,9 +18,9 @@ void UBOGameSettingsWidget::OnUpdateGameSettings(const FGameSettings& CurrentSet
 {
 	for (auto Param : CurrentSettings.Params)
 	{
-		if (Elems[Param.Index]) return;
+		if (Elems.FindRef(Param.Index)) return;
 
-		if (! ElemClasses[Param.Type])
+		if (! ElemClasses.FindRef(Param.Type))
 		{
 			UE_LOG(LogGameSettingsWidget, Error, TEXT("Game Settings Widget classes weren't selected"))
 			return;

@@ -25,7 +25,7 @@ public:
 	UVerticalBox* ElemList;
 
 	UPROPERTY(EditAnywhere)
-	TMap<EGameParamType, TSubclassOf<UUserWidget>> ElemClasses;
+	TMap<EGameParamType, TSubclassOf<UBOGameSettingsElemWidget>> ElemClasses;
 
 	UPROPERTY()
 	TMap<EGameParamIndex, UUserWidget*> Elems;
