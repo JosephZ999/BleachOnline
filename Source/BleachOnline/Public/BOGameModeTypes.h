@@ -28,9 +28,6 @@ struct FGameParam
 	FGameParam()
 		: Index(EGameParamIndex::Max)
 		, Type(EGameParamType::Bool)
-		, bBoolValue(false)
-		, FloatValue(0.f)
-		, IntegerValue(0)
 	{
 	}
 
@@ -41,13 +38,16 @@ struct FGameParam
 	EGameParamType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bBoolValue;
+	bool bValue = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float FloatValue;
+	float Value = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 IntegerValue;
+	float MinValue = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxValue = 1.f;
 };
 
 USTRUCT(BlueprintType)
