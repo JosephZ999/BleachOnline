@@ -19,7 +19,7 @@ void ABOPlayerController::Reset()
 void ABOPlayerController::SetGameSettings_Implementation(const FGameParam NewSettings)
 {
 	if (! GetWorld()) return;
-	
+
 	auto GM = GetWorld()->GetAuthGameMode<ABOGameMode>();
 	if (! GM) return;
 
@@ -72,4 +72,9 @@ void ABOPlayerController::ShowPlayerGameUI_Implementation()
 	{
 		HUD->ShowGameUI();
 	}
+}
+
+void ABOPlayerController::GetPlayerProfile_Implementation()
+{
+	//...
 }

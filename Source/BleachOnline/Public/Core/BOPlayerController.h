@@ -44,4 +44,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowPlayerGameUI();
 	void ShowPlayerGameUI_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void GetPlayerProfile();
+	void GetPlayerProfile_Implementation();
 };

@@ -18,3 +18,13 @@ void ABOPlayerState::ChangePlayerState_Implementation(const FName& StateName)
 		PC->ChangeState(StateName);
 	}
 }
+
+void ABOPlayerState::AddedANewPlayer_Implementation(FPlayerGameProfile NewPlayer)
+{
+	// ...
+}
+
+void ABOPlayerState::SetId(int32 NewId)
+{
+	PlayerId = NewId;
+}
