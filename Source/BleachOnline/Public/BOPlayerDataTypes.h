@@ -6,6 +6,12 @@ USTRUCT(BlueprintType)
 struct FPlayerProfile
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Avatar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Name;
 };
 
 USTRUCT(BlueprintType)

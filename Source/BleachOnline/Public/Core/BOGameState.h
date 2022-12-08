@@ -7,6 +7,8 @@
 #include "BOPlayerDataTypes.h"
 #include "BOGameState.generated.h"
 
+class UBOPlayerListComponent;
+
 class AController;
 class APlayerController;
 class ABOHUD;
@@ -27,21 +29,14 @@ private:
 	UPROPERTY()
 	ABOPlayerState* AdminPlayer;
 
-	UPROPERTY()
-	TMap<int32, FPlayerGameProfile> ActivePlayers;
-
-	int32 LastPlayerIndex = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	UBOPlayerListComponent* PlayerListComponent;
 
 public:
+	FORCEINLINE UBOPlayerListComponent* GetPlayerListComponent() const { return PlayerListComponent; }
+
 	bool			CanStartMatch();
 	ABOPlayerState* GetAdminPlayer();
 	void			SetAdminPlayer(ABOPlayerState* inPlayer);
-
-	bool IsAdmin(ABOPlayerState* InPlayer);
-	void AddPlayer(const AController* Player, const FPlayerProfile& Profile);
-	void RemovePlayer(int32 PlayerId);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void AddedANewPlayer(FPlayerGameProfile NewPlayer);
-	void AddedANewPlayer_Implementation(FPlayerGameProfile NewPlayer);
+	bool			IsAdmin(ABOPlayerState* InPlayer);
 };

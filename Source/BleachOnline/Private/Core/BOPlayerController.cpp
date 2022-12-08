@@ -5,6 +5,7 @@
 #include "Engine\World.h"
 #include "BOGameMode.h"
 #include "BOGameSettingsWidget.h"
+#include "BOGameInstance.h"
 
 ABOPlayerController::ABOPlayerController()
 {
@@ -72,9 +73,4 @@ void ABOPlayerController::ShowPlayerGameUI_Implementation()
 	{
 		HUD->ShowGameUI();
 	}
-}
-
-void ABOPlayerController::GetPlayerProfile_Implementation()
-{
-	//...
 }

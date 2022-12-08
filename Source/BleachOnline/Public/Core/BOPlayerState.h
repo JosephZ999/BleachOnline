@@ -7,8 +7,6 @@
 #include "BOPlayerDataTypes.h"
 #include "BOPlayerState.generated.h"
 
-class ABOHUD;
-
 /**
  *
  */
@@ -20,18 +18,23 @@ class BLEACHONLINE_API ABOPlayerState : public APlayerState
 public:
 	ABOPlayerState();
 
-private:
-	int32 PlayerId = 0;
+	UPROPERTY(replicatedUsing = OnRep_PlayerProfile, BlueprintReadOnly, Category = PlayerState)
+	FPlayerProfile Profile;
+
+protected:
+	virtual void BeginPlay() override;
 
 public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangePlayerState(const FName& StateName);
 	void ChangePlayerState_Implementation(const FName& StateName);
 
-	UFUNCTION(Client, Reliable)
-	void AddedANewPlayer(FPlayerGameProfile NewPlayer);
-	void AddedANewPlayer_Implementation(FPlayerGameProfile NewPlayer);
+	UFUNCTION(Server, Reliable)
+	void SendPlayerProfileToServer(FPlayerProfile NewProfile);
+	void SendPlayerProfileToServer_Implementation(FPlayerProfile NewProfile);
 
-	void  SetId(int32 NewId);
-	int32 GetId() { return PlayerId; }
+	UFUNCTION()
+	void OnRep_PlayerProfile();
 };

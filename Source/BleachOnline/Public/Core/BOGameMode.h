@@ -44,8 +44,6 @@ public:
 
 	FGameSettings& GetGameSettings() { return GameSettings; }
 
-	void SendPlayerProfile(AController* Player, FPlayerProfile Profile);
-
 protected:
 	virtual void ApplyGameSettings();
 
@@ -53,5 +51,4 @@ private:
 	void SetStartMatchTimer(bool ForceStart);
 	void StartMatchHandle();
 	void ResetPlayerUI(AController* Player);
-	void OnGetPlayerProfile(AController* Player, FPlayerProfile& Profile);
 };

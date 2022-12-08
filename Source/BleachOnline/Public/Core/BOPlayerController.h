@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "BOGameModeTypes.h"
+#include "BOPlayerDataTypes.h"
 #include "BOPlayerController.generated.h"
 
 /**
@@ -44,8 +45,4 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowPlayerGameUI();
 	void ShowPlayerGameUI_Implementation();
-
-	UFUNCTION(Client, Reliable)
-	void GetPlayerProfile();
-	void GetPlayerProfile_Implementation();
 };
