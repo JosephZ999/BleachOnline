@@ -123,6 +123,12 @@ void ABOGameMode::ResetPlayerUI(AController* Player)
 	{
 		PC->HideAllWidgets();
 
+		//
+		PC->ShowPlayerGameSettings();
+		return;
+		//
+
+
 		if (GetState()->IsAdmin(PC->GetPlayerState<ABOPlayerState>()))
 		{
 			PC->ShowPlayerGameSettings();

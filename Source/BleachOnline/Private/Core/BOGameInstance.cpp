@@ -4,7 +4,8 @@
 
 UBOGameInstance::UBOGameInstance()
 {
-	Profile.Name = FText::FromString("RandomPlayer");
+	FString NameString = "Player " + FString::FromInt(FMath::RandRange(0, 9));
+	Profile.Name = FText::FromString(NameString);
 }
 
 FPlayerProfile& UBOGameInstance::GetPlayerProfile()

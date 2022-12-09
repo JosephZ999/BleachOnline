@@ -18,7 +18,8 @@ class BLEACHONLINE_API ABOPlayerState : public APlayerState
 public:
 	ABOPlayerState();
 
-	UPROPERTY(replicatedUsing = OnRep_PlayerProfile, BlueprintReadOnly, Category = PlayerState)
+private:
+	UPROPERTY(replicatedUsing = OnRep_PlayerProfile)
 	FPlayerProfile Profile;
 
 protected:
@@ -37,4 +38,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_PlayerProfile();
+
+public:
+	const FPlayerProfile& GetProfile() const { return Profile; }
 };
