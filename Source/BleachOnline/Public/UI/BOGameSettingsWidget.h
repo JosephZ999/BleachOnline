@@ -8,6 +8,9 @@
 #include "BOGameSettingsWidget.generated.h"
 
 class UBOGameSettingsElemWidget;
+class UBOChatWidget;
+class UBOPlayerListWidget;
+
 class UVerticalBox;
 
 /**
@@ -30,14 +33,24 @@ public:
 	UPROPERTY()
 	TMap<EGameParamIndex, UUserWidget*> Elems;
 
+private:
+	FTimerHandle EnableWidgetTimer;
+
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	UFUNCTION()
 	void OnUpdateGameSettings(const FGameSettings& CurrentSettings);
 
-	//  protected:
-	//	virtual void NativeConstruct() override;
-
-private:
 	UFUNCTION()
 	void OnParamChangedHandle(const FGameParam& NewParam);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = GameSettings)
+	void OnWidgetActivated();
+
+private:
+	void SetIsActive(bool IsActive);
+	void SetIsActiveHandle();
+	bool IsCanBeActivated();
 };
