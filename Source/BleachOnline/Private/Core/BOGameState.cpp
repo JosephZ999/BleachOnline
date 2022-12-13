@@ -35,3 +35,8 @@ bool ABOGameState::IsAdmin(ABOPlayerState* InPlayer)
 {
 	return AdminPlayer == InPlayer;
 }
+
+void ABOGameState::Join(APlayerState* NewPlayer)
+{
+	GetPlayerListComponent()->OnPlayerJoin.Broadcast(NewPlayer);
+}

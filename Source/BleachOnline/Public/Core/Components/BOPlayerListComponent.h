@@ -9,7 +9,9 @@
 
 class APlayerState;
 
-typedef TArray<APlayerState*> PlayerList;
+typedef TArray<APlayerState*> PlayerArray;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerJoinSignature, APlayerState*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BLEACHONLINE_API UBOPlayerListComponent : public UActorComponent
@@ -19,14 +21,16 @@ class BLEACHONLINE_API UBOPlayerListComponent : public UActorComponent
 public:
 	UBOPlayerListComponent();
 
+	FOnPlayerJoinSignature OnPlayerJoin;
+
 private:
-	PlayerList* List;
+	PlayerArray* List;
 
 	UPROPERTY()
 	APlayerState* LocalPlayer;
 
 protected:
-	void SetPlayerList(PlayerList* PlayerArray);
+	void SetPlayerList(PlayerArray* PlayerArray);
 
 public:
 	UFUNCTION(BlueprintCallable)

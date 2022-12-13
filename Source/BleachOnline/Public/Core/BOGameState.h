@@ -39,4 +39,7 @@ public:
 	ABOPlayerState* GetAdminPlayer();
 	void			SetAdminPlayer(ABOPlayerState* inPlayer);
 	bool			IsAdmin(ABOPlayerState* InPlayer);
+
+	UFUNCTION()
+	void Join(APlayerState* NewPlayer);
 };

@@ -1,9 +1,12 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOPlayerState.h"
+#include "BOGameState.h"
+
 #include "BOPlayerController.h"
 #include "BOGameInstance.h"
 #include "UnrealNetwork.h"
+#include "Engine\World.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerState, All, All);
 
@@ -53,12 +56,10 @@ void ABOPlayerState::SendPlayerProfileToServer_Implementation(FPlayerProfile New
 
 void ABOPlayerState::OnRep_PlayerProfile()
 {
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Server Profile Updating"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Client Profile Updating"));
-	}
+	if (! GetWorld()) return;
+
+	auto GS = GetWorld()->GetGameState<ABOGameState>();
+	if (! GS) return;
+
+	GS->Join(this);
 }

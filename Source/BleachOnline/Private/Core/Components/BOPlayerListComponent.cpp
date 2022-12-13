@@ -9,7 +9,7 @@ UBOPlayerListComponent::UBOPlayerListComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UBOPlayerListComponent::SetPlayerList(PlayerList* PlayerArray)
+void UBOPlayerListComponent::SetPlayerList(PlayerArray* PlayerArray)
 {
 	List = PlayerArray;
 }
@@ -33,14 +33,14 @@ APlayerState* UBOPlayerListComponent::GetLocalPlayer()
 	return nullptr;
 }
 
-TArray<APlayerState*> UBOPlayerListComponent::GetAllPlayers() const
+PlayerArray UBOPlayerListComponent::GetAllPlayers() const
 {
 	return *List;
 }
 
-TArray<APlayerState*> UBOPlayerListComponent::GetOtherPlayers() const
+PlayerArray UBOPlayerListComponent::GetOtherPlayers() const
 {
-	TArray<APlayerState*> NewList;
+	PlayerArray NewList;
 	for (auto Player : *List)
 	{
 		if (IsLocalPlayer(Player)) continue;
