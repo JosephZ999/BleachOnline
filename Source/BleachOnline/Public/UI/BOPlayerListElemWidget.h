@@ -7,6 +7,8 @@
 #include "BOPlayerListElemWidget.generated.h"
 
 class APlayerState;
+class UTextBlock;
+class UImage;
 
 /**
  *
@@ -15,6 +17,13 @@ UCLASS()
 class BLEACHONLINE_API UBOPlayerListElemWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(Meta = (BindWidget))
+	UTextBlock* PlayerName;
+
+	UPROPERTY(Meta = (BindWidget))
+	UImage* PlayerAvatar;
 
 private:
 	UPROPERTY()
@@ -31,5 +40,7 @@ public:
 
 private:
 	void UpdateProfile();
-	void UpdateProfileHandle();
+
+	UFUNCTION()
+	void OnPlayerEndPlay(AActor* Target, EEndPlayReason::Type EndPlayReason);
 };

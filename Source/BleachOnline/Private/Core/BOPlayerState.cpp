@@ -26,6 +26,11 @@ void ABOPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!GetWorld()->GetGameState())
+	{
+		UE_LOG(LogTemp, Error, TEXT("WTF WTF???"));
+	}
+
 	auto PC = Cast<ABOPlayerController>(GetOwner());
 	if (! PC) return;
 

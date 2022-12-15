@@ -40,6 +40,8 @@ void UBOPlayerListWidget::OnPlayerJoin(APlayerState* NewPlayer)
 
 void UBOPlayerListWidget::CreateElemnt(APlayerState* Player)
 {
+	check(ElemClass);
+
 	if (GetPlayerListComp()->GetLocalPlayer() == Player) return;
 
 	// check if player already added to list

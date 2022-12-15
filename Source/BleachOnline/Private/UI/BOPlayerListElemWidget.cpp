@@ -4,17 +4,21 @@
 #include "BOPlayerState.h"
 
 #include "TimerManager.h"
+#include "Components\TextBlock.h"
+#include "Components\Image.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerListElemWidget, All, All);
 
 void UBOPlayerListElemWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
 	UpdateProfile();
 }
 
 void UBOPlayerListElemWidget::SetPlayer(APlayerState* NewPlayer)
 {
 	Player = NewPlayer;
+	Player->OnEndPlay.AddDynamic(this, &ThisClass::OnPlayerEndPlay);
 }
 
 bool UBOPlayerListElemWidget::ComparePlayer(APlayerState* OtherPlayer)
@@ -33,30 +37,24 @@ void UBOPlayerListElemWidget::UpdateProfile()
 	}
 
 	auto PS = Cast<ABOPlayerState>(Player);
-	checkf(PS, TEXT("PlayerState is null or incorrect type"));
+	if (! PS) return;
+
 
 	if (PS->GetProfile().Name.IsEmpty())
 	{
-		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfileHandle, true, 1.f);
+		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfile, true, 1.f);
+		return;
 	}
+
+	// Updating
+	auto Profile = PS->GetProfile();
+	PlayerName->SetText(Profile.Name);
+	// PlayerAvatar->SetBrushFromMaterial();
+
+	PS->GetWorldTimerManager().ClearTimer(UpdateTimer);
 }
 
-void UBOPlayerListElemWidget::UpdateProfileHandle()
+void UBOPlayerListElemWidget::OnPlayerEndPlay(AActor* Target, EEndPlayReason::Type EndPlayReason)
 {
-	if (! GetWorld()) return;
-
-	if (! Player)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(UpdateTimer);
-		RemoveFromParent();
-	}
-
-	auto PS = Cast<ABOPlayerState>(Player);
-	if (PS && ! PS->GetProfile().Name.IsEmpty())
-	{
-		PS->GetWorldTimerManager().ClearTimer(UpdateTimer);
-
-		// Updtate Profile
-		// ...
-	}
+	RemoveFromParent();
 }
