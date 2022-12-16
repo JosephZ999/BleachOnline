@@ -26,7 +26,7 @@ void ABOPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!GetWorld()->GetGameState())
+	if (! GetWorld()->GetGameState())
 	{
 		UE_LOG(LogTemp, Error, TEXT("WTF WTF???"));
 	}

@@ -12,16 +12,17 @@
 				"Engine",
 				"Paper2D",
 				"UMG",
-        "AIModule",
-        "AbilitySystem"
+				"AIModule",
+				"AbilitySystem",
+				"CoreUObject"
 			]
 		}
 	],
 	"Plugins": [
-    {
-      "Name": "Paper2D",
-      "Enabled": true
-    }
+		{
+			"Name": "Paper2D",
+			"Enabled": true
+		}
 	],
 	"TargetPlatforms": [
 		"Android",
