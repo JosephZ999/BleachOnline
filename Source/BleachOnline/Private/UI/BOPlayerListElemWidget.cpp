@@ -7,6 +7,9 @@
 #include "Components\TextBlock.h"
 #include "Components\Image.h"
 
+#include "BOFunctionLibrary.h"
+#include "BOGameInstanceSubsystem.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerListElemWidget, All, All);
 
 void UBOPlayerListElemWidget::NativeConstruct()
@@ -42,14 +45,16 @@ void UBOPlayerListElemWidget::UpdateProfile()
 
 	if (PS->GetProfile().Name.IsEmpty())
 	{
-		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfile, true, 1.f);
+		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfile, true, 0.5f);
 		return;
 	}
 
 	// Updating
 	auto Profile = PS->GetProfile();
 	PlayerName->SetText(Profile.Name);
-	// PlayerAvatar->SetBrushFromMaterial();
+
+	auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
+	PlayerAvatar->SetBrushFromTexture(GISubsystem->GetAvatarByIndex(Profile.Avatar));
 
 	PS->GetWorldTimerManager().ClearTimer(UpdateTimer);
 }

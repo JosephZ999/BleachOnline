@@ -19,10 +19,10 @@ class BLEACHONLINE_API UBOPlayerListElemWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(Meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
 	UTextBlock* PlayerName;
 
-	UPROPERTY(Meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
 	UImage* PlayerAvatar;
 
 private:

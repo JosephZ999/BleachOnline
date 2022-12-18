@@ -15,7 +15,10 @@ public class BleachOnline : ModuleRules
             "Engine",
             "InputCore",
             "Paper2D",
-            "AbilitySystem"
+            "AbilitySystem",
+            "ImageWrapper",
+            "Slate",
+            "SlateCore",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

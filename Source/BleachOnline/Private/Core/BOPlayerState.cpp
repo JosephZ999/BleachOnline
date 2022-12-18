@@ -2,11 +2,13 @@
 
 #include "BOPlayerState.h"
 #include "BOGameState.h"
-
 #include "BOPlayerController.h"
-#include "BOGameInstance.h"
+#include "BOFunctionLibrary.h"
+
 #include "UnrealNetwork.h"
 #include "Engine\World.h"
+
+#include "BOGameInstanceSubsystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerState, All, All);
 
@@ -26,20 +28,15 @@ void ABOPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (! GetWorld()->GetGameState())
-	{
-		UE_LOG(LogTemp, Error, TEXT("WTF WTF???"));
-	}
-
 	auto PC = Cast<ABOPlayerController>(GetOwner());
 	if (! PC) return;
 
 	if (PC->IsLocalController())
 	{
-		auto GI = GetGameInstance<UBOGameInstance>();
-		if (GI)
+		auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
+		if (GISubsystem)
 		{
-			SendPlayerProfileToServer(GI->GetPlayerProfile());
+			SendPlayerProfileToServer(GISubsystem->GetPlayerProfile());
 		}
 	}
 }

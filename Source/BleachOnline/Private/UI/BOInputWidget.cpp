@@ -1,7 +1,7 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOInputWidget.h"
-#include "BoFunctionLibrary.h"
+#include "BOMathLibrary.h"
 #include "BOCharacterBase.h"
 #include "BOInputComponent.h"
 

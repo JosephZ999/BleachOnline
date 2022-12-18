@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "BOPlayerDataTypes.h"
 #include "BOGameInstanceSubsystem.generated.h"
 
 class UBOSaveLoadComponent;
 class UBOPlayerDataComponent;
 class UBOGameDataComponent;
+class UTexture2D;
 
 /**
  *
@@ -45,4 +47,9 @@ public:
 		}
 		return nullptr;
 	}
+
+	FPlayerProfile GetPlayerProfile();
+
+	UTexture2D* GetAvatarByIndex(int32 Index);
+	
 };
