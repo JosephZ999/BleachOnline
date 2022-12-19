@@ -20,11 +20,9 @@ class BLEACHONLINE_API UBOSaveLoadComponent : public UObject
 public:
 	UTexture2D* LoadImageToTexture2D(const FString& ImagePath);
 
-	bool LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue);
-
-	bool ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format, UTexture2D* OutTexture);
-
-	bool LoadImageFromFileDialog(FString& OutFilePath);
+	UTexture2D* ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format);
+	bool		LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue);
+	bool		LoadImageFromFileDialog(FString& OutFilePath);
 
 	EImageFormat GetFileExtension(const FString& FilePath);
 };

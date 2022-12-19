@@ -51,5 +51,6 @@ public:
 	FPlayerProfile GetPlayerProfile();
 
 	UTexture2D* GetAvatarByIndex(int32 Index);
+	UTexture2D* GetImageFromFile();
 	
 };

@@ -55,7 +55,7 @@ bool UBOSaveLoadComponent::LoadImageAsByte(const FString& FilePath, TArray<uint8
 	return FFileHelper::LoadFileToArray(OutValue, *FilePath);
 }
 
-bool UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format, UTexture2D* OutTexture)
+UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format)
 {
 	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
 	TSharedPtr<IImageWrapper> ImageWrapperptr	 = ImageWrapperModule.CreateImageWrapper(Format);
@@ -67,7 +67,8 @@ bool UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageF
 		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
 		int32 Width	 = ImageWrapperptr->GetWidth();
 		int32 Height = ImageWrapperptr->GetHeight();
-		OutTexture	 = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
+
+		UTexture2D* OutTexture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
 		if (OutTexture)
 		{
 			void* TextureData = OutTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
@@ -77,7 +78,7 @@ bool UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageF
 			return OutTexture;
 		}
 	}
-	return false;
+	return nullptr;
 }
 
 bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
