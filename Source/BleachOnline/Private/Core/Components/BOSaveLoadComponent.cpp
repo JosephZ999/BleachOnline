@@ -6,7 +6,6 @@
 
 #include "ModuleManager.h"
 #include "IImageWrapperModule.h"
-#include "IImageWrapper.h"
 
 #include "DesktopPlatformModule.h"
 
@@ -55,8 +54,29 @@ bool UBOSaveLoadComponent::LoadImageAsByte(const FString& FilePath, TArray<uint8
 {
 	return FFileHelper::LoadFileToArray(OutValue, *FilePath);
 }
-bool UBOSaveLoadComponent::ConvertByteToImage(TArray<uint8> OutValue, UTexture2D* OutTexture)
+
+bool UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format, UTexture2D* OutTexture)
 {
+	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
+	TSharedPtr<IImageWrapper> ImageWrapperptr	 = ImageWrapperModule.CreateImageWrapper(Format);
+
+	bool PtrIsValid = ImageWrapperptr.IsValid();
+	if (PtrIsValid && ImageWrapperptr->SetCompressed(File.GetData(), File.GetAllocatedSize()))
+	{
+		const TArray<uint8>* OutRawData = nullptr;
+		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
+		int32 Width	 = ImageWrapperptr->GetWidth();
+		int32 Height = ImageWrapperptr->GetHeight();
+		OutTexture	 = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
+		if (OutTexture)
+		{
+			void* TextureData = OutTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+			FMemory::Memcpy(TextureData, OutRawData->GetData(), OutRawData->Num());
+			OutTexture->PlatformData->Mips[0].BulkData.Unlock();
+			OutTexture->UpdateResource();
+			return OutTexture;
+		}
+	}
 	return false;
 }
 
@@ -76,4 +96,18 @@ bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
 		return true;
 	}
 	return false;
+}
+
+EImageFormat UBOSaveLoadComponent::GetFileExtension(const FString& FilePath)
+{
+	FString Extension = FPaths::GetExtension(FilePath, false);
+	if (Extension.Equals(TEXT("png"), ESearchCase::IgnoreCase))
+	{
+		return EImageFormat::PNG;
+	}
+	else if (Extension.Equals(TEXT("jpg"), ESearchCase::IgnoreCase))
+	{
+		return EImageFormat::JPEG;
+	}
+	return EImageFormat::Invalid;
 }
