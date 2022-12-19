@@ -17,6 +17,8 @@ class BLEACHONLINE_API UBOSaveLoadComponent : public UObject
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	static UTexture2D* LoadImageToTexture2D(const FString& ImagePath);
+	UTexture2D* LoadImageToTexture2D(const FString& ImagePath);
+	bool LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue);
+	bool ConvertByteToImage(TArray<uint8> OutValue, UTexture2D* OutTexture);
+	bool LoadImageFromFileDialog(FString& OutFilePath);
 };

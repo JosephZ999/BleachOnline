@@ -1,11 +1,14 @@
 // Authors MoonDi & JosephZzz for BleachOnline fan game.
 
 #include "BOSaveLoadComponent.h"
+#include "Engine\Texture2D.h"
+#include "FileHelper.h"
+
+#include "ModuleManager.h"
 #include "IImageWrapperModule.h"
 #include "IImageWrapper.h"
-#include "FileHelper.h"
-#include "ModuleManager.h"
-#include "Engine\Texture2D.h"
+
+#include "DesktopPlatformModule.h"
 
 UTexture2D* UBOSaveLoadComponent::LoadImageToTexture2D(const FString& ImagePath)
 {
@@ -46,4 +49,31 @@ UTexture2D* UBOSaveLoadComponent::LoadImageToTexture2D(const FString& ImagePath)
 		}
 	}
 	return nullptr;
+}
+
+bool UBOSaveLoadComponent::LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue)
+{
+	return FFileHelper::LoadFileToArray(OutValue, *FilePath);
+}
+bool UBOSaveLoadComponent::ConvertByteToImage(TArray<uint8> OutValue, UTexture2D* OutTexture)
+{
+	return false;
+}
+
+bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
+{
+	auto Platform = FDesktopPlatformModule::Get();
+
+	TArray<FString> FileName;
+	FString			Title	  = "Select A Image";
+	FString			Path	  = "";
+	FString			File	  = "";
+	FString			FileTypes = "Image|*.png; *.jpg";
+
+	if (Platform->OpenFileDialog(nullptr, Title, Path, File, FileTypes, 0, FileName))
+	{
+		OutFilePath = FileName[0];
+		return true;
+	}
+	return false;
 }

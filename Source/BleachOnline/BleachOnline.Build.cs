@@ -17,8 +17,7 @@ public class BleachOnline : ModuleRules
             "Paper2D",
             "AbilitySystem",
             "ImageWrapper",
-            "Slate",
-            "SlateCore",
+            "DesktopPlatform",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

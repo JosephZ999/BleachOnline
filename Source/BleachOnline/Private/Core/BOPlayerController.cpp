@@ -7,6 +7,11 @@
 #include "BOGameSettingsWidget.h"
 #include "BOGameInstance.h"
 
+#include "DesktopPlatformModule.h"
+#include "FileHelper.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogBOPlayerController, All, All);
+
 ABOPlayerController::ABOPlayerController()
 {
 	bShowMouseCursor = true;

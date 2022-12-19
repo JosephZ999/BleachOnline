@@ -15,13 +15,4 @@ class BLEACHONLINE_API UBOGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-public:
-	UBOGameInstance();
-
-private:
-	FPlayerProfile Profile;
-
-public:
-	UFUNCTION(BlueprintCallable)
-	FPlayerProfile& GetPlayerProfile();
 };
