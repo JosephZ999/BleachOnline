@@ -42,10 +42,9 @@ void UBOPlayerListElemWidget::UpdateProfile()
 	auto PS = Cast<ABOPlayerState>(Player);
 	if (! PS) return;
 
-
 	if (PS->GetProfile().Name.IsEmpty())
 	{
-		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfile, true, 0.5f);
+		PS->GetWorldTimerManager().SetTimer(UpdateTimer, this, &ThisClass::UpdateProfile, 0.5f, true);
 		return;
 	}
 
@@ -54,7 +53,12 @@ void UBOPlayerListElemWidget::UpdateProfile()
 	PlayerName->SetText(Profile.Name);
 
 	auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
-	PlayerAvatar->SetBrushFromTexture(GISubsystem->GetAvatarByIndex(Profile.Avatar));
+
+	UTexture2D* Image;
+	if (GISubsystem->LoadAvatarAsImage(Image))
+	{
+		PlayerAvatar->SetBrushFromTexture(Image);
+	}
 
 	PS->GetWorldTimerManager().ClearTimer(UpdateTimer);
 }

@@ -9,6 +9,10 @@
 
 #include "DesktopPlatformModule.h"
 
+#include "Engine/Engine.h"
+#include "Engine/GameViewportClient.h"
+#include "Widgets\SWindow.h"
+
 UTexture2D* UBOSaveLoadComponent::LoadImageToTexture2D(const FString& ImagePath)
 {
 	TArray<uint8> ImageReasultData;
@@ -83,6 +87,8 @@ UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, 
 
 bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
 {
+	if (! GEngine) return false;
+
 	auto Platform = FDesktopPlatformModule::Get();
 
 	TArray<FString> FileName;
@@ -91,7 +97,10 @@ bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
 	FString			File	  = "";
 	FString			FileTypes = "Image|*.png; *.jpg";
 
-	if (Platform->OpenFileDialog(nullptr, Title, Path, File, FileTypes, 0, FileName))
+	auto Window = GEngine->GameViewport->GetWindow().Get();
+	auto Handle = Window->GetNativeWindow().Get()->GetOSWindowHandle();
+
+	if (Platform->OpenFileDialog(Handle, Title, Path, File, FileTypes, 0, FileName))
 	{
 		OutFilePath = FileName[0];
 		return true;
@@ -111,4 +120,14 @@ EImageFormat UBOSaveLoadComponent::GetFileExtension(const FString& FilePath)
 		return EImageFormat::JPEG;
 	}
 	return EImageFormat::Invalid;
+}
+
+bool UBOSaveLoadComponent::CopyFile(const FString& InitialFilePath, const FString& FinalFilePath)
+{
+	TArray<uint8> File;
+	if (FFileHelper::LoadFileToArray(File, *InitialFilePath))
+	{
+		return FFileHelper::SaveArrayToFile(File, *FinalFilePath);
+	}
+	return false;
 }

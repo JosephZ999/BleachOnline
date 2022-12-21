@@ -24,22 +24,37 @@ FPlayerProfile UBOGameInstanceSubsystem::GetPlayerProfile()
 	return NewProfile;
 }
 
-UTexture2D* UBOGameInstanceSubsystem::GetAvatarByIndex(int32 Index)
+UTexture2D* UBOGameInstanceSubsystem::GetImageFromFile(FString& OutPath)
 {
-	FString Path = "F:/TestAva.png"; // FPaths::ProjectContentDir() + "TestAva.png";
-	return SaveLoadComp->LoadImageToTexture2D(Path);
-}
-
-UTexture2D* UBOGameInstanceSubsystem::GetImageFromFile()
-{
-	FString FilePath;
-	if (SaveLoadComp->LoadImageFromFileDialog(FilePath))
+	if (SaveLoadComp->LoadImageFromFileDialog(OutPath))
 	{
 		TArray<uint8> FileInByte;
-		if (SaveLoadComp->LoadImageAsByte(FilePath, FileInByte))
+		if (SaveLoadComp->LoadImageAsByte(OutPath, FileInByte))
 		{
-			return SaveLoadComp->ConvertByteToImage(FileInByte, SaveLoadComp->GetFileExtension(FilePath));
+			return SaveLoadComp->ConvertByteToImage(FileInByte, SaveLoadComp->GetFileExtension(OutPath));
 		}
 	}
 	return nullptr;
+}
+
+bool UBOGameInstanceSubsystem::LoadAvatarAsImage(UTexture2D*& Avatar)
+{
+	TArray<uint8> File;
+	const FString Path = FPaths::ProjectSavedDir() + AvatarPath;
+	if (SaveLoadComp->LoadImageAsByte(Path, File))
+	{
+		return Avatar = SaveLoadComp->ConvertByteToImage(File, SaveLoadComp->GetFileExtension(Path));
+	}
+	return false;
+}
+
+bool UBOGameInstanceSubsystem::SetAvatarFromFile(UTexture2D*& Avatar)
+{
+	FString FilePath;
+	Avatar = GetImageFromFile(FilePath);
+	if (Avatar)
+	{
+		return SaveLoadComp->CopyFile(FilePath, FPaths::ProjectSavedDir() + AvatarPath);
+	}
+	return false;
 }

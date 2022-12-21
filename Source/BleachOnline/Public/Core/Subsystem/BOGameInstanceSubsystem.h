@@ -23,6 +23,8 @@ class BLEACHONLINE_API UBOGameInstanceSubsystem : public UGameInstanceSubsystem
 public:
 	UBOGameInstanceSubsystem();
 
+	const FString AvatarPath = "PlayerProfile/Avatar.png";
+
 private:
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	UBOSaveLoadComponent* SaveLoadComp;
@@ -50,7 +52,12 @@ public:
 
 	FPlayerProfile GetPlayerProfile();
 
-	UTexture2D* GetAvatarByIndex(int32 Index);
-	UTexture2D* GetImageFromFile();
-	
+	// UFUNCTION(BlueprintCallable)
+	UTexture2D* GetImageFromFile(FString& OutPath);
+
+	UFUNCTION(BlueprintCallable)
+	bool LoadAvatarAsImage(UTexture2D*& Avatar);
+
+	UFUNCTION(BlueprintCallable)
+	bool SetAvatarFromFile(UTexture2D*& Avatar);
 };

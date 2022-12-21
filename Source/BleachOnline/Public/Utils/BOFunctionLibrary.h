@@ -10,5 +10,4 @@ class UBOGameInstanceSubsystem;
 struct BOGetterLib
 {
 	static UBOGameInstanceSubsystem* GetGameInstanceSubsystem(UObject* WorldContextObj);
-	
 };
