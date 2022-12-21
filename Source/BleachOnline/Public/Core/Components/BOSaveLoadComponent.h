@@ -27,4 +27,5 @@ public:
 	EImageFormat GetFileExtension(const FString& FilePath);
 
 	bool CopyFile(const FString& InitialFilePath, const FString& FinalFilePath);
+	bool DeleteFile(const FString& FilePath);
 };

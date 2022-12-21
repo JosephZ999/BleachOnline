@@ -23,7 +23,7 @@ class BLEACHONLINE_API UBOGameInstanceSubsystem : public UGameInstanceSubsystem
 public:
 	UBOGameInstanceSubsystem();
 
-	const FString AvatarPath = "PlayerProfile/Avatar.png";
+	const FString AvatarPath = "PlayerProfile/Avatar";
 
 private:
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))

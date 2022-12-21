@@ -8,9 +8,10 @@
 #include "IImageWrapperModule.h"
 
 #include "DesktopPlatformModule.h"
+#include "PlatformFilemanager.h"
 
-#include "Engine/Engine.h"
-#include "Engine/GameViewportClient.h"
+#include "Engine\Engine.h"
+#include "Engine\GameViewportClient.h"
 #include "Widgets\SWindow.h"
 
 UTexture2D* UBOSaveLoadComponent::LoadImageToTexture2D(const FString& ImagePath)
@@ -130,4 +131,9 @@ bool UBOSaveLoadComponent::CopyFile(const FString& InitialFilePath, const FStrin
 		return FFileHelper::SaveArrayToFile(File, *FinalFilePath);
 	}
 	return false;
+}
+
+bool UBOSaveLoadComponent::DeleteFile(const FString& FilePath)
+{
+	return FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*FilePath);
 }

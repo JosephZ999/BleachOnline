@@ -41,9 +41,13 @@ bool UBOGameInstanceSubsystem::LoadAvatarAsImage(UTexture2D*& Avatar)
 {
 	TArray<uint8> File;
 	const FString Path = FPaths::ProjectSavedDir() + AvatarPath;
-	if (SaveLoadComp->LoadImageAsByte(Path, File))
+	if (SaveLoadComp->LoadImageAsByte(Path + ".png", File))
 	{
-		return Avatar = SaveLoadComp->ConvertByteToImage(File, SaveLoadComp->GetFileExtension(Path));
+		return Avatar = SaveLoadComp->ConvertByteToImage(File, SaveLoadComp->GetFileExtension(Path + ".png"));
+	}
+	else if (SaveLoadComp->LoadImageAsByte(Path + ".jpg", File))
+	{
+		return Avatar = SaveLoadComp->ConvertByteToImage(File, SaveLoadComp->GetFileExtension(Path + ".jpg"));
 	}
 	return false;
 }
@@ -54,7 +58,20 @@ bool UBOGameInstanceSubsystem::SetAvatarFromFile(UTexture2D*& Avatar)
 	Avatar = GetImageFromFile(FilePath);
 	if (Avatar)
 	{
-		return SaveLoadComp->CopyFile(FilePath, FPaths::ProjectSavedDir() + AvatarPath);
+		auto Ex = SaveLoadComp->GetFileExtension(FilePath);
+		switch (Ex)
+		{
+		case EImageFormat::PNG:
+		{
+			SaveLoadComp->DeleteFile(FPaths::ProjectSavedDir() + AvatarPath + ".jpg");
+			return SaveLoadComp->CopyFile(FilePath, FPaths::ProjectSavedDir() + AvatarPath + ".png");
+		}
+		case EImageFormat::JPEG:
+		{
+			SaveLoadComp->DeleteFile(FPaths::ProjectSavedDir() + AvatarPath + ".png");
+			return SaveLoadComp->CopyFile(FilePath, FPaths::ProjectSavedDir() + AvatarPath + ".jpg");
+		}
+		}
 	}
 	return false;
 }
