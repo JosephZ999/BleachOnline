@@ -103,8 +103,9 @@ bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
 
 	if (Platform->OpenFileDialog(Handle, Title, Path, File, FileTypes, 0, FileName))
 	{
-		OutFilePath = FileName[0];
-		return true;
+		OutFilePath	  = FileName[0];
+		auto FileSize = FPlatformFileManager::Get().GetPlatformFile().FileSize(*OutFilePath);
+		return (FileSize < 256000 && FileSize > 0)? true : false;
 	}
 	return false;
 }
