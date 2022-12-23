@@ -13,6 +13,7 @@
 #include "Engine\Engine.h"
 #include "Engine\GameViewportClient.h"
 #include "Widgets\SWindow.h"
+#include "ImageUtils.h"
 
 UTexture2D* UBOSaveLoadComponent::LoadImageToTexture2D(const FString& ImagePath)
 {
@@ -70,20 +71,67 @@ UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, 
 	{
 		const TArray<uint8>* OutRawData = nullptr;
 		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
+
+		auto NewRaw = CropImage(*OutRawData, FIntPoint(400, 400), FIntPoint(800, 800));
+		ImageWrapperptr->SetRaw(NewRaw.GetData(), 640000, 400, 400, ERGBFormat::BGRA, 8);
+
+		// return FImageUtils::CreateTexture2D(								  //
+		//	400, 400,														  //
+		//	CropImage(*OutRawData, FIntPoint(400, 400), FIntPoint(800, 800)), //
+		//	GetOuter(),														  //
+		//	"Img", EObjectFlags::RF_Transient, FCreateTexture2DParameters());
+
 		int32 Width	 = ImageWrapperptr->GetWidth();
 		int32 Height = ImageWrapperptr->GetHeight();
+
+		UE_LOG(LogTemp, Display, TEXT("-- Warning -- %i - %i"), Width, Height);
 
 		UTexture2D* OutTexture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
 		if (OutTexture)
 		{
 			void* TextureData = OutTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-			FMemory::Memcpy(TextureData, OutRawData->GetData(), OutRawData->Num());
+			FMemory::Memcpy(TextureData, NewRaw.GetData(), NewRaw.Num());
 			OutTexture->PlatformData->Mips[0].BulkData.Unlock();
 			OutTexture->UpdateResource();
 			return OutTexture;
 		}
 	}
 	return nullptr;
+}
+
+TArray<uint8> UBOSaveLoadComponent::CropImage(const TArray<uint8>& SourceRaw, FIntPoint CropStart, FIntPoint CropEnd)
+{
+	TArray<uint8> NRaw;
+	NRaw.Init(255, 400 * 400 * 4);
+
+	// TArray<FColor> NRaw;
+	// NRaw.Init(FColor(255, 255, 255, 255), 400 * 400 * 4);
+
+	for (int32 y = CropStart.Y; y <= CropEnd.Y; y++)
+	{
+		for (int32 x = CropStart.X; x <= CropEnd.X; x++)
+		{
+			// if (x - CropStart.X <= 0 || y - CropEnd.Y <= 0) continue;
+
+			// int32 a = (400 * y) - (400 - x); // Cropped index
+			int32 a = (400 * (y - CropStart.Y)) - (400 - (x - CropStart.X)); // Cropped index
+			int32 b = (800 * y) - (800 - x);								 // Source Index
+			--a;
+			--b;
+
+			//if ((b % 4) != 0) continue;
+			if (a < 0 || b < 0) continue;
+
+			a *= 4;
+			b *= 4;
+
+			NRaw[a]		= SourceRaw[b];
+			NRaw[a + 1] = SourceRaw[b + 1];
+			NRaw[a + 2] = SourceRaw[b + 2];
+			NRaw[a + 2] = SourceRaw[b + 2];
+		}
+	}
+	return NRaw;
 }
 
 bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
@@ -105,7 +153,7 @@ bool UBOSaveLoadComponent::LoadImageFromFileDialog(FString& OutFilePath)
 	{
 		OutFilePath	  = FileName[0];
 		auto FileSize = FPlatformFileManager::Get().GetPlatformFile().FileSize(*OutFilePath);
-		return (FileSize < 256000 && FileSize > 0)? true : false;
+		return (FileSize < 256000 * 4 && FileSize > 0) ? true : false;
 	}
 	return false;
 }
