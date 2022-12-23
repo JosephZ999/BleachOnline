@@ -28,6 +28,8 @@ public:
 
 	bool CopyFile(const FString& InitialFilePath, const FString& FinalFilePath);
 	bool DeleteFile(const FString& FilePath);
+	bool CropImage(const TArray<uint8>& File, const FString& Path, const FIntPoint& CropStart, const FIntPoint& CropEnd);
 
-	TArray<uint8> CropImage(const TArray<uint8>& SourceRaw, FIntPoint CropStart, FIntPoint CropEnd);
+private:
+	TArray<uint8> CropRaw(const TArray<uint8>& SourceRaw, const FIntPoint& SourceImageSize , const FIntPoint& CropStart, const FIntPoint& CropEnd);
 };

@@ -75,3 +75,18 @@ bool UBOGameInstanceSubsystem::SetAvatarFromFile(UTexture2D*& Avatar)
 	}
 	return false;
 }
+
+bool UBOGameInstanceSubsystem::CropAvatar(const FIntPoint& CropStart, const FIntPoint& CropEnd)
+{
+	TArray<uint8> File;
+	const FString Path = FPaths::ProjectSavedDir() + AvatarPath;
+	if (SaveLoadComp->LoadImageAsByte(Path + ".png", File))
+	{
+		return SaveLoadComp->CropImage(File, Path + ".png", CropStart, CropEnd);
+	}
+	else if (SaveLoadComp->LoadImageAsByte(Path + ".jpg", File))
+	{
+		return SaveLoadComp->CropImage(File, Path + ".jpg", CropStart, CropEnd);
+	}
+	return false;
+}

@@ -66,31 +66,19 @@ UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, 
 	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
 	TSharedPtr<IImageWrapper> ImageWrapperptr	 = ImageWrapperModule.CreateImageWrapper(Format);
 
-	bool PtrIsValid = ImageWrapperptr.IsValid();
-	if (PtrIsValid && ImageWrapperptr->SetCompressed(File.GetData(), File.GetAllocatedSize()))
+	if (ImageWrapperptr.IsValid() //
+		&& ImageWrapperptr->SetCompressed(File.GetData(), File.GetAllocatedSize()))
 	{
 		const TArray<uint8>* OutRawData = nullptr;
 		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
 
-		auto NewRaw = CropImage(*OutRawData, FIntPoint(400, 400), FIntPoint(800, 800));
-		ImageWrapperptr->SetRaw(NewRaw.GetData(), 640000, 400, 400, ERGBFormat::BGRA, 8);
-
-		// return FImageUtils::CreateTexture2D(								  //
-		//	400, 400,														  //
-		//	CropImage(*OutRawData, FIntPoint(400, 400), FIntPoint(800, 800)), //
-		//	GetOuter(),														  //
-		//	"Img", EObjectFlags::RF_Transient, FCreateTexture2DParameters());
-
-		int32 Width	 = ImageWrapperptr->GetWidth();
-		int32 Height = ImageWrapperptr->GetHeight();
-
-		UE_LOG(LogTemp, Display, TEXT("-- Warning -- %i - %i"), Width, Height);
-
+		const int32 Width	   = ImageWrapperptr->GetWidth();
+		const int32 Height	   = ImageWrapperptr->GetHeight();
 		UTexture2D* OutTexture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
 		if (OutTexture)
 		{
 			void* TextureData = OutTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-			FMemory::Memcpy(TextureData, NewRaw.GetData(), NewRaw.Num());
+			FMemory::Memcpy(TextureData, OutRawData->GetData(), OutRawData->Num());
 			OutTexture->PlatformData->Mips[0].BulkData.Unlock();
 			OutTexture->UpdateResource();
 			return OutTexture;
@@ -99,27 +87,51 @@ UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, 
 	return nullptr;
 }
 
-TArray<uint8> UBOSaveLoadComponent::CropImage(const TArray<uint8>& SourceRaw, FIntPoint CropStart, FIntPoint CropEnd)
+bool UBOSaveLoadComponent::CropImage(const TArray<uint8>& File, const FString& Path, const FIntPoint& CropStart, const FIntPoint& CropEnd)
 {
-	TArray<uint8> NRaw;
-	NRaw.Init(255, 400 * 400 * 4);
+	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
+	TSharedPtr<IImageWrapper> ImageWrapperptr	 = ImageWrapperModule.CreateImageWrapper(GetFileExtension(Path));
 
-	// TArray<FColor> NRaw;
-	// NRaw.Init(FColor(255, 255, 255, 255), 400 * 400 * 4);
-
-	for (int32 y = CropStart.Y; y <= CropEnd.Y; y++)
+	if (ImageWrapperptr.IsValid() //
+		&& ImageWrapperptr->SetCompressed(File.GetData(), File.GetAllocatedSize()))
 	{
-		for (int32 x = CropStart.X; x <= CropEnd.X; x++)
+		const TArray<uint8>* OutRawData = nullptr;
+		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
+		const FIntPoint Size = FIntPoint(ImageWrapperptr->GetWidth(), ImageWrapperptr->GetHeight());
+
+		UE_LOG(LogTemp, Display, TEXT("-- Warning -- %i"), ImageWrapperptr->GetCompressed().Num());
+
+		const auto NewRaw = CropRaw(*OutRawData, Size, CropStart, CropEnd);
+
+		ImageWrapperptr->SetRaw(		  //
+			NewRaw.GetData(),			  //
+			NewRaw.Num(),				  //
+			abs(CropStart.X - CropEnd.X), //
+			abs(CropStart.Y - CropEnd.Y), //
+			ERGBFormat::BGRA, 8);
+
+		UE_LOG(LogTemp, Display, TEXT("-- Warning -- %i"), ImageWrapperptr->GetCompressed().Num());
+
+		return FFileHelper::SaveArrayToFile(ImageWrapperptr->GetCompressed(), *Path);
+	}
+	return false;
+}
+
+TArray<uint8> UBOSaveLoadComponent::CropRaw(
+	const TArray<uint8>& SourceRaw, const FIntPoint& SourceImageSize, const FIntPoint& CropStart, const FIntPoint& CropEnd)
+{
+	const FIntPoint NewSize = FIntPoint(abs(CropStart.X - CropEnd.X), abs(CropStart.Y - CropEnd.Y));
+
+	TArray<uint8> NRaw;
+	NRaw.Init(255, NewSize.X * NewSize.Y * 4);
+
+	for (int32 y = CropStart.Y + 1; y <= CropEnd.Y; y++)
+	{
+		for (int32 x = CropStart.X + 1; x <= CropEnd.X; x++)
 		{
-			// if (x - CropStart.X <= 0 || y - CropEnd.Y <= 0) continue;
+			int32 a = (NewSize.Y * (y - CropStart.Y)) - (NewSize.X - (x - CropStart.X)) - 1; // Cropped index
+			int32 b = (SourceImageSize.Y * y) - (SourceImageSize.X - x) - 1;				 // Source Index
 
-			// int32 a = (400 * y) - (400 - x); // Cropped index
-			int32 a = (400 * (y - CropStart.Y)) - (400 - (x - CropStart.X)); // Cropped index
-			int32 b = (800 * y) - (800 - x);								 // Source Index
-			--a;
-			--b;
-
-			//if ((b % 4) != 0) continue;
 			if (a < 0 || b < 0) continue;
 
 			a *= 4;
