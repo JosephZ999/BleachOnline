@@ -99,7 +99,8 @@ bool UBOSaveLoadComponent::CropImage(const TArray<uint8>& File, const FString& P
 		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
 		const FIntPoint Size = FIntPoint(ImageWrapperptr->GetWidth(), ImageWrapperptr->GetHeight());
 
-		UE_LOG(LogTemp, Display, TEXT("-- Warning -- %i"), ImageWrapperptr->GetCompressed().Num());
+		checkf(CropStart.X < CropEnd.X && CropStart.Y < CropEnd.Y, TEXT("Incorrect Crop Region"));
+		checkf(CropStart.X >= 0 && CropStart.Y >= 0 && CropEnd.X <= Size.X && CropEnd.Y <= Size.Y, TEXT("Incorrect Crop Region"));
 
 		const auto NewRaw = CropRaw(*OutRawData, Size, CropStart, CropEnd);
 
@@ -129,8 +130,8 @@ TArray<uint8> UBOSaveLoadComponent::CropRaw(
 	{
 		for (int32 x = CropStart.X + 1; x <= CropEnd.X; x++)
 		{
-			int32 a = (NewSize.Y * (y - CropStart.Y)) - (NewSize.X - (x - CropStart.X)) - 1; // Cropped index
-			int32 b = (SourceImageSize.Y * y) - (SourceImageSize.X - x) - 1;				 // Source Index
+			int32 a = (NewSize.X * (y - CropStart.Y)) - (NewSize.X - (x - CropStart.X)) - 1; // Cropped index
+			int32 b = (SourceImageSize.X * y) - (SourceImageSize.X - x) - 1;				 // Source Index
 
 			if (a < 0 || b < 0) continue;
 
