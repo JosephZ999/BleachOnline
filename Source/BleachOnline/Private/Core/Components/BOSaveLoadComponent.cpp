@@ -102,6 +102,13 @@ bool UBOSaveLoadComponent::CropImage(const TArray<uint8>& File, const FString& P
 		checkf(CropStart.X < CropEnd.X && CropStart.Y < CropEnd.Y, TEXT("Incorrect Crop Region"));
 		checkf(CropStart.X >= 0 && CropStart.Y >= 0 && CropEnd.X <= Size.X && CropEnd.Y <= Size.Y, TEXT("Incorrect Crop Region"));
 
+		if (												   //
+			CropStart.X < CropEnd.X && CropStart.Y < CropEnd.Y //
+			|| CropStart.X >= 0 && CropStart.Y >= 0 && CropEnd.X <= Size.X && CropEnd.Y <= Size.Y)
+		{
+			return false;
+		}
+
 		const auto NewRaw = CropRaw(*OutRawData, Size, CropStart, CropEnd);
 
 		ImageWrapperptr->SetRaw(		  //
