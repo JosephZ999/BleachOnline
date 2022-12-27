@@ -48,18 +48,7 @@ void UBOPlayerListElemWidget::UpdateProfile()
 		return;
 	}
 
-	// Updating
-	auto Profile = PS->GetProfile();
-	PlayerName->SetText(Profile.Name);
-
-	auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
-
-	UTexture2D* Image;
-	if (GISubsystem->LoadAvatarAsImage(Image))
-	{
-		PlayerAvatar->SetBrushFromTexture(Image);
-	}
-
+	OnProfileUpdate(PS->GetProfile());
 	PS->GetWorldTimerManager().ClearTimer(UpdateTimer);
 }
 

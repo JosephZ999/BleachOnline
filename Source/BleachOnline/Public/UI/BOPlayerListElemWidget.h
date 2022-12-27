@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BOPlayerDataTypes.h"
 #include "BOPlayerListElemWidget.generated.h"
 
 class APlayerState;
@@ -35,6 +36,9 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnProfileUpdate(const FPlayerProfile& Profile);
+
 	void SetPlayer(APlayerState* NewPlayer);
 	bool ComparePlayer(APlayerState* OtherPlayer);
 
