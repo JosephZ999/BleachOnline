@@ -16,6 +16,7 @@ public class BleachOnline : ModuleRules
             "InputCore",
             "Paper2D",
             "AbilitySystem",
+            "ImageDownloadManager",
             "ImageWrapper",
             "DesktopPlatform",
         });
