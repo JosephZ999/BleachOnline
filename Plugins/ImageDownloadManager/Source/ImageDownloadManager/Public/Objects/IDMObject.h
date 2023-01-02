@@ -7,6 +7,8 @@
 #include "IDMDataTypes.h"
 #include "IDMObject.generated.h"
 
+class IIDMInterface;
+
 /**
  * Object for sending or receiving a image
  */
@@ -17,9 +19,24 @@ class IMAGEDOWNLOADMANAGER_API UIDMObject : public UObject
 
 private:
 	EIDMObjectType Type;
+	IIDMInterface* Interface;
+	uint8		   Id;
+	TArray<uint8>  File;
+	int32		   FileLastPart = 0;
+	bool		   bSuccess;
 
 protected:
-	void SetType(EIDMObjectType NewType) { Type = NewType; }
+	void		 Init(EIDMObjectType NewType, uint8 ImageId);
+	virtual void BeginPlay();
+
+	uint8 GetId() { return Id; }
+
+	void OnPackSent();
+	void ReceiveFile(const FIDMPackage& FilePack);
+
+private:
+	IIDMInterface* GetOuterInterface();
+	void SendPack();
 
 private:
 	friend class UIDMComponent;

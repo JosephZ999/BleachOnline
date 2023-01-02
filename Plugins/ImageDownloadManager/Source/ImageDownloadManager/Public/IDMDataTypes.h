@@ -5,16 +5,14 @@
 #include "IDMDataTypes.generated.h"
 
 UENUM()
-enum class EIDMObjectType
+enum class EIDMObjectType : uint8
 {
-	SendServer,
-	SendClient,
-	RecieveServer,
-	RecieveClient,
+	Send,
+	Recieve,
 };
 
 UENUM()
-enum class EIDMImageType
+enum class EIDMImageType : uint8
 {
 	None,
 	Avatar,
@@ -52,4 +50,19 @@ USTRUCT()
 struct FIDMPackage
 {
 	GENERATED_BODY()
+
+	FIDMPackage() {}
+	FIDMPackage(uint8 InId, int32 InPart, int32 InLength, TArray<uint8>& InData)
+		: Id(InId)
+		, Part(InPart)
+		, Length(InLength)
+		, Data(InData)
+	{
+	}
+
+	uint8		  Id;	  // Image Id
+	int32		  Part;	  // Array first elem
+	int32		  Length; // Image Length
+	TArray<uint8> Data;	  // Image in byte
+	bool		  bLastPart = false;
 };
