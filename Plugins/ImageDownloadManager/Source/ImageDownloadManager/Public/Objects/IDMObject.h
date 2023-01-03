@@ -23,20 +23,20 @@ private:
 	uint8		   Id;
 	TArray<uint8>  File;
 	int32		   FileLastPart = 0;
-	bool		   bSuccess;
+	int32		   FilePartCount;
 
-protected:
-	void		 Init(EIDMObjectType NewType, uint8 ImageId);
-	virtual void BeginPlay();
-
+public:
 	uint8 GetId() { return Id; }
 
-	void OnPackSent();
-	void ReceiveFile(const FIDMPackage& FilePack);
+protected:
+	void		 Init(EIDMObjectType NewType, uint8 ImageId, TArray<uint8>* Image = nullptr);
+	virtual void BeginPlay();
+	void		 OnPackSent();
+	void		 ReceiveFile(const FIDMPackage& FilePack);
 
 private:
 	IIDMInterface* GetOuterInterface();
-	void SendPack();
+	void		   SendPack();
 
 private:
 	friend class UIDMComponent;

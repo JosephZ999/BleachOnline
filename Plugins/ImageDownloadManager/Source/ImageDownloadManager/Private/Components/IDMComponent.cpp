@@ -11,32 +11,16 @@ UIDMComponent::UIDMComponent()
 	bReplicates						  = true;
 }
 
-IIDMInterface* UIDMComponent::GetOuterInterface()
-{
-	if (! OuterInterface)
-	{
-		OuterInterface = Cast<IIDMInterface>(GetOuter());
-	}
-	return OuterInterface;
-}
-
 void UIDMComponent::CreateObject(bool Send, const EIDMImageType ImageId)
 {
-	const bool OnServer	  = GetOuterInterface()->IDM_HasAuthority();
-	const auto ObjectType = Send ?  EIDMObjectType::Send : EIDMObjectType::Recieve;
-
+	const auto ObjectType = Send ? EIDMObjectType::Send : EIDMObjectType::Recieve;
+	const auto Id		  = static_cast<uint8>(ImageId);
 	if (auto NewObj = NewObject<UIDMObject>(this, "IDMObj"))
 	{
 		const FIDMObjectData NewData(ImageId, NewObj, this);
-		if (Send)
-		{
-			Senders.Add(NewData);
-		}
-		else
-		{
-			Receivers.Add(NewData);
-		}
-		NewObj->Init(ObjectType, static_cast<uint8>(ImageId));
+		auto*				 ObjArr = (Send) ? &Senders : &Receivers;
+		ObjArr->Add(NewData);
+		NewObj->Init(ObjectType, Id, GetImageAsByte(Id));
 		NewObj->BeginPlay();
 	}
 }
@@ -76,7 +60,37 @@ void UIDMComponent::SendFile(FIDMPackage FilePack)
 	// Error
 }
 
-bool UIDMComponent::IDM_HasAuthority()
+void UIDMComponent::IDM_SendPackage(FIDMPackage FilePack)
+{
+	if (HasAuthority())
+	{
+	}
+	else
+	{
+	}
+}
+
+void UIDMComponent::IDM_SendRequest(uint8 FileId)
+{
+	if (HasAuthority())
+	{
+	}
+	else
+	{
+	}
+}
+
+void UIDMComponent::IDM_SendResponse(int32 FilePart)
+{
+	if (HasAuthority())
+	{
+	}
+	else
+	{
+	}
+}
+
+bool UIDMComponent::HasAuthority()
 {
 	if (! GetOwner()) return false;
 
@@ -87,39 +101,17 @@ bool UIDMComponent::IDM_HasAuthority()
 	return false;
 }
 
-void UIDMComponent::IDM_SendPackage(FIDMPackage FilePack) 
+TArray<uint8>* UIDMComponent::GetImageAsByte(uint8 Id)
 {
-	if (IDM_HasAuthority())
+	if (! GetOwner()) return nullptr;
+
+	if (const auto OwnerInterface = Cast<IIDMInterface>(GetOwner()))
 	{
-
+		TArray<uint8> Arr;
+		if (OwnerInterface->IDM_GetImageAsByte(Id, &Arr))
+		{
+			return &Arr;
+		}
 	}
-	else
-	{
-
-	}
-}
-
-void UIDMComponent::IDM_SendRequest(uint8 FileId) 
-{
-	if (IDM_HasAuthority())
-	{
-
-	}
-	else
-	{
-
-	}
-
-}
-
-void UIDMComponent::IDM_SendResponse(int32 FilePart) 
-{
-	if (IDM_HasAuthority())
-	{
-
-	}
-	else
-	{
-
-	}
+	return nullptr;
 }

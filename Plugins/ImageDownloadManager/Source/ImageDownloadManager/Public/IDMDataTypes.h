@@ -64,5 +64,4 @@ struct FIDMPackage
 	int32		  Part;	  // Array first elem
 	int32		  Length; // Image Length
 	TArray<uint8> Data;	  // Image in byte
-	bool		  bLastPart = false;
 };

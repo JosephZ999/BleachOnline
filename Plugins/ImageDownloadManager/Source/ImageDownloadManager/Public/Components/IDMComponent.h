@@ -39,11 +39,11 @@ public:
 	void SendFile(FIDMPackage FilePack);
 
 	// Interface
-	virtual bool IDM_HasAuthority() override;
 	virtual void IDM_SendPackage(FIDMPackage FilePack) override;
 	virtual void IDM_SendRequest(uint8 FileId) override;
 	virtual void IDM_SendResponse(int32 FilePart) override;
 
 private:
-	IIDMInterface* GetOuterInterface();
+	bool HasAuthority();
+	TArray<uint8>* GetImageAsByte(uint8 Id);
 };

@@ -24,10 +24,11 @@ class IMAGEDOWNLOADMANAGER_API IIDMInterface
 	GENERATED_BODY()
 
 public:
-	virtual UIDMComponent* IDM_GetComponent() { return nullptr; }
-
-	virtual bool IDM_HasAuthority() { return false; }
+	// For IDM Component
 	virtual void IDM_SendPackage(FIDMPackage FilePack) {}
 	virtual void IDM_SendRequest(uint8 FileId) {}
 	virtual void IDM_SendResponse(int32 FilePart) {}
+
+	// For Actor
+	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) {}
 };

@@ -4,10 +4,17 @@
 #include "TimerManager.h"
 #include "IDMInterface.h"
 
-void UIDMObject::Init(EIDMObjectType NewType, uint8 ImageId)
+#define PACK_SIZE 2048
+
+void UIDMObject::Init(EIDMObjectType NewType, uint8 ImageId, TArray<uint8>* Image)
 {
 	Type = NewType;
 	Id	 = ImageId;
+	if (Image)
+	{
+		File		  = *Image;
+		FilePartCount = ceil(File.Num() / ((float)PACK_SIZE));
+	}
 }
 
 void UIDMObject::BeginPlay()
@@ -39,11 +46,12 @@ IIDMInterface* UIDMObject::GetOuterInterface()
 
 void UIDMObject::OnPackSent()
 {
-	if (! bSuccess)
+	if (FilePartCount-- == 0)
 	{
-		SendPack();
+		// Success
+		return;
 	}
-	// Send Again
+	SendPack();
 }
 
 void UIDMObject::SendPack()
@@ -54,8 +62,8 @@ void UIDMObject::SendPack()
 	if (OuterInterface)
 	{
 		TArray<uint8> FileData;
-		const bool	  LastPart		= ! (FileLastPart + 2048 < File.Num() - 1);
-		const int32	  PartLastIndex = (LastPart) ? File.Num() - 1 : FileLastPart + 2048;
+		const bool	  LastPart		= ! (FileLastPart + (PACK_SIZE) < File.Num() - 1);
+		const int32	  PartLastIndex = (LastPart) ? File.Num() - 1 : FileLastPart + (PACK_SIZE);
 
 		for (int32 i = FileLastPart; i < PartLastIndex; i++)
 		{
