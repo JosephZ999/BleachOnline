@@ -61,6 +61,24 @@ bool UBOSaveLoadComponent::LoadImageAsByte(const FString& FilePath, TArray<uint8
 	return FFileHelper::LoadFileToArray(OutValue, *FilePath);
 }
 
+bool UBOSaveLoadComponent::LoadImageRaw(const FString& FilePath, TArray<uint8>& OutValue)
+{
+	TArray<uint8> File;
+	FFileHelper::LoadFileToArray(File, *FilePath);
+	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");
+	TSharedPtr<IImageWrapper> ImageWrapperptr	 = ImageWrapperModule.CreateImageWrapper(GetFileExtension(FilePath));
+
+	if (ImageWrapperptr.IsValid() //
+		&& ImageWrapperptr->SetCompressed(File.GetData(), File.GetAllocatedSize()))
+	{
+		const TArray<uint8>* OutRawData = nullptr;
+		ImageWrapperptr->GetRaw(ERGBFormat::BGRA, 8, OutRawData);
+		OutValue = *OutRawData;
+		return true;
+	}
+	return false;
+}
+
 UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format)
 {
 	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");

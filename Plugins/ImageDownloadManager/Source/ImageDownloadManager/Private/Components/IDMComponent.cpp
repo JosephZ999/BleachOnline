@@ -11,9 +11,9 @@ UIDMComponent::UIDMComponent()
 	bReplicates						  = true;
 }
 
-
 void UIDMComponent::UploadImage(uint8 ImageId)
 {
+	CreateObject(true, ImageId);
 }
 
 void UIDMComponent::IDM_SendPackage(FIDMPackage& FilePack)
@@ -97,7 +97,6 @@ bool UIDMComponent::FindObject(bool SendObj, uint8 ImageId, const UObject* Outer
 	}
 	return OutObject = nullptr;
 }
-
 
 void UIDMComponent::SendFile(const FIDMPackage& FilePack)
 {

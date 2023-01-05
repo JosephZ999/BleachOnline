@@ -61,6 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetAvatarFromFile(UTexture2D*& Avatar);
 
+	UFUNCTION()
+	bool GetAvatarRaw(TArray<uint8>& Avatar);
+
 	UFUNCTION(BlueprintCallable)
 	bool CropAvatar(const FIntPoint& CropStart, const FIntPoint& CropEnd);
 };

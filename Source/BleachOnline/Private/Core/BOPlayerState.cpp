@@ -9,12 +9,14 @@
 #include "Engine\World.h"
 
 #include "BOGameInstanceSubsystem.h"
+#include "IDMComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerState, All, All);
 
 ABOPlayerState::ABOPlayerState()
 {
 	SetReplicates(true);
+	IDMComp = CreateDefaultSubobject<UIDMComponent>("IDM");
 }
 
 void ABOPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -38,6 +40,9 @@ void ABOPlayerState::BeginPlay()
 		{
 			SendPlayerProfileToServer(GISubsystem->GetPlayerProfile());
 		}
+
+		// IDM
+		IDMComp->UploadImage(static_cast<uint8>(EIDMImageType::Avatar));
 	}
 }
 
@@ -64,4 +69,22 @@ void ABOPlayerState::OnRep_PlayerProfile()
 	if (! GS) return;
 
 	GS->Join(this);
+}
+
+bool ABOPlayerState::IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray)
+{
+	EIDMImageType ImageType = static_cast<EIDMImageType>(ImageId);
+	switch (ImageType)
+	{
+	case EIDMImageType::Avatar:
+	{
+		auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
+		if (GISubsystem)
+		{
+			return GISubsystem->GetAvatarRaw(*OutArray);
+		}
+		break;
+	}
+	} // switch end
+	return false;
 }

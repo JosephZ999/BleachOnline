@@ -22,6 +22,7 @@ public:
 
 	UTexture2D* ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format);
 	bool		LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue);
+	bool		LoadImageRaw(const FString& FilePath, TArray<uint8>& OutValue);
 	bool		LoadImageFromFileDialog(FString& OutFilePath);
 
 	EImageFormat GetFileExtension(const FString& FilePath);
@@ -31,5 +32,6 @@ public:
 	bool CropImage(const TArray<uint8>& File, const FString& Path, const FIntPoint& CropStart, const FIntPoint& CropEnd);
 
 private:
-	TArray<uint8> CropRaw(const TArray<uint8>& SourceRaw, const FIntPoint& SourceImageSize , const FIntPoint& CropStart, const FIntPoint& CropEnd);
+	TArray<uint8> CropRaw(
+		const TArray<uint8>& SourceRaw, const FIntPoint& SourceImageSize, const FIntPoint& CropStart, const FIntPoint& CropEnd);
 };

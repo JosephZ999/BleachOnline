@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "BOPlayerDataTypes.h"
+#include "IDMInterface.h"
 #include "BOPlayerState.generated.h"
 
+class UIDMComponent;
 /**
  *
  */
 UCLASS()
-class BLEACHONLINE_API ABOPlayerState : public APlayerState
+class BLEACHONLINE_API ABOPlayerState : public APlayerState, public IIDMInterface
 {
 	GENERATED_BODY()
 
@@ -19,6 +21,9 @@ public:
 	ABOPlayerState();
 
 private:
+	UPROPERTY()
+	UIDMComponent* IDMComp;
+
 	UPROPERTY(replicatedUsing = OnRep_PlayerProfile)
 	FPlayerProfile Profile;
 
@@ -26,6 +31,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UIDMComponent* GetIDM() { return IDMComp; }
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -38,6 +45,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_PlayerProfile();
+
+	// Interfaces
+	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) override;
 
 public:
 	const FPlayerProfile& GetProfile() const { return Profile; }
