@@ -78,4 +78,7 @@ private:
 	void SendResponse(uint8 Id);
 
 	bool HasAuthority();
+
+	UFUNCTION()
+	void OnObjectFinished(UIDMObject* Obj);
 };

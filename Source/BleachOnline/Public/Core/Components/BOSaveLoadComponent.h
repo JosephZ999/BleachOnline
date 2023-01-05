@@ -21,6 +21,7 @@ public:
 	UTexture2D* LoadImageToTexture2D(const FString& ImagePath);
 
 	UTexture2D* ConvertByteToImage(const TArray<uint8>& File, EImageFormat Format);
+	UTexture2D* ConvertRawToImage(const TArray<uint8>& File, int32 Width, int32 Height);
 	bool		LoadImageAsByte(const FString& FilePath, TArray<uint8>& OutValue);
 	bool		LoadImageRaw(const FString& FilePath, TArray<uint8>& OutValue);
 	bool		LoadImageFromFileDialog(FString& OutFilePath);

@@ -88,3 +88,20 @@ bool ABOPlayerState::IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray)
 	} // switch end
 	return false;
 }
+
+void ABOPlayerState::IDM_SetImage(uint8 ImageId, TArray<uint8>* ImageRaw)
+{
+	EIDMImageType ImageType = static_cast<EIDMImageType>(ImageId);
+	switch (ImageType)
+	{
+	case EIDMImageType::Avatar:
+	{
+		auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
+		if (GISubsystem)
+		{
+			GISubsystem->RawToTexture2D(*ImageRaw, Profile.AvatarWidth, Profile.AvatarHeight, Profile.Avatar)
+		}
+		break;
+	}
+	} // switch end
+}

@@ -64,6 +64,9 @@ public:
 	UFUNCTION()
 	bool GetAvatarRaw(TArray<uint8>& Avatar);
 
+	UFUNCTION()
+	bool RawToTexture2D(const TArray<uint8>& ImageRaw, int32 Width, int32 Height, UTexture2D*& OutTexture);
+
 	UFUNCTION(BlueprintCallable)
 	bool CropAvatar(const FIntPoint& CropStart, const FIntPoint& CropEnd);
 };

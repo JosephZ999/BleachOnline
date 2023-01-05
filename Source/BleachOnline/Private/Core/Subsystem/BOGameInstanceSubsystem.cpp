@@ -86,6 +86,11 @@ bool UBOGameInstanceSubsystem::GetAvatarRaw(TArray<uint8>& Avatar)
 	return false;
 }
 
+bool UBOGameInstanceSubsystem::RawToTexture2D(const TArray<uint8>& ImageRaw, int32 Width, int32 Height, UTexture2D *& OutTexture)
+{
+	return OutTexture = SaveLoadComp->ConvertRawToImage(ImageRaw, Width, Height);
+}
+
 bool UBOGameInstanceSubsystem::CropAvatar(const FIntPoint& CropStart, const FIntPoint& CropEnd)
 {
 	TArray<uint8> File;

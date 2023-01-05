@@ -105,6 +105,20 @@ UTexture2D* UBOSaveLoadComponent::ConvertByteToImage(const TArray<uint8>& File, 
 	return nullptr;
 }
 
+UTexture2D* UBOSaveLoadComponent::ConvertRawToImage(const TArray<uint8>& File, int32 Width, int32 Height)
+{
+	UTexture2D* OutTexture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
+	if (OutTexture)
+	{
+		void* TextureData = OutTexture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+		FMemory::Memcpy(TextureData, File.GetData(), File.Num());
+		OutTexture->PlatformData->Mips[0].BulkData.Unlock();
+		OutTexture->UpdateResource();
+		return OutTexture;
+	}
+	return nullptr;
+}
+
 bool UBOSaveLoadComponent::CropImage(const TArray<uint8>& File, const FString& Path, const FIntPoint& CropStart, const FIntPoint& CropEnd)
 {
 	IImageWrapperModule&	  ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>("ImageWrapper");

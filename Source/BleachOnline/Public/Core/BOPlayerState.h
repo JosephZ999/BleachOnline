@@ -48,6 +48,7 @@ public:
 
 	// Interfaces
 	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) override;
+	virtual void IDM_SetImage(uint8 ImageId, TArray<uint8>* ImageRaw) override;
 
 public:
 	const FPlayerProfile& GetProfile() const { return Profile; }

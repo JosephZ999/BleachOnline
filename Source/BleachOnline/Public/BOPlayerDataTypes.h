@@ -8,7 +8,10 @@ struct FPlayerProfile
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Avatar;
+	UTexture2D* Avatar;
+
+	int32 AvatarWidth;
+	int32 AvatarHeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;

@@ -31,4 +31,5 @@ public:
 
 	// For Actor
 	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) { return false; }
+	virtual void IDM_SetImage(uint8 ImageId, TArray<uint8>* ImageRaw){}
 };

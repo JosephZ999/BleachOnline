@@ -8,6 +8,9 @@
 #include "IDMObject.generated.h"
 
 class IIDMInterface;
+class UIDMObject;
+
+DECLARE_DELEGATE_OneParam(FOnLoadingFinishSignature, UIDMObject*);
 
 /**
  * Object for sending or receiving a image
@@ -29,6 +32,8 @@ public:
 	uint8 GetId() { return Id; }
 
 protected:
+	FOnLoadingFinishSignature OnLoadingFinish;
+
 	void		 Init(EIDMObjectType NewType, uint8 ImageId);
 	virtual void BeginPlay();
 	void		 OnPackSent();

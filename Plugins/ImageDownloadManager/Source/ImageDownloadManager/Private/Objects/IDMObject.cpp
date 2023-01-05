@@ -76,11 +76,17 @@ void UIDMObject::ReceiveFile(const FIDMPackage& FilePack)
 	if (File.Num() == 0)
 	{
 		File.Init(0, FilePack.Length);
+		FilePartCount = ceil(File.Num() / ((float)PACK_SIZE));
 	}
 
 	for (int32 i = FilePack.Part; i < FilePack.Part + FilePack.Data.Num(); i++)
 	{
 		File[i] = FilePack.Data[i - FilePack.Part];
+	}
+
+	if (++FilePartCount == FilePartCount)
+	{
+		OnLoadingFinish.ExecuteIfBound(this);
 	}
 
 	auto OuterInterface = GetOuterInterface();
