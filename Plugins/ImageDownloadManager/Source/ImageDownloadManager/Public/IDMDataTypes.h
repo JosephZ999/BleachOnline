@@ -29,7 +29,7 @@ struct FIDMObjectData
 
 	FIDMObjectData() {}
 
-	FIDMObjectData(EIDMImageType InId, UIDMObject* InObject, UObject* InOuterObject)
+	FIDMObjectData(uint8 InId, UIDMObject* InObject, UObject* InOuterObject)
 		: Id(InId)
 		, Object(InObject)
 		, OuterObject(InOuterObject)
@@ -37,7 +37,7 @@ struct FIDMObjectData
 	}
 
 	UPROPERTY()
-	EIDMImageType Id;
+	uint8 Id;
 
 	UPROPERTY()
 	UIDMObject* Object;

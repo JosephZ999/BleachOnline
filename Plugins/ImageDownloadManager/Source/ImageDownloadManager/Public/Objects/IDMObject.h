@@ -29,7 +29,7 @@ public:
 	uint8 GetId() { return Id; }
 
 protected:
-	void		 Init(EIDMObjectType NewType, uint8 ImageId, TArray<uint8>* Image = nullptr);
+	void		 Init(EIDMObjectType NewType, uint8 ImageId);
 	virtual void BeginPlay();
 	void		 OnPackSent();
 	void		 ReceiveFile(const FIDMPackage& FilePack);
@@ -37,6 +37,7 @@ protected:
 private:
 	IIDMInterface* GetOuterInterface();
 	void		   SendPack();
+	void		   GetImageAsByte();
 
 private:
 	friend class UIDMComponent;

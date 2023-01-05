@@ -25,10 +25,10 @@ class IMAGEDOWNLOADMANAGER_API IIDMInterface
 
 public:
 	// For IDM Component
-	virtual void IDM_SendPackage(FIDMPackage FilePack) {}
+	virtual void IDM_SendPackage(FIDMPackage& FilePack) {}
 	virtual void IDM_SendRequest(uint8 FileId) {}
-	virtual void IDM_SendResponse(int32 FilePart) {}
+	virtual void IDM_SendResponse(uint8 FileId) {}
 
 	// For Actor
-	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) {}
+	virtual bool IDM_GetImageAsByte(uint8 ImageId, TArray<uint8>* OutArray) { return false; }
 };

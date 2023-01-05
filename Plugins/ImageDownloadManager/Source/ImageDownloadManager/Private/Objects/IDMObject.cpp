@@ -3,18 +3,14 @@
 #include "IDMObject.h"
 #include "TimerManager.h"
 #include "IDMInterface.h"
+#include "Engine/World.h"
 
 #define PACK_SIZE 2048
 
-void UIDMObject::Init(EIDMObjectType NewType, uint8 ImageId, TArray<uint8>* Image)
+void UIDMObject::Init(EIDMObjectType NewType, uint8 ImageId)
 {
 	Type = NewType;
 	Id	 = ImageId;
-	if (Image)
-	{
-		File		  = *Image;
-		FilePartCount = ceil(File.Num() / ((float)PACK_SIZE));
-	}
 }
 
 void UIDMObject::BeginPlay()
@@ -23,7 +19,7 @@ void UIDMObject::BeginPlay()
 	{
 	case EIDMObjectType::Send:
 	{
-		SendPack();
+		GetImageAsByte();
 		break;
 	}
 	case EIDMObjectType::Recieve:
@@ -46,7 +42,7 @@ IIDMInterface* UIDMObject::GetOuterInterface()
 
 void UIDMObject::OnPackSent()
 {
-	if (FilePartCount-- == 0)
+	if (--FilePartCount == 0)
 	{
 		// Success
 		return;
@@ -86,4 +82,30 @@ void UIDMObject::ReceiveFile(const FIDMPackage& FilePack)
 	{
 		File[i] = FilePack.Data[i - FilePack.Part];
 	}
+
+	auto OuterInterface = GetOuterInterface();
+	if (OuterInterface)
+	{
+		OuterInterface->IDM_SendResponse(Id);
+	}
+}
+
+void UIDMObject::GetImageAsByte()
+{
+	if (! GetWorld()) return;
+
+	auto	   OuterInterface		 = GetOuterInterface();
+	const bool FileLoadedSuccessfull = OuterInterface->IDM_GetImageAsByte(Id, &File);
+	if (FileLoadedSuccessfull)
+	{
+		FilePartCount = ceil(File.Num() / ((float)PACK_SIZE));
+		SendPack();
+		SendPack();
+		SendPack();
+		return;
+	}
+
+	// Repeat this function
+	FTimerHandle   GetImageTimer;
+	GetWorld()->GetTimerManager().SetTimer(GetImageTimer, this, &ThisClass::GetImageAsByte, 1.f);
 }
