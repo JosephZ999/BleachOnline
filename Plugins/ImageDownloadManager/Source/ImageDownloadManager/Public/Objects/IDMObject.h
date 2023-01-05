@@ -34,10 +34,12 @@ public:
 protected:
 	FOnLoadingFinishSignature OnLoadingFinish;
 
-	void		 Init(EIDMObjectType NewType, uint8 ImageId);
-	virtual void BeginPlay();
-	void		 OnPackSent();
-	void		 ReceiveFile(const FIDMPackage& FilePack);
+	void		   Init(EIDMObjectType NewType, uint8 ImageId);
+	virtual void   BeginPlay();
+	void		   OnPackSent();
+	void		   ReceiveFile(const FIDMPackage& FilePack);
+	EIDMObjectType GetType() { return Type; }
+	TArray<uint8>* GetFile() { return &File; }
 
 private:
 	IIDMInterface* GetOuterInterface();

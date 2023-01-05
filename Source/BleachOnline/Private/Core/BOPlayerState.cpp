@@ -99,7 +99,7 @@ void ABOPlayerState::IDM_SetImage(uint8 ImageId, TArray<uint8>* ImageRaw)
 		auto GISubsystem = BOGetterLib::GetGameInstanceSubsystem(this);
 		if (GISubsystem)
 		{
-			GISubsystem->RawToTexture2D(*ImageRaw, Profile.AvatarWidth, Profile.AvatarHeight, Profile.Avatar)
+			GISubsystem->RawToTexture2D(*ImageRaw, Profile.AvatarWidth, Profile.AvatarHeight, Profile.Avatar);
 		}
 		break;
 	}

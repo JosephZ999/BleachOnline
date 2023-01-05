@@ -77,7 +77,7 @@ void UIDMComponent::CreateObject(bool Send, const uint8 ImageId)
 	const auto Id		  = ImageId;
 	if (auto NewObj = NewObject<UIDMObject>(this, "IDMObj"))
 	{
-		NewObj->OnLoadingFinish.BindUObject(this, &ThisClass::OnObjectFinished);
+		NewObj->OnLoadingFinish.BindUObject(this, &ThisClass::OnLoadingFinished);
 		const FIDMObjectData NewData(ImageId, NewObj, this);
 		auto*				 ObjArr = (Send) ? &Senders : &Receivers;
 		ObjArr->Add(NewData);
@@ -133,4 +133,14 @@ bool UIDMComponent::HasAuthority()
 	return false;
 }
 
-void UIDMComponent::OnObjectFinished(UIDMObject* Obj) {}
+void UIDMComponent::OnLoadingFinished(UIDMObject* Obj)
+{
+	if (Obj->GetType() == EIDMObjectType::Recieve)
+	{
+		if (auto OwnerActor = Cast<IIDMInterface>(GetOwner()))
+		{
+			OwnerActor->IDM_SetImage(Obj->GetId(), Obj->GetFile());
+		}
+	}
+	Obj->ConditionalBeginDestroy();
+}

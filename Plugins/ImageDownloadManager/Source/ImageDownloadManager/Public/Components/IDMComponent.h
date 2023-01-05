@@ -80,5 +80,5 @@ private:
 	bool HasAuthority();
 
 	UFUNCTION()
-	void OnObjectFinished(UIDMObject* Obj);
+	void OnLoadingFinished(UIDMObject* Obj);
 };
